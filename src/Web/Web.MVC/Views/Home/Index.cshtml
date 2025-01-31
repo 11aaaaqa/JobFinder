@@ -1,0 +1,20 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+@if (User.Identity.IsAuthenticated)
+{
+    string returnUrl = Context.Request.Path;
+    if (Context.Request.QueryString.HasValue)
+    {
+        returnUrl += Context.Request.QueryString;
+    }
+    <form method="post" asp-controller="Auth" asp-action="Logout" asp-route-returnUrl="@returnUrl">
+        <input type="submit" value="Выйти из аккаунта"/>
+    </form>
+}
+else
+{
+    <a asp-action="Login" asp-controller="Auth" asp-route-returnUrl="@Context.Request.Path">войти в аккаунт</a>
+    <a asp-action="Register" asp-controller="Auth">зарегистрироваться</a>
+}

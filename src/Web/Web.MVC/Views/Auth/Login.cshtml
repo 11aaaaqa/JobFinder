@@ -1,0 +1,18 @@
+﻿@model Web.MVC.DTOs.Auth.LoginDto
+@{
+    ViewData["Title"] = "Вход в аккаунт";
+}
+<h3>Войти в аккаунт</h3>
+<form method="post" asp-controller="Auth" asp-action="Login">
+    <div asp-validation-summary="ModelOnly"></div>
+    <span asp-validation-for="Email"></span>
+    <span asp-validation-for="Password"></span>
+    <input type="hidden" asp-for="ReturnUrl"/>
+    <div>
+        <input asp-for="Email" placeholder="Адрес эл. почты" />
+    </div>
+    <div>
+        <input asp-for="Password" placeholder="Пароль" />
+    </div>
+    <input type="submit" value="Войти"/>
+</form>
