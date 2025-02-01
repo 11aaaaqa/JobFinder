@@ -4,7 +4,6 @@ using Confluent.Kafka.Admin;
 using EmployeeMicroservice.Api.Database;
 using EmployeeMicroservice.Api.Kafka.Consumer_models;
 using EmployeeMicroservice.Api.Models;
-using EmployeeMicroservice.Api.Models.EmployeeSkills;
 using GeneralLibrary.Constants;
 
 namespace EmployeeMicroservice.Api.Kafka
@@ -68,13 +67,7 @@ namespace EmployeeMicroservice.Api.Kafka
                         Name = account.Name,
                         Id = Guid.NewGuid(),
                         Surname = account.Surname,
-                        ForeignLanguages = new List<ForeignLanguage>(),
-                        DesiredSalaryFrom = null,
-                        DesiredSalaryTo = null,
-                        DateOfBirth = DateOnly.MinValue,
-                        Educations = new List<Education>(),
-                        EmployeeExperience = new List<EmployeeExperience>(),
-                        ReadyToMove = false,
+                        City = null, DateOfBirth = null, PhoneNumber = null, Gender = null, Patronymic = null, Status = WorkStatusConstants.LookingForJob
                     }, CancellationToken.None);
                     await context.SaveChangesAsync(CancellationToken.None);
                 }
