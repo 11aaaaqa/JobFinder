@@ -67,6 +67,7 @@ namespace EmployeeMicroservice.Api.Kafka
                         Name = account.Name,
                         Id = Guid.NewGuid(),
                         Surname = account.Surname,
+                        AccountId = account.AccountId,
                         City = null, DateOfBirth = null, PhoneNumber = null, Gender = null, Patronymic = null, Status = WorkStatusConstants.LookingForJob
                     }, CancellationToken.None);
                     await context.SaveChangesAsync(CancellationToken.None);
