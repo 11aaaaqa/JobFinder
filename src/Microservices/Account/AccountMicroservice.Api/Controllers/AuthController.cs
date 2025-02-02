@@ -47,7 +47,7 @@ namespace AccountMicroservice.Api.Controllers
 
             await kafkaProducer.ProduceAsync("user-registered-topic", new Message<Null, string>
             {
-                Value = JsonSerializer.Serialize(new { model.Name, model.Surname, model.AccountType, model.Email })
+                Value = JsonSerializer.Serialize(new { model.Name, model.Surname, model.AccountType, model.Email, AccountId = user.Id })
             });
 
             return Ok();

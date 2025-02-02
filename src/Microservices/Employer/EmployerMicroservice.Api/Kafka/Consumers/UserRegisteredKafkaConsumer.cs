@@ -61,7 +61,8 @@ namespace EmployerMicroservice.Api.Kafka.Consumers
                         CompanyPost = null,
                         CompanyId = null,
                         Id = Guid.NewGuid(),
-                        Surname = account.Surname
+                        Surname = account.Surname,
+                        AccountId = account.AccountId
                     }, CancellationToken.None);
                     await context.SaveChangesAsync(CancellationToken.None);
                 }
