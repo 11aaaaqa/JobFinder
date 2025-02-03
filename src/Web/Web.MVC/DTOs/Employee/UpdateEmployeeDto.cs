@@ -16,12 +16,6 @@ namespace Web.MVC.DTOs.Employee
         [StringLength(50)]
         public string Surname { get; set; }
 
-        [Required(ErrorMessage = "Поле \"Адрес эл. почты\" обязательно")]
-        [Display(Name = "Адрес эл. почты")]
-        [StringLength(80)]
-        [DataType(DataType.EmailAddress)]
-        public string Email { get; set; }
-
         [Display(Name = "Отчество")]
         [StringLength(50)]
         public string? Patronymic { get; set; }
@@ -41,5 +35,7 @@ namespace Web.MVC.DTOs.Employee
         [StringLength(20)]
         [DataType(DataType.PhoneNumber)]
         public string? PhoneNumber { get; set; }
+
+        public string Status { get; set; }
     }
 }
