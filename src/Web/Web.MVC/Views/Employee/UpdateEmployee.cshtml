@@ -1,0 +1,76 @@
+﻿@using GeneralLibrary.Constants
+@model Web.MVC.DTOs.Employee.UpdateEmployeeDto
+@{
+    ViewData["Title"] = "Профиль";
+}
+<link rel="stylesheet" href="~/css/Employee/update-employee.css"/>
+
+@if (ViewBag.IsUpdated != null)
+{
+    <input id="isUpdated" type="hidden" value="@ViewBag.IsUpdated" />
+}
+
+<div id="modal" class="modal">
+    <span class="close-modal" id="close-modal">&times;</span>
+    <p>Данные успешно обновлены</p>
+</div>
+
+<form method="post" asp-action="UpdateEmployee" asp-controller="Employee">
+    <span asp-validation-for="Name"></span>
+    <span asp-validation-for="Surname"></span>
+    <span asp-validation-for="Patronymic"></span>
+    <span asp-validation-for="DateOfBirth"></span>
+    <span asp-validation-for="Gender"></span>
+    <span asp-validation-for="PhoneNumber"></span>
+    <span asp-validation-for="City"></span>
+    
+    <input asp-for="Id" type="hidden"/>
+    <input asp-for="Status" type="hidden" />
+    <div class="input-container">
+        <input class="text-input" asp-for="Name" placeholder="">
+        <label class="placeholder">Имя</label>
+    </div>
+    <div class="input-container">
+        <input class="text-input" asp-for="Surname" placeholder="">
+        <label class="placeholder">Фамилия</label>
+    </div>
+    <div class="input-container">
+        <input class="text-input" asp-for="Patronymic" placeholder="">
+        <label class="placeholder">Отчество</label>
+    </div>
+    <div class="input-container">
+        <input class="text-input" asp-for="DateOfBirth" placeholder="">
+        <label class="radio-placeholder">Дата рождения</label>
+    </div>
+    
+
+    <div class="input-container">
+        <input type="text" class="gender-input" id="toggleButton" value="@GenderConstants.Man" readonly />
+        <label class="radio-placeholder">Пол</label>
+        <div id="radioGroup" class="radio-group">
+            <label>
+                <input type="radio" asp-for="Gender" value="@GenderConstants.Man" checked /> Мужской
+                @* <input type="radio" name="gender" value="male" checked> Мужской *@
+            </label>
+            <br>
+            <label>
+                <input type="radio" asp-for="Gender" value="@GenderConstants.Woman" /> Женский
+                @* <input type="radio" name="gender" value="female"> Женский *@
+            </label>
+        </div>
+    </div>
+
+    <div class="input-container">
+        <input class="text-input" asp-for="PhoneNumber" placeholder="">
+        <label class="placeholder">Номер телефона</label>
+    </div>
+    <div class="input-container">
+        <input class="text-input" asp-for="City" placeholder="">
+        <label class="placeholder">Город проживания</label>
+    </div>
+    
+    <input type="submit" value="Сохранить"/>
+</form>
+
+<script src="~/js/employee/update-employee.js"></script>
+<script src="~/js/employee/employee-successfully-updated.js"></script>
