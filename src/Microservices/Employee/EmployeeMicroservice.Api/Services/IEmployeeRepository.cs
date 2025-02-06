@@ -1,4 +1,5 @@
-﻿using EmployeeMicroservice.Api.Models;
+﻿using EmployeeMicroservice.Api.DTOs;
+using EmployeeMicroservice.Api.Models;
 
 namespace EmployeeMicroservice.Api.Services
 {
@@ -6,6 +7,6 @@ namespace EmployeeMicroservice.Api.Services
     {
         Task<Employee?> GetEmployeeByIdAsync(Guid id);
         Task<Employee?> GetEmployeeByEmailAsync(string email);
-        Task UpdateEmployeeAsync(Employee employee);
+        Task UpdateEmployeeAsync(UpdateEmployeeDto model);
     }
 }
