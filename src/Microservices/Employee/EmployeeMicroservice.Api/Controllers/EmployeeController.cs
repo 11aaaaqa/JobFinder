@@ -1,11 +1,16 @@
-﻿using EmployeeMicroservice.Api.Services;
+﻿using System.Text.Json;
+using Confluent.Kafka;
+using EmployeeMicroservice.Api.DTOs;
+using EmployeeMicroservice.Api.Kafka.Kafka_producer;
+using EmployeeMicroservice.Api.Models;
+using EmployeeMicroservice.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeMicroservice.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class EmployeeController(IEmployeeRepository employeeRepository) : ControllerBase
+    public class EmployeeController(IEmployeeRepository employeeRepository, IKafkaProducer kafkaProducer) : ControllerBase
     {
         [Route("GetEmployeeById/{id}")]
         [HttpGet]
@@ -17,7 +22,7 @@ namespace EmployeeMicroservice.Api.Controllers
             return Ok(employee);
         }
 
-        [Route("GetEmployeeByEmail/{email}")]
+        [Route("GetEmployeeByEmail")]
         [HttpGet]
         public async Task<IActionResult> GetEmployeeByEmailAsync(string email)
         {
@@ -25,6 +30,17 @@ namespace EmployeeMicroservice.Api.Controllers
             if (employee is null) return BadRequest();
 
             return Ok(employee);
+        }
+
+        [Route("UpdateEmployee")]
+        [HttpPatch]
+        public async Task<IActionResult> UpdateEmployeeAsync([FromBody] UpdateEmployeeDto model)
+        {
+            var employee = await employeeRepository.GetEmployeeByIdAsync(model.Id);
+            if (employee is null) return BadRequest();
+
+            await employeeRepository.UpdateEmployeeAsync(model);
+            return Ok();
         }
     }
 }
