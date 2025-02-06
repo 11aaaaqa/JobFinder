@@ -5,9 +5,9 @@
 }
 <link rel="stylesheet" href="~/css/Employee/update-employee.css"/>
 
-@if (ViewBag.IsUpdated != null)
+@if (ViewBag.IsUpdated == true)
 {
-    <input id="isUpdated" type="hidden" value="@ViewBag.IsUpdated" />
+    <input id="isUpdated" type="hidden" value="true" />
 }
 
 <div id="modal" class="modal">
