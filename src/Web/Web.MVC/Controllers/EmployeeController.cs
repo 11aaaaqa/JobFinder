@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Text;
+using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Web.MVC.DTOs.Employee;
 using Web.MVC.Models.ApiResponses;
 
@@ -18,18 +21,21 @@ namespace Web.MVC.Controllers
         [Authorize]
         [Route("profile/me")]
         [HttpGet]
-        public async Task<IActionResult> UpdateEmployee()
+        public async Task<IActionResult> UpdateEmployee(bool? isUpdated)
         {
             using HttpClient httpClient = httpClientFactory.CreateClient();
-            var response = await httpClient.GetAsync($"{url}/api/Employee/GetEmployeeByEmail/{User.Identity.Name}");
+            var email = User.Identity.Name;
+            var response = await httpClient.GetAsync($"{url}/api/Employee/GetEmployeeByEmail?email={email}");
             response.EnsureSuccessStatusCode();
+
+            ViewBag.IsUpdated = isUpdated;
 
             var employee = await response.Content.ReadFromJsonAsync<EmployeeResponse>();
             return View(new UpdateEmployeeDto
             {
-                Name = employee.Name, Email = employee.Email, City = employee.City, DateOfBirth = employee.DateOfBirth,
+                Name = employee.Name, City = employee.City, DateOfBirth = employee.DateOfBirth,
                 Gender = employee.Gender, Id = employee.Id, Patronymic = employee.Patronymic,
-                PhoneNumber = employee.PhoneNumber, Surname = employee.Surname
+                PhoneNumber = employee.PhoneNumber, Surname = employee.Surname, Status = employee.Status
             });
         }
 
@@ -40,7 +46,12 @@ namespace Web.MVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                
+                using HttpClient httpClient = httpClientFactory.CreateClient();
+                using StringContent jsonContent = new(JsonSerializer.Serialize(model), Encoding.UTF8, "application/json");
+                var response = await httpClient.PatchAsync($"{url}/api/Employee/UpdateEmployee", jsonContent);
+                response.EnsureSuccessStatusCode();
+
+                return RedirectToAction("UpdateEmployee", new { isUpdated = true });
             }
 
             return View(model);
