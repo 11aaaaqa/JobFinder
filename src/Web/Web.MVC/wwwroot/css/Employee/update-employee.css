@@ -86,11 +86,12 @@
     display: none; 
     position: fixed;
     z-index: 1; 
-    left: 50%;
     top: 20px; 
-    transform: translateX(-50%); 
+    margin-left: 40%;
+    width: 20%;
+    height: 90px;
     background-color: rgba(255, 255, 255, 0.9); 
-    border: 1px solid #888;
+    border: 2px solid chartreuse;
     padding: 20px;
     border-radius: 4px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -103,6 +104,7 @@
 }
 
 .close-modal {
+    transform: translateY(-11px);
     color: #aaa;
     float: right;
     font-size: 28px;
@@ -114,4 +116,8 @@
     color: black;
     text-decoration: none;
     cursor: pointer;
+}
+
+.updated-p {
+    margin-top: 6px;
 }
