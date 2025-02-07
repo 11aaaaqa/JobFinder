@@ -2,7 +2,6 @@
 using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Formatters;
 using Web.MVC.DTOs.Employee;
 using Web.MVC.Models.ApiResponses;
 
@@ -24,8 +23,7 @@ namespace Web.MVC.Controllers
         public async Task<IActionResult> UpdateEmployee(bool? isUpdated)
         {
             using HttpClient httpClient = httpClientFactory.CreateClient();
-            var email = User.Identity.Name;
-            var response = await httpClient.GetAsync($"{url}/api/Employee/GetEmployeeByEmail?email={email}");
+            var response = await httpClient.GetAsync($"{url}/api/Employee/GetEmployeeByEmail?email={User.Identity.Name}");
             response.EnsureSuccessStatusCode();
 
             ViewBag.IsUpdated = isUpdated;
