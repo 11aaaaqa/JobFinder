@@ -23,5 +23,14 @@ namespace EmployeeMicroservice.Api.Services
 
             await context.SaveChangesAsync();
         }
+
+        public async Task UpdateEmployeeStatusAsync(Guid employeeId, string status)
+        {
+            var user = await context.Employees.SingleAsync(x => x.Id == employeeId);
+
+            user.Status = status;
+
+            await context.SaveChangesAsync();
+        }
     }
 }
