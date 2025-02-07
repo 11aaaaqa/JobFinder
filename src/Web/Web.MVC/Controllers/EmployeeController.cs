@@ -54,5 +54,24 @@ namespace Web.MVC.Controllers
 
             return View(model);
         }
+
+        [Authorize]
+        [Route("update-employee-status")]
+        [HttpPost]
+        public async Task<IActionResult> UpdateEmployeeStatusAsync(string status, string returnUrl)
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+            var getEmployeeResponse = await httpClient.GetAsync($"{url}/Employee/GetEmployeeByEmail?email={User.Identity.Name}");
+            getEmployeeResponse.EnsureSuccessStatusCode();
+
+            var employee = await getEmployeeResponse.Content.ReadFromJsonAsync<EmployeeResponse>();
+
+            using StringContent jsonContent = new(JsonSerializer.Serialize(new {status}), Encoding.UTF8, "application/json");
+
+            var response = await httpClient.PatchAsync($"{url}/Employee/UpdateEmployeeStatus/{employee.Id}", jsonContent);
+            response.EnsureSuccessStatusCode();
+
+            return LocalRedirect(returnUrl);
+        }
     }
 }
