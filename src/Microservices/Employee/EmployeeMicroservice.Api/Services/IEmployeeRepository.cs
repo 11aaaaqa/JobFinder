@@ -8,5 +8,6 @@ namespace EmployeeMicroservice.Api.Services
         Task<Employee?> GetEmployeeByIdAsync(Guid id);
         Task<Employee?> GetEmployeeByEmailAsync(string email);
         Task UpdateEmployeeAsync(UpdateEmployeeDto model);
+        Task UpdateEmployeeStatusAsync(Guid employeeId, string status);
     }
 }
