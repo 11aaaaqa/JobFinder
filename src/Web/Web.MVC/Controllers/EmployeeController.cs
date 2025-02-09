@@ -38,7 +38,7 @@ namespace Web.MVC.Controllers
         }
 
         [Authorize]
-        [Route("profile/me")]
+        [Route("employee/profile/me")]
         [HttpPost]
         public async Task<IActionResult> UpdateEmployee(UpdateEmployeeDto model)
         {
@@ -56,9 +56,9 @@ namespace Web.MVC.Controllers
         }
 
         [Authorize]
-        [Route("update-employee-status")]
+        [Route("employee/update-employee-status")]
         [HttpPost]
-        public async Task<IActionResult> UpdateEmployeeStatusAsync(string status, string returnUrl)
+        public async Task<IActionResult> UpdateEmployeeStatus(string status, string returnUrl)
         {
             using HttpClient httpClient = httpClientFactory.CreateClient();
             var getEmployeeResponse = await httpClient.GetAsync($"{url}/Employee/GetEmployeeByEmail?email={User.Identity.Name}");
