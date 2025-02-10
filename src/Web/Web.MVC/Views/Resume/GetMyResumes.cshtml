@@ -1,0 +1,62 @@
+﻿@using GeneralLibrary.Constants
+@model Web.MVC.Models.ApiResponses.EmployeeResponse
+
+<link rel="stylesheet" href="~/css/resume/get-my-resumes.css"/>
+
+@if (true)
+{
+    string returnUrl = Context.Request.Path;
+    if (Context.Request.QueryString.HasValue)
+        returnUrl += Context.Request.QueryString;
+
+    <div class="profile-section">
+        <a class="update-employee-link" asp-controller="Employee" asp-action="UpdateEmployee">
+            <div class="profile">
+                <div>
+                    <p class="label">Профиль</p>
+                    <p class="profile-NS">@Model.Name @Model.Surname</p>
+                </div>
+                <div class="arrow">
+                    &#62;
+                </div>
+            </div>
+        </a>
+        <div id="status" class="status">
+            <div>
+                <p class="label">Ваш статус</p>
+                <p class="dynamic-status">@Model.Status</p>
+            </div>
+            <div class="edit-png">
+                <img src="~/img/edit-icon.png" />
+            </div>
+        </div>
+        <div class="update-status-modal">
+            <form method="post" asp-controller="Employee" asp-action="UpdateEmployeeStatus" asp-route-returnUrl="@returnUrl">
+                @if (Model.Status == WorkStatusConstants.LookingForJob)
+                {
+                    <button class="active-status" type="submit" name="status" value="@WorkStatusConstants.LookingForJob">@WorkStatusConstants.LookingForJob</button>
+                }
+                else
+                {
+                    <button type="submit" name="status" value="@WorkStatusConstants.LookingForJob">@WorkStatusConstants.LookingForJob</button>
+                }
+                @if (Model.Status == WorkStatusConstants.ConsideringOffers)
+                {
+                    <button class="active-status" type="submit" name="status" value="@WorkStatusConstants.ConsideringOffers">@WorkStatusConstants.ConsideringOffers</button>
+                }
+                else
+                {
+                    <button type="submit" name="status" value="@WorkStatusConstants.ConsideringOffers">@WorkStatusConstants.ConsideringOffers</button>
+                }
+                @if (Model.Status == WorkStatusConstants.NotLookingForJob)
+                {
+                    <button class="active-status" type="submit" name="status" value="@WorkStatusConstants.NotLookingForJob">@WorkStatusConstants.NotLookingForJob</button>
+                }
+                else
+                {
+                    <button type="submit" name="status" value="@WorkStatusConstants.NotLookingForJob">@WorkStatusConstants.NotLookingForJob</button>
+                }
+            </form>
+        </div>
+    </div>
+}
