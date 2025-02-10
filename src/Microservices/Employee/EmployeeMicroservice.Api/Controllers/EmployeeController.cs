@@ -43,14 +43,14 @@ namespace EmployeeMicroservice.Api.Controllers
             return Ok();
         }
 
-        [Route("UpdateEmployeeStatus/{employeeId}")]
+        [Route("UpdateEmployeeStatus")]
         [HttpPatch]
-        public async Task<IActionResult> UpdateEmployeeStatusAsync(Guid employeeId, [FromBody] string status)
+        public async Task<IActionResult> UpdateEmployeeStatusAsync([FromBody] UpdateEmployeeStatusDto model)
         {
-            var employee = await employeeRepository.GetEmployeeByIdAsync(employeeId);
+            var employee = await employeeRepository.GetEmployeeByIdAsync(model.EmployeeId);
             if (employee is null) return BadRequest();
 
-            await employeeRepository.UpdateEmployeeStatusAsync(employeeId, status);
+            await employeeRepository.UpdateEmployeeStatusAsync(model.EmployeeId, model.Status);
 
             return Ok();
         }
