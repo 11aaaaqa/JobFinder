@@ -1,0 +1,67 @@
+﻿.profile-section {
+    display: flex;
+    justify-content: space-between;
+}
+
+.status {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 10px 5px 10px;
+    border: 1px solid black;
+    border-radius: 10px;
+    cursor: pointer;
+    width: 45%;
+}
+
+.label {
+    margin: 0;
+    padding: 10px 0 1px 8px;
+    color: gray;
+    font-size: 14px;
+}
+
+.dynamic-status {
+    margin: 0;
+    padding: 1px 0 9px 8px;
+    color: black;
+    font-size: 17px;
+}
+
+.active-status {
+    background-color: deepskyblue;
+}
+
+.edit-png {
+    align-content: center;
+}
+
+.profile {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 10px 5px 10px;
+    border: 1px solid black;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.profile-NS {
+    margin: 0;
+    padding: 1px 0 9px 8px;
+    color: black;
+    font-size: 17px;
+}
+
+.arrow {
+    align-content: center;
+    font-size: 25px;
+    color: black;
+}
+
+.update-employee-link {
+    text-decoration: none;
+    width: 45%;
+}
+
+.update-status-modal {
+    display: none;
+}
