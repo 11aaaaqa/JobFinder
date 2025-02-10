@@ -18,7 +18,7 @@ namespace Web.MVC.Controllers
         }
 
         [Authorize]
-        [Route("profile/me")]
+        [Route("employee/profile/me")]
         [HttpGet]
         public async Task<IActionResult> UpdateEmployee(bool? isUpdated)
         {
@@ -61,14 +61,15 @@ namespace Web.MVC.Controllers
         public async Task<IActionResult> UpdateEmployeeStatus(string status, string returnUrl)
         {
             using HttpClient httpClient = httpClientFactory.CreateClient();
-            var getEmployeeResponse = await httpClient.GetAsync($"{url}/Employee/GetEmployeeByEmail?email={User.Identity.Name}");
+            var getEmployeeResponse = await httpClient.GetAsync($"{url}/api/Employee/GetEmployeeByEmail?email={User.Identity.Name}");
             getEmployeeResponse.EnsureSuccessStatusCode();
 
             var employee = await getEmployeeResponse.Content.ReadFromJsonAsync<EmployeeResponse>();
 
-            using StringContent jsonContent = new(JsonSerializer.Serialize(new {status}), Encoding.UTF8, "application/json");
+            using StringContent jsonContent = new(JsonSerializer.Serialize(new { Status = status, EmployeeId = employee.Id }),
+                Encoding.UTF8, "application/json");
 
-            var response = await httpClient.PatchAsync($"{url}/Employee/UpdateEmployeeStatus/{employee.Id}", jsonContent);
+            var response = await httpClient.PatchAsync($"{url}/api/Employee/UpdateEmployeeStatus", jsonContent);
             response.EnsureSuccessStatusCode();
 
             return LocalRedirect(returnUrl);
