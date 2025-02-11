@@ -1,6 +1,7 @@
 ﻿.profile-section {
     display: flex;
     justify-content: space-between;
+    position: relative;
 }
 
 .label {
