@@ -29,34 +29,34 @@
             <div class="edit-png">
                 <img src="~/img/edit-icon.png" />
             </div>
-            <div class="update-status-modal" id="update-status-modal">
-                <form method="post" asp-controller="Employee" asp-action="UpdateEmployeeStatus" asp-route-returnUrl="@returnUrl">
-                    @if (Model.Status == WorkStatusConstants.LookingForJob)
-                    {
-                        <button class="active-status" type="submit" name="status" value="@WorkStatusConstants.LookingForJob">@WorkStatusConstants.LookingForJob</button>
-                    }
-                    else
-                    {
-                        <button type="submit" name="status" value="@WorkStatusConstants.LookingForJob">@WorkStatusConstants.LookingForJob</button>
-                    }
-                    @if (Model.Status == WorkStatusConstants.ConsideringOffers)
-                    {
-                        <button class="active-status" type="submit" name="status" value="@WorkStatusConstants.ConsideringOffers">@WorkStatusConstants.ConsideringOffers</button>
-                    }
-                    else
-                    {
-                        <button type="submit" name="status" value="@WorkStatusConstants.ConsideringOffers">@WorkStatusConstants.ConsideringOffers</button>
-                    }
-                    @if (Model.Status == WorkStatusConstants.NotLookingForJob)
-                    {
-                        <button class="active-status" type="submit" name="status" value="@WorkStatusConstants.NotLookingForJob">@WorkStatusConstants.NotLookingForJob</button>
-                    }
-                    else
-                    {
-                        <button type="submit" name="status" value="@WorkStatusConstants.NotLookingForJob">@WorkStatusConstants.NotLookingForJob</button>
-                    }
-                </form>
-            </div>
+        </div>
+        <div class="update-status-modal" id="update-status-modal">
+            <form method="post" asp-controller="Employee" asp-action="UpdateEmployeeStatus" asp-route-returnUrl="@returnUrl">
+                @if (Model.Status == WorkStatusConstants.LookingForJob)
+                {
+                    <button class="active-status" type="submit" name="status" value="@WorkStatusConstants.LookingForJob">@WorkStatusConstants.LookingForJob</button>
+                }
+                else
+                {
+                    <button type="submit" name="status" value="@WorkStatusConstants.LookingForJob">@WorkStatusConstants.LookingForJob</button>
+                }
+                @if (Model.Status == WorkStatusConstants.ConsideringOffers)
+                {
+                    <button class="active-status" type="submit" name="status" value="@WorkStatusConstants.ConsideringOffers">@WorkStatusConstants.ConsideringOffers</button>
+                }
+                else
+                {
+                    <button type="submit" name="status" value="@WorkStatusConstants.ConsideringOffers">@WorkStatusConstants.ConsideringOffers</button>
+                }
+                @if (Model.Status == WorkStatusConstants.NotLookingForJob)
+                {
+                    <button class="active-status" type="submit" name="status" value="@WorkStatusConstants.NotLookingForJob">@WorkStatusConstants.NotLookingForJob</button>
+                }
+                else
+                {
+                    <button type="submit" name="status" value="@WorkStatusConstants.NotLookingForJob">@WorkStatusConstants.NotLookingForJob</button>
+                }
+            </form>
         </div>
     </div>
 }
