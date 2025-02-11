@@ -30,7 +30,7 @@
                 <img src="~/img/edit-icon.png" />
             </div>
         </div>
-        <div class="update-status-modal">
+        <div class="update-status-modal" id="update-status-modal">
             <form method="post" asp-controller="Employee" asp-action="UpdateEmployeeStatus" asp-route-returnUrl="@returnUrl">
                 @if (Model.Status == WorkStatusConstants.LookingForJob)
                 {
@@ -60,3 +60,5 @@
         </div>
     </div>
 }
+
+<script src="~/js/resume/get-my-resumes.js"></script>
