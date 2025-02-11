@@ -1,9 +1,8 @@
 ﻿const button = document.getElementById('status');
 const modal = document.getElementById('update-status-modal');
-const rightBlock = document.getElementById('status');
 
 button.onclick = function () {
-    var rect = rightBlock.getBoundingClientRect();
+    var rect = button.getBoundingClientRect();
     var containerRect = document.querySelector('.profile-section').getBoundingClientRect();
 
     modal.style.top = (rect.bottom - containerRect.top) + "px";
