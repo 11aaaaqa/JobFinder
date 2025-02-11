@@ -3,16 +3,6 @@
     justify-content: space-between;
 }
 
-.status {
-    display: flex;
-    justify-content: space-between;
-    padding: 5px 10px 5px 10px;
-    border: 1px solid black;
-    border-radius: 10px;
-    cursor: pointer;
-    width: 45%;
-}
-
 .label {
     margin: 0;
     padding: 10px 0 1px 8px;
@@ -62,6 +52,26 @@
     width: 45%;
 }
 
+.status {
+    display: flex;
+    position: relative;
+    justify-content: space-between;
+    padding: 5px 10px 5px 10px;
+    border: 1px solid black;
+    border-radius: 10px;
+    cursor: pointer;
+    width: 45%;
+}
+
 .update-status-modal {
     display: none;
+    position: absolute;
+    top: 95%;
+    left: 0;
+    width: 70%;
+    border-radius: 7px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    z-index: 1000;
+    cursor: default;
 }
