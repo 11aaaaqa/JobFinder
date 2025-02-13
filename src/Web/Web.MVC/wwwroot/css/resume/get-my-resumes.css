@@ -9,6 +9,7 @@
     padding: 10px 0 1px 8px;
     color: gray;
     font-size: 14px;
+    user-select: none;
 }
 
 .dynamic-status {
@@ -16,6 +17,7 @@
     padding: 1px 0 9px 8px;
     color: black;
     font-size: 17px;
+    user-select: none;
 }
 
 .active-status {
@@ -24,6 +26,7 @@
 
 .edit-png {
     align-content: center;
+    user-select: none;
 }
 
 .profile {
@@ -40,12 +43,14 @@
     padding: 1px 0 9px 8px;
     color: black;
     font-size: 17px;
+    user-select: none;
 }
 
 .arrow {
     align-content: center;
     font-size: 25px;
     color: black;
+    user-select: none;
 }
 
 .update-employee-link {
