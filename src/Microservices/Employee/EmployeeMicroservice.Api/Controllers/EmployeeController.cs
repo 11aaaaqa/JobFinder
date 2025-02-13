@@ -1,8 +1,5 @@
-﻿using System.Text.Json;
-using Confluent.Kafka;
-using EmployeeMicroservice.Api.DTOs;
+﻿using EmployeeMicroservice.Api.DTOs;
 using EmployeeMicroservice.Api.Kafka.Kafka_producer;
-using EmployeeMicroservice.Api.Models;
 using EmployeeMicroservice.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 
