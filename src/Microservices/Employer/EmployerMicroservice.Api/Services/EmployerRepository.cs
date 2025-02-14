@@ -13,24 +13,26 @@ namespace EmployerMicroservice.Api.Services
         public async Task<Employer?> GetEmployerByEmailAsync(string email)
             => await context.Employers.SingleOrDefaultAsync(x => x.Email == email);
 
-        public async Task UpdateEmployerAsync(UpdateEmployerDto model)
+        public async Task<bool> UpdateEmployerAsync(UpdateEmployerDto model)
         {
             var employer = await context.Employers.SingleOrDefaultAsync(x => x.Id == model.Id);
-            if (employer is null) throw new Exception("Employer with current ID wasn't found");
+            if (employer is null) return false;
 
             employer.Name = model.Name; employer.Surname = model.Surname; employer.CompanyPost = model.CompanyPost;
 
             await context.SaveChangesAsync();
+            return true;
         }
 
-        public async Task AssignCompanyAsync(Guid employerId, Guid companyId)
+        public async Task<bool> AssignCompanyAsync(Guid employerId, Guid companyId)
         {
             var employer = await context.Employers.SingleOrDefaultAsync(x => x.Id == employerId);
-            if (employer is null) throw new Exception("Employer with current ID wasn't found");
+            if (employer is null) return false;
 
             employer.CompanyId = companyId;
 
             await context.SaveChangesAsync();
+            return true;
         }
     }
 }
