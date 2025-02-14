@@ -21,7 +21,7 @@ namespace EmployerMicroservice.Api.Controllers
 
         [HttpGet]
         [Route("GetCompanyByCompanyName/{companyName}")]
-        public async Task<IActionResult> GetCompanyByCompanyName(string companyName)
+        public async Task<IActionResult> GetCompanyByCompanyNameAsync(string companyName)
         {
             var company = await companyRepository.GetCompanyByCompanyNameAsync(companyName);
             if(company is null) return BadRequest();
