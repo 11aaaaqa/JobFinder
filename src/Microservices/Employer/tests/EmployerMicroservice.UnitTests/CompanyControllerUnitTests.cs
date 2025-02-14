@@ -1,4 +1,5 @@
 ﻿using EmployerMicroservice.Api.Controllers;
+using EmployerMicroservice.Api.DTOs;
 using EmployerMicroservice.Api.Models;
 using EmployerMicroservice.Api.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -81,6 +82,45 @@ namespace EmployerMicroservice.UnitTests
             Assert.NotNull(methodResult.Value);
             var addedCompany = Assert.IsType<Company>(methodResult.Value);
             Assert.Equal(company, addedCompany);
+            mock.VerifyAll();
+        }
+
+        [Fact]
+        public async Task UpdateCompanyAsync_ReturnsBadRequest()
+        {
+            var nonExistentId = Guid.NewGuid();
+            UpdateCompanyDto model = new()
+            {
+                Id = nonExistentId, CompanyColleaguesCount = It.IsAny<uint>(), CompanyDescription = It.IsAny<string>(), CompanyName = It.IsAny<string>()
+            };
+            var mock = new Mock<ICompanyRepository>();
+            mock.Setup(x => x.UpdateCompanyAsync(model)).ReturnsAsync(false);
+            var controller = new CompanyController(mock.Object);
+
+            var result = await controller.UpdateCompanyAsync(model);
+
+            Assert.IsType<BadRequestResult>(result);
+            mock.VerifyAll();
+        }
+
+        [Fact]
+        public async Task UpdateCompanyAsync_ReturnsOk()
+        {
+            var existingId = Guid.NewGuid();
+            UpdateCompanyDto model = new()
+            {
+                Id = existingId,
+                CompanyColleaguesCount = It.IsAny<uint>(),
+                CompanyDescription = It.IsAny<string>(),
+                CompanyName = It.IsAny<string>()
+            };
+            var mock = new Mock<ICompanyRepository>();
+            mock.Setup(x => x.UpdateCompanyAsync(model)).ReturnsAsync(true);
+            var controller = new CompanyController(mock.Object);
+
+            var result = await controller.UpdateCompanyAsync(model);
+
+            Assert.IsType<OkResult>(result);
             mock.VerifyAll();
         }
     }
