@@ -8,7 +8,7 @@ namespace EmployerMicroservice.Api.Services
         Task<Company?> GetCompanyByIdAsync(Guid id);
         Task<Company?> GetCompanyByCompanyNameAsync(string companyName);
         Task AddCompanyAsync(Company model);
-        Task UpdateCompanyAsync(UpdateCompanyDto model);
+        Task<bool> UpdateCompanyAsync(UpdateCompanyDto model);
         Task DeleteCompanyAsync(Guid id);
     }
 }
