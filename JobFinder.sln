@@ -37,6 +37,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resume", "Resume", "{D24408
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResumeMicroservice.Api", "src\Microservices\Resume\ResumeMicroservice.Api\ResumeMicroservice.Api.csproj", "{CE2B9475-D95D-4525-9339-3A5E9F246868}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{50F1CC6B-1A31-4313-A6CF-44CE3D57BA69}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployerMicroservice.UnitTests", "src\Microservices\Employer\tests\EmployerMicroservice.UnitTests\EmployerMicroservice.UnitTests.csproj", "{127549DF-F81B-4331-9F1F-1565BCD309CE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +79,10 @@ Global
 		{CE2B9475-D95D-4525-9339-3A5E9F246868}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CE2B9475-D95D-4525-9339-3A5E9F246868}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CE2B9475-D95D-4525-9339-3A5E9F246868}.Release|Any CPU.Build.0 = Release|Any CPU
+		{127549DF-F81B-4331-9F1F-1565BCD309CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{127549DF-F81B-4331-9F1F-1565BCD309CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{127549DF-F81B-4331-9F1F-1565BCD309CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{127549DF-F81B-4331-9F1F-1565BCD309CE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -95,5 +103,7 @@ Global
 		{A142294D-4736-427E-A619-5D76C63FF35D} = {525E5420-C268-4670-8083-C146904C78E8}
 		{D2440851-D9A7-46EF-8268-4DB3A6B29A87} = {62C5CF3F-E56E-4E4D-9192-FB9B689CFFD6}
 		{CE2B9475-D95D-4525-9339-3A5E9F246868} = {D2440851-D9A7-46EF-8268-4DB3A6B29A87}
+		{50F1CC6B-1A31-4313-A6CF-44CE3D57BA69} = {6B90FDB1-9E4E-46FF-89D3-53EF32A60D8A}
+		{127549DF-F81B-4331-9F1F-1565BCD309CE} = {50F1CC6B-1A31-4313-A6CF-44CE3D57BA69}
 	EndGlobalSection
 EndGlobal
