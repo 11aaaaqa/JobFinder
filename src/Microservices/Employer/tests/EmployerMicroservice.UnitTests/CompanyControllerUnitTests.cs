@@ -123,5 +123,19 @@ namespace EmployerMicroservice.UnitTests
             Assert.IsType<OkResult>(result);
             mock.VerifyAll();
         }
+
+        [Fact]
+        public async Task DeleteCompanyAsync_ReturnsOk()
+        {
+            var id = Guid.NewGuid();
+            var mock = new Mock<ICompanyRepository>();
+            mock.Setup(x => x.DeleteCompanyAsync(id));
+            var controller = new CompanyController(mock.Object);
+
+            var result = await controller.DeleteCompanyAsync(new DeleteCompanyDto { CompanyId = id });
+
+            Assert.IsType<OkResult>(result);
+            mock.VerifyAll();
+        }
     }
 }
