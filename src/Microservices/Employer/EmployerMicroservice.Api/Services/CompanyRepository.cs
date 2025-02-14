@@ -19,15 +19,16 @@ namespace EmployerMicroservice.Api.Services
             await context.SaveChangesAsync();
         }
 
-        public async Task UpdateCompanyAsync(UpdateCompanyDto model)
+        public async Task<bool> UpdateCompanyAsync(UpdateCompanyDto model)
         {
             var company = await context.Companies.SingleOrDefaultAsync(x => x.Id == model.Id);
-            if (company is null) throw new Exception("Company with current ID wasn't found");
+            if (company is null) return false;
 
             company.CompanyDescription = model.CompanyDescription; company.CompanyName = model.CompanyName;
             company.CompanyColleaguesCount = model.CompanyColleaguesCount;
 
             await context.SaveChangesAsync();
+            return true;
         }
 
         public async Task DeleteCompanyAsync(Guid id)
