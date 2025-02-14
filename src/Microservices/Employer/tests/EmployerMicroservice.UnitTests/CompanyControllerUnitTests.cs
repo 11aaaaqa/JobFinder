@@ -3,6 +3,7 @@ using EmployerMicroservice.Api.DTOs;
 using EmployerMicroservice.Api.Models;
 using EmployerMicroservice.Api.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Moq;
 using Guid = System.Guid;
 
@@ -133,6 +134,23 @@ namespace EmployerMicroservice.UnitTests
             var controller = new CompanyController(mock.Object);
 
             var result = await controller.DeleteCompanyAsync(new DeleteCompanyDto { CompanyId = id });
+
+            Assert.IsType<OkResult>(result);
+            mock.VerifyAll();
+        }
+
+        [Fact]
+        public async Task AddCompanyAsync_ReturnsOk()
+        {
+            var model = new AddCompanyDto
+            {
+                CompanyName = It.IsAny<string>(), CompanyDescription = It.IsAny<string>(), CompanyColleaguesCount = It.IsAny<uint>(),
+                FounderEmployerId = Guid.NewGuid()
+            };
+            var mock = new Mock<ICompanyRepository>();
+            var controller = new CompanyController(mock.Object);
+
+            var result = await controller.AddCompanyAsync(model);
 
             Assert.IsType<OkResult>(result);
             mock.VerifyAll();
