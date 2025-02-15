@@ -16,6 +16,7 @@
 </div>
 
 <form method="post" asp-action="UpdateEmployee" asp-controller="Employee">
+    <div asp-validation-summary="ModelOnly"></div>
     <span asp-validation-for="Name"></span>
     <span asp-validation-for="Surname"></span>
     <span asp-validation-for="Patronymic"></span>
@@ -23,9 +24,9 @@
     <span asp-validation-for="Gender"></span>
     <span asp-validation-for="PhoneNumber"></span>
     <span asp-validation-for="City"></span>
-    
+
     <input asp-for="Id" type="hidden"/>
-    <input asp-for="Status" type="hidden" />
+    <input asp-for="Status" type="hidden"/>
     <div class="input-container">
         <input class="text-input" asp-for="Name" placeholder="">
         <label class="placeholder">Имя</label>
@@ -42,20 +43,18 @@
         <input class="text-input" asp-for="DateOfBirth" placeholder="">
         <label class="radio-placeholder">Дата рождения</label>
     </div>
-    
+
 
     <div class="input-container">
-        <input type="text" class="gender-input" id="toggleButton" value="@GenderConstants.Man" readonly />
+        <input type="text" class="gender-input" id="toggleButton" value="@GenderConstants.Man" readonly/>
         <label class="radio-placeholder">Пол</label>
         <div id="radioGroup" class="radio-group">
             <label>
-                <input type="radio" asp-for="Gender" value="@GenderConstants.Man" checked /> Мужской
-                @* <input type="radio" name="gender" value="male" checked> Мужской *@
+                <input type="radio" asp-for="Gender" value="@GenderConstants.Man" checked/> Мужской
             </label>
             <br>
             <label>
-                <input type="radio" asp-for="Gender" value="@GenderConstants.Woman" /> Женский
-                @* <input type="radio" name="gender" value="female"> Женский *@
+                <input type="radio" asp-for="Gender" value="@GenderConstants.Woman"/> Женский
             </label>
         </div>
     </div>
@@ -68,7 +67,7 @@
         <input class="text-input" asp-for="City" placeholder="">
         <label class="placeholder">Город проживания</label>
     </div>
-    
+
     <input type="submit" value="Сохранить"/>
 </form>
 
