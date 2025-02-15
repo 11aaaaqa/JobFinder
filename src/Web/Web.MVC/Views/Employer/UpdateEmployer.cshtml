@@ -1,0 +1,39 @@
+﻿@model Web.MVC.DTOs.Employer.UpdateEmployerDto
+@{
+    ViewData["Title"] = "Профиль";
+}
+<link rel="stylesheet" href="~/css/employer/update-employer.css"/>
+
+@if (ViewBag.IsUpdated == true)
+{
+    <input id="isUpdated" type="hidden" value="true" />
+}
+
+<div id="modal" class="modal">
+    <span class="close-modal" id="close-modal">&times;</span>
+    <p class="updated-p">&#9989; Данные успешно обновлены</p>
+</div>
+
+<form method="post" asp-controller="Employer" asp-action="UpdateEmployer">
+    <div asp-validation-summary="ModelOnly"></div>
+    <span asp-validation-for="Name"></span>
+    <span asp-validation-for="Surname"></span>
+    <span asp-validation-for="CompanyPost"></span>
+    
+    <input asp-for="Id" type="hidden" />
+    <div class="input-container">
+        <input class="text-input" asp-for="Name" placeholder="">
+        <label class="placeholder">Имя</label>
+    </div>
+    <div class="input-container">
+        <input class="text-input" asp-for="Surname" placeholder="">
+        <label class="placeholder">Фамилия</label>
+    </div>
+    <div class="input-container">
+        <input class="text-input" asp-for="CompanyPost" placeholder="">
+        <label class="placeholder">Должность</label>
+    </div>
+    <input type="submit" value="Сохранить" />
+</form>
+
+<script src="~/js/employer/employer-successfully-updated.js"></script>
