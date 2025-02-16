@@ -1,0 +1,62 @@
+﻿@using Web.MVC.Constants
+@model Web.MVC.DTOs.Company.AddCompanyDto
+
+<link rel="stylesheet " href="~/css/placeholder-with-input.css"/>
+<link rel="stylesheet" href="~/css/company/add-my-company.css"/>
+
+<form method="post" asp-controller="Company" asp-action="AddMyCompany">
+    <div asp-validation-summary="ModelOnly"></div>
+    <span asp-validation-for="CompanyName"></span>
+    <span asp-validation-for="CompanyColleaguesCount"></span>
+    <span asp-validation-for="CompanyDescription"></span>
+    
+    <input asp-for="FounderEmployerId" type="hidden"/>
+
+    <div class="input-container">
+        <input class="text-input" asp-for="CompanyName" placeholder="">
+        <label class="placeholder">Название компании</label>
+    </div>
+    
+    @if (true)
+    {
+        const string employees = " сотрудников";
+        <div class="input-container">
+            <input type="text" class="employees-input" id="toggleButton" value="@ColleaguesCountConstants.UnderFifty @employees" readonly />
+            <label class="radio-placeholder">Количество сотрудников</label>
+            <div id="radioGroup" class="radio-group">
+                <label>
+                    <input type="radio" asp-for="CompanyColleaguesCount" value="@ColleaguesCountConstants.UnderFifty" checked />
+                    @ColleaguesCountConstants.UnderFifty
+                </label><br>
+                <label>
+                    <input type="radio" asp-for="CompanyColleaguesCount" value="@ColleaguesCountConstants.FiftyToOneHundred" />
+                    @ColleaguesCountConstants.FiftyToOneHundred
+                </label><br />
+                <label>
+                    <input type="radio" asp-for="CompanyColleaguesCount" value="@ColleaguesCountConstants.OneHundredToFiveHundred" />
+                    @ColleaguesCountConstants.OneHundredToFiveHundred
+                </label><br />
+                <label>
+                    <input type="radio" asp-for="CompanyColleaguesCount" value="@ColleaguesCountConstants.FiveHundredToOneThousand" />
+                    @ColleaguesCountConstants.FiveHundredToOneThousand
+                </label><br />
+                <label>
+                    <input type="radio" asp-for="CompanyColleaguesCount" value="@ColleaguesCountConstants.OneThousandToFiveThousand" />
+                    @ColleaguesCountConstants.OneThousandToFiveThousand
+                </label><br />
+                <label>
+                    <input type="radio" asp-for="CompanyColleaguesCount" value="@ColleaguesCountConstants.MoreThanFiveThousand" />
+                    @ColleaguesCountConstants.MoreThanFiveThousand
+                </label>
+            </div>
+        </div>
+    }
+
+    <div class="input-container">
+        <input class="text-input" asp-for="CompanyDescription" placeholder="">
+        <label class="placeholder">Описание</label>
+    </div>
+    <input type="submit" value="Создать"/>
+</form>
+
+<script src="~/js/company/add-my-company.js"></script>
