@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Text;
+using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Web.MVC.DTOs.Company;
 using Web.MVC.Models.ApiResponses.Company;
 using Web.MVC.Models.ApiResponses.Employer;
 
@@ -34,6 +37,44 @@ namespace Web.MVC.Controllers
             companyResponse.EnsureSuccessStatusCode();
             var company = await companyResponse.Content.ReadFromJsonAsync<CompanyResponse>();
             return View(company);
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("employer/company/add")]
+        public async Task<IActionResult> AddMyCompany()
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+            var response = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
+            response.EnsureSuccessStatusCode();
+
+            var employer = await response.Content.ReadFromJsonAsync<EmployerResponse>();
+
+            return View(new AddCompanyDto{FounderEmployerId = employer.Id});
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("employer/company/add")]
+        public async Task<IActionResult> AddMyCompany(AddCompanyDto model)
+        {
+            if (ModelState.IsValid)
+            {
+                using HttpClient httpClient = httpClientFactory.CreateClient();
+                using StringContent jsonContent = new(JsonSerializer.Serialize(model), Encoding.UTF8, "application/json");
+
+                var response = await httpClient.PostAsync($"{url}/api/Company/AddCompany", jsonContent);
+                
+                if (!response.IsSuccessStatusCode)
+                {
+                    ModelState.AddModelError(string.Empty, "Компания с таким названием уже существует");
+                    return View(model);
+                }
+
+                return RedirectToAction("GetMyCompany");
+            }
+
+            return View(model);
         }
     }
 }
