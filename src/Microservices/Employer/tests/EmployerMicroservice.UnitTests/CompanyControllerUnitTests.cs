@@ -32,7 +32,7 @@ namespace EmployerMicroservice.UnitTests
             var company = new Company
             {
                 Id = companyId, CompanyName = It.IsAny<string>(), CompanyDescription = It.IsAny<string>(),
-                CompanyColleaguesCount = It.IsAny<uint>(), FounderEmployerId = Guid.NewGuid()
+                CompanyColleaguesCount = It.IsAny<string>(), FounderEmployerId = Guid.NewGuid()
             };
             var mock = new Mock<ICompanyRepository>();
             mock.Setup(x => x.GetCompanyByIdAsync(companyId)).ReturnsAsync(company);
@@ -70,7 +70,7 @@ namespace EmployerMicroservice.UnitTests
                 Id = Guid.NewGuid(),
                 CompanyName = companyName,
                 CompanyDescription = It.IsAny<string>(),
-                CompanyColleaguesCount = It.IsAny<uint>(),
+                CompanyColleaguesCount = It.IsAny<string>(),
                 FounderEmployerId = Guid.NewGuid()
             };
             var mock = new Mock<ICompanyRepository>();
@@ -92,7 +92,7 @@ namespace EmployerMicroservice.UnitTests
             var nonExistentId = Guid.NewGuid();
             UpdateCompanyDto model = new()
             {
-                Id = nonExistentId, CompanyColleaguesCount = It.IsAny<uint>(), CompanyDescription = It.IsAny<string>(), CompanyName = It.IsAny<string>()
+                Id = nonExistentId, CompanyColleaguesCount = It.IsAny<string>(), CompanyDescription = It.IsAny<string>(), CompanyName = It.IsAny<string>()
             };
             var mock = new Mock<ICompanyRepository>();
             mock.Setup(x => x.UpdateCompanyAsync(model)).ReturnsAsync(false);
@@ -111,7 +111,7 @@ namespace EmployerMicroservice.UnitTests
             UpdateCompanyDto model = new()
             {
                 Id = existingId,
-                CompanyColleaguesCount = It.IsAny<uint>(),
+                CompanyColleaguesCount = It.IsAny<string>(),
                 CompanyDescription = It.IsAny<string>(),
                 CompanyName = It.IsAny<string>()
             };
@@ -144,7 +144,7 @@ namespace EmployerMicroservice.UnitTests
         {
             var model = new AddCompanyDto
             {
-                CompanyName = It.IsAny<string>(), CompanyDescription = It.IsAny<string>(), CompanyColleaguesCount = It.IsAny<uint>(),
+                CompanyName = It.IsAny<string>(), CompanyDescription = It.IsAny<string>(), CompanyColleaguesCount = It.IsAny<string>(),
                 FounderEmployerId = Guid.NewGuid()
             };
             var mock = new Mock<ICompanyRepository>();
