@@ -5,6 +5,6 @@
         public Guid FounderEmployerId { get; set; }
         public string CompanyName { get; set; }
         public string? CompanyDescription { get; set; }
-        public uint CompanyColleaguesCount { get; set; }
+        public string CompanyColleaguesCount { get; set; }
     }
 }
