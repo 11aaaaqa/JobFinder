@@ -1,0 +1,12 @@
+﻿@model Web.MVC.Models.ApiResponses.Company.CompanyResponse?
+
+@if (Model is null)
+{
+    <a asp-controller="Company" asp-action="">Добавить</a> //ссылка на создание/вступление в компанию
+}
+else
+{
+    <p>@Model.CompanyName</p>
+    <p>@Model.CompanyColleaguesCount сотрудников</p>
+    <a asp-controller="Company">Обновить</a> //ссылка на обновление данных о компании
+}
