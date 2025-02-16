@@ -52,11 +52,16 @@ namespace EmployerMicroservice.Api.Controllers
         [Route("AddCompany")]
         public async Task<IActionResult> AddCompanyAsync([FromBody] AddCompanyDto model)
         {
+            var company = await companyRepository.GetCompanyByCompanyNameAsync(model.CompanyName);
+            if (company is not null) return BadRequest();
+
             await companyRepository.AddCompanyAsync(new Company
             {
                 Id = Guid.NewGuid(), CompanyName = model.CompanyName, CompanyDescription = model.CompanyDescription,
                 CompanyColleaguesCount = model.CompanyColleaguesCount, FounderEmployerId = model.FounderEmployerId
             });
+
+            //kafka
 
             return Ok();
         }

@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Net;
+using System.Text;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -65,11 +66,12 @@ namespace Web.MVC.Controllers
 
                 var response = await httpClient.PostAsync($"{url}/api/Company/AddCompany", jsonContent);
                 
-                if (!response.IsSuccessStatusCode)
+                if (response.StatusCode == HttpStatusCode.BadRequest)
                 {
                     ModelState.AddModelError(string.Empty, "Компания с таким названием уже существует");
                     return View(model);
                 }
+                response.EnsureSuccessStatusCode();
 
                 return RedirectToAction("GetMyCompany");
             }
