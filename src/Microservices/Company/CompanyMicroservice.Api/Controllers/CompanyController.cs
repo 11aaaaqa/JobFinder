@@ -1,9 +1,9 @@
-﻿using EmployerMicroservice.Api.DTOs;
-using EmployerMicroservice.Api.Models;
-using EmployerMicroservice.Api.Services;
+﻿using CompanyMicroservice.Api.DTOs;
+using CompanyMicroservice.Api.Models;
+using CompanyMicroservice.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace EmployerMicroservice.Api.Controllers
+namespace CompanyMicroservice.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -61,7 +61,7 @@ namespace EmployerMicroservice.Api.Controllers
                 CompanyColleaguesCount = model.CompanyColleaguesCount, FounderEmployerId = model.FounderEmployerId
             });
 
-            //kafka
+            //добавить CompanyId в модель Employer
 
             return Ok();
         }

@@ -9,7 +9,6 @@ builder.Services.AddDbContext<ApplicationDbContext>(
     x => x.UseNpgsql(builder.Configuration["Database:ConnectionString"]));
 
 builder.Services.AddTransient<IEmployerRepository, EmployerRepository>();
-builder.Services.AddTransient<ICompanyRepository, CompanyRepository>();
 
 builder.Services.AddHostedService<UserRegisteredKafkaConsumer>();
 builder.Services.AddControllers();

@@ -8,7 +8,8 @@
         "accountmicroservice.api": "StartDebugging",
         "employermicroservice.api": "StartDebugging",
         "employeemicroservice.api": "StartDebugging",
-        "web.mvc": "StartDebugging"
+        "web.mvc": "StartDebugging",
+        "companymicroservice.api": "StartDebugging"
       }
     }
   }

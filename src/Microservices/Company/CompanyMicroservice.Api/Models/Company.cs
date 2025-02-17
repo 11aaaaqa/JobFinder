@@ -1,4 +1,4 @@
-﻿namespace EmployerMicroservice.Api.Models
+﻿namespace CompanyMicroservice.Api.Models
 {
     public class Company
     {

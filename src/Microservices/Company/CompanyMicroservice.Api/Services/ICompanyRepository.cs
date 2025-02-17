@@ -1,7 +1,7 @@
-﻿using EmployerMicroservice.Api.DTOs;
-using EmployerMicroservice.Api.Models;
+﻿using CompanyMicroservice.Api.DTOs;
+using CompanyMicroservice.Api.Models;
 
-namespace EmployerMicroservice.Api.Services
+namespace CompanyMicroservice.Api.Services
 {
     public interface ICompanyRepository
     {
