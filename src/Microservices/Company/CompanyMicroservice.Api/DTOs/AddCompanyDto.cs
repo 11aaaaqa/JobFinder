@@ -1,4 +1,4 @@
-﻿namespace EmployerMicroservice.Api.DTOs
+﻿namespace CompanyMicroservice.Api.DTOs
 {
     public class AddCompanyDto
     {

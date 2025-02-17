@@ -1,9 +1,9 @@
-﻿using EmployerMicroservice.Api.Database;
-using EmployerMicroservice.Api.DTOs;
-using EmployerMicroservice.Api.Models;
+﻿using CompanyMicroservice.Api.Database;
+using CompanyMicroservice.Api.DTOs;
+using CompanyMicroservice.Api.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace EmployerMicroservice.Api.Services
+namespace CompanyMicroservice.Api.Services
 {
     public class CompanyRepository(ApplicationDbContext context) : ICompanyRepository
     {
