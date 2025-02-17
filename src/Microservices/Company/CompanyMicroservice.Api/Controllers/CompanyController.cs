@@ -1,13 +1,16 @@
-﻿using CompanyMicroservice.Api.DTOs;
+﻿using System.Text.Json;
+using CompanyMicroservice.Api.DTOs;
+using CompanyMicroservice.Api.Kafka.Producer;
 using CompanyMicroservice.Api.Models;
 using CompanyMicroservice.Api.Services;
+using Confluent.Kafka;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CompanyMicroservice.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CompanyController(ICompanyRepository companyRepository) : ControllerBase
+    public class CompanyController(ICompanyRepository companyRepository, IKafkaProducer kafkaProducer) : ControllerBase
     {
         [HttpGet]
         [Route("GetCompanyByCompanyId/{id}")]
@@ -55,13 +58,17 @@ namespace CompanyMicroservice.Api.Controllers
             var company = await companyRepository.GetCompanyByCompanyNameAsync(model.CompanyName);
             if (company is not null) return BadRequest();
 
+            var companyId = Guid.NewGuid();
             await companyRepository.AddCompanyAsync(new Company
             {
-                Id = Guid.NewGuid(), CompanyName = model.CompanyName, CompanyDescription = model.CompanyDescription,
+                Id = companyId, CompanyName = model.CompanyName, CompanyDescription = model.CompanyDescription,
                 CompanyColleaguesCount = model.CompanyColleaguesCount, FounderEmployerId = model.FounderEmployerId
             });
 
-            //добавить CompanyId в модель Employer
+            await kafkaProducer.ProduceAsync("company-added-topic", new Message<Null, string>
+            {
+                Value = JsonSerializer.Serialize(new {CompanyId = companyId, EmployerId = model.FounderEmployerId})
+            });
 
             return Ok();
         }
