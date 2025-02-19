@@ -8,6 +8,7 @@ namespace CompanyMicroservice.Api.Database
         public ApplicationDbContext(DbContextOptions options) : base(options) { }
 
         public DbSet<Company> Companies { get; set; }
+        public DbSet<InvitationRequestedEmployers> InvitationRequestedEmployers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
