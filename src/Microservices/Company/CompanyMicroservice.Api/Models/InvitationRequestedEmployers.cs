@@ -1,6 +1,6 @@
 ﻿namespace CompanyMicroservice.Api.Models
 {
-    public class InvitationRequestedEmployers
+    public class JoiningRequestedEmployer
     {
         public Guid Id { get; set; }
         public Guid CompanyId { get; set; }
