@@ -10,8 +10,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(
 
 builder.Services.AddTransient<IEmployerRepository, EmployerRepository>();
 
+builder.Services.AddHostedService<EmployerRemovedFromCompanyKafkaConsumer>();
 builder.Services.AddHostedService<UserRegisteredKafkaConsumer>();
 builder.Services.AddHostedService<CompanyAddedKafkaConsumer>();
+
 builder.Services.AddControllers();
 
 var app = builder.Build();
