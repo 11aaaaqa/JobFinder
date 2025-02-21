@@ -8,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ApplicationDbContext>(
     x => x.UseNpgsql(builder.Configuration["Database:ConnectionString"]));
 
+builder.Services.AddTransient<ICompanyEmployerRepository, CompanyEmployerRepository>();
 builder.Services.AddTransient<IJoinToCompanyRepository, JoinToCompanyRepository>();
 builder.Services.AddTransient<ICompanyRepository, CompanyRepository>();
 builder.Services.AddTransient<IKafkaProducer, KafkaProducer>();
