@@ -2,6 +2,7 @@
 {
     public interface ICompanyEmployerRepository
     {
-        Task RemoveEmployerFromCompany(Guid companyId, Guid employerId);
+        Task RemoveEmployerFromCompanyAsync(Guid companyId, Guid employerId);
+        Task RequestJoiningCompanyAsync(Guid companyId, Guid employerId, string employerName, string employerSurname);
     }
 }
