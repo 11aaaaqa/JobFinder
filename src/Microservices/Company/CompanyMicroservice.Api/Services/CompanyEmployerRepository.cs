@@ -1,4 +1,5 @@
-﻿using CompanyMicroservice.Api.Database;
+﻿using CompanyMicroservice.Api.Constants;
+using CompanyMicroservice.Api.Database;
 using CompanyMicroservice.Api.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,6 +7,13 @@ namespace CompanyMicroservice.Api.Services
 {
     public class CompanyEmployerRepository(ApplicationDbContext context) : ICompanyEmployerRepository
     {
+        public async Task<List<JoiningRequestedEmployer>> GetListOfEmployersRequestedJoiningAsync(Guid companyId, int pageNumber)
+        {
+            var employers = await context.JoiningRequestedEmployers.Where(x => x.CompanyId == companyId)
+                .Skip(PaginationConstants.EmployersPageSize * (pageNumber - 1)).Take(PaginationConstants.EmployersPageSize).ToListAsync();
+            return employers;
+        }
+
         public async Task RemoveEmployerFromCompanyAsync(Guid companyId, Guid employerId)
         {
             var company = await context.Companies.SingleAsync(x => x.Id == companyId);
@@ -31,5 +39,14 @@ namespace CompanyMicroservice.Api.Services
             if (joiningRequest is null) return false;
             return true;
         }
+
+        public async Task DeleteEmployerJoiningAsync(Guid joiningRequestId)
+        {
+            context.JoiningRequestedEmployers.Remove(new JoiningRequestedEmployer { Id = joiningRequestId });
+            await context.SaveChangesAsync();
+        }
+
+        public async Task<JoiningRequestedEmployer?> GetJoiningRequestByRequestId(Guid id)
+            => await context.JoiningRequestedEmployers.SingleOrDefaultAsync(x => x.Id == id);
     }
 }
