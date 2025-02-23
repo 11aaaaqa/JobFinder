@@ -4,13 +4,25 @@ using Confluent.Kafka;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using CompanyMicroservice.Api.Kafka.Producer;
+using CompanyMicroservice.Api.Services.Pagination;
 
 namespace CompanyMicroservice.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CompanyEmployerController(IKafkaProducer kafkaProducer, ICompanyEmployerRepository companyEmployerRepository) : ControllerBase
+    public class CompanyEmployerController(IKafkaProducer kafkaProducer, ICompanyEmployerRepository companyEmployerRepository,
+        ICheckForNextPageExisting checkForNextPage) : ControllerBase
     {
+        [HttpGet]
+        [Route("GetListOfEmployersRequestedJoining")]
+        public async Task<IActionResult> GetListOfEmployersRequestedJoining(Guid companyId, int pageNumber)
+            => Ok(await companyEmployerRepository.GetListOfEmployersRequestedJoiningAsync(companyId, pageNumber));
+
+        [HttpGet]
+        [Route("DoesNextEmployersRequestedJoiningPageExist")]
+        public async Task<IActionResult> DoesNextEmployersRequestedJoiningPageExistAsync(Guid companyId, int pageNumber)
+            => Ok(await checkForNextPage.DoesNextEmployersRequestedJoiningPageExist(companyId, pageNumber));
+
         [HttpPatch]
         [Route("RemoveEmployerFromCompany")]
         public async Task<IActionResult> RemoveEmployerFromCompanyAsync([FromBody] RemoveEmployerFromCompanyDto model)
