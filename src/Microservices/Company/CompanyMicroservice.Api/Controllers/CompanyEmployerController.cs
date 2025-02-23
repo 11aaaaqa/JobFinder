@@ -58,7 +58,7 @@ namespace CompanyMicroservice.Api.Controllers
             var request = await companyEmployerRepository.GetJoiningRequestByRequestId(joiningRequestId);
             if(request is null) return BadRequest();
 
-            await kafkaProducer.ProduceAsync("employer-accepted-to-join-company-topic", new Message<Null, string>
+            await kafkaProducer.ProduceAsync("employer-joined-company-topic", new Message<Null, string>
             {
                 Value = JsonSerializer.Serialize(new { request.EmployerId, request.CompanyId})
             });
