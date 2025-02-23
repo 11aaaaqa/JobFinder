@@ -1,10 +1,12 @@
-﻿using CompanyMicroservice.Api.DTOs;
+﻿using System.ComponentModel;
+using CompanyMicroservice.Api.DTOs;
 using CompanyMicroservice.Api.Services;
 using Confluent.Kafka;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using CompanyMicroservice.Api.Kafka.Producer;
 using CompanyMicroservice.Api.Services.Pagination;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace CompanyMicroservice.Api.Controllers
 {
@@ -46,6 +48,30 @@ namespace CompanyMicroservice.Api.Controllers
 
             await companyEmployerRepository.RequestJoiningCompanyAsync(model.CompanyId, model.EmployerId, model.EmployerName,
                 model.EmployerSurname);
+            return Ok();
+        }
+
+        [HttpGet]
+        [Route("AcceptEmployerJoiningRequest")]
+        public async Task<IActionResult> AcceptEmployerJoiningRequestAsync(Guid joiningRequestId)
+        {
+            var request = await companyEmployerRepository.GetJoiningRequestByRequestId(joiningRequestId);
+            if(request is null) return BadRequest();
+
+            await kafkaProducer.ProduceAsync("employer-accepted-to-join-company-topic", new Message<Null, string>
+            {
+                Value = JsonSerializer.Serialize(new { request.EmployerId, request.CompanyId})
+            });
+
+            await companyEmployerRepository.DeleteEmployerJoiningAsync(joiningRequestId);
+            return Ok();
+        }
+
+        [HttpGet]
+        [Route("RejectEmployerJoiningRequest")]
+        public async Task<IActionResult> RejectEmployerJoiningRequestAsync(Guid joiningRequestId)
+        {
+            await companyEmployerRepository.DeleteEmployerJoiningAsync(joiningRequestId);
             return Ok();
         }
     }
