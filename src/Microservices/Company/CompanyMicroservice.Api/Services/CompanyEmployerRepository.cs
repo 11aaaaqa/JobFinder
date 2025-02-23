@@ -23,5 +23,13 @@ namespace CompanyMicroservice.Api.Services
             });
             await context.SaveChangesAsync();
         }
+
+        public async Task<bool> DidEmployerAlreadyRequestJoiningAsync(Guid employerId, Guid companyId)
+        {
+            var joiningRequest = await context.JoiningRequestedEmployers.Where(x => x.CompanyId == companyId)
+                .SingleOrDefaultAsync(x => x.EmployerId == employerId);
+            if (joiningRequest is null) return false;
+            return true;
+        }
     }
 }
