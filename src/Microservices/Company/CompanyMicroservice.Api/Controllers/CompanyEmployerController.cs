@@ -1,12 +1,10 @@
-﻿using System.ComponentModel;
-using CompanyMicroservice.Api.DTOs;
+﻿using CompanyMicroservice.Api.DTOs;
 using CompanyMicroservice.Api.Services;
 using Confluent.Kafka;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using CompanyMicroservice.Api.Kafka.Producer;
 using CompanyMicroservice.Api.Services.Pagination;
-using Microsoft.EntityFrameworkCore.Query;
 
 namespace CompanyMicroservice.Api.Controllers
 {
