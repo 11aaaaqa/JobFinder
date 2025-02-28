@@ -11,7 +11,7 @@ namespace CompanyMicroservice.Api.Services
             => await context.Companies.SingleOrDefaultAsync(x => x.Id == id);
 
         public async Task<Company?> GetCompanyByCompanyNameAsync(string companyName)
-            => await context.Companies.SingleOrDefaultAsync(x => x.CompanyName == companyName);
+            => await context.Companies.SingleOrDefaultAsync(x => x.CompanyName.ToLower() == companyName.ToLower());
 
         public async Task AddCompanyAsync(Company model)
         {
