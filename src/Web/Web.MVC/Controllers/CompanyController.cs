@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Web.MVC.DTOs.Company;
 using Web.MVC.Models.ApiResponses.Company;
 using Web.MVC.Models.ApiResponses.Employer;
@@ -22,9 +23,19 @@ namespace Web.MVC.Controllers
         [Authorize]
         [HttpGet]
         [Route("employer/company/my-company")]
-        public async Task<IActionResult> GetMyCompany()
+        public async Task<IActionResult> GetMyCompany(string? companyQuery)
         {
             using HttpClient httpClient = httpClientFactory.CreateClient();
+
+            if (companyQuery is not null)
+            {
+                var companyQueryResponse = await httpClient.GetAsync($"{url}/api/Company/GetCompanyByCompanyName/{companyQuery}");
+                if (companyQueryResponse.IsSuccessStatusCode)
+                {
+                    var foundCompany = await companyQueryResponse.Content.ReadFromJsonAsync<CompanyResponse>();
+                    ViewBag.FoundCompany = foundCompany;
+                }
+            }
 
             var employerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
             employerResponse.EnsureSuccessStatusCode();
