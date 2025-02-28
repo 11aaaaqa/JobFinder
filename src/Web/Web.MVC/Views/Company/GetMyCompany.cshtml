@@ -2,8 +2,25 @@
 
 @if (Model is null)
 {
+    <form method="get">
+        <input name="companyQuery" placeholder="Найти компанию"/>
+        <input type="submit" value="Найти"/>
+    </form>
     <a asp-controller="Company" asp-action="AddMyCompany">Добавить</a>
-    //ссылка на вступление в компанию
+    if (Context.Request.QueryString.Value.Contains("companyQuery"))
+    {
+        if (ViewBag.FoundCompany is not null)
+        {
+            <p><strong>@ViewBag.FoundCompany.CompanyName</strong></p>
+            <p>Описание: @ViewBag.FoundCompany.CompanyDescription</p>
+            <p>Количество сотрудников: @ViewBag.FoundCompany.CompanyColleaguesCount</p>
+            <a>Вступить</a> //запросить вступление в компанию
+        }
+        else
+        {
+            <p>Такой компании не существует</p>
+        }
+    }
 }
 else
 {
