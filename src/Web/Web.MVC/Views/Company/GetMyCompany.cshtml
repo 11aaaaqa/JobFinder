@@ -11,10 +11,20 @@
     {
         if (ViewBag.FoundCompany is not null)
         {
+            string returnUrl = Context.Request.Path;
+            if (Context.Request.QueryString.HasValue)
+                returnUrl += Context.Request.QueryString;
+
             <p><strong>@ViewBag.FoundCompany.CompanyName</strong></p>
             <p>Описание: @ViewBag.FoundCompany.CompanyDescription</p>
             <p>Количество сотрудников: @ViewBag.FoundCompany.CompanyColleaguesCount</p>
-            <a>Вступить</a> //запросить вступление в компанию
+            <form method="post" asp-controller="Company" asp-action="RequestJoiningCompany">
+
+            </form>
+            <form method="post" asp-controller="Company" asp-action="RequestJoiningCompany" asp-route-returnUrl="@returnUrl">
+                <input type="hidden" name="companyId"  value="@ViewBag.FoundCompany.Id"/>
+                <input type="submit" value="Запросить вступление"/>
+            </form>
         }
         else
         {
