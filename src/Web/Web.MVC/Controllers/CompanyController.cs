@@ -89,5 +89,27 @@ namespace Web.MVC.Controllers
 
             return View(model);
         }
+
+        [Authorize]
+        [HttpPost]
+        [Route("employer/company/request-joining")]
+        public async Task<IActionResult> RequestJoiningCompany(Guid companyId, string returnUrl)
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+            var response = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
+            response.EnsureSuccessStatusCode();
+
+            var employer = await response.Content.ReadFromJsonAsync<EmployerResponse>();
+
+            using StringContent jsonContent = new(JsonSerializer.Serialize(new
+            {
+                CompanyId = companyId, EmployerId = employer.Id, EmployerName = employer.Name, EmployerSurname = employer.Surname
+            }), Encoding.UTF8, "application/json");
+            var requestJoiningResponse = await httpClient.PostAsync($"{url}/api/CompanyEmployer/RequestJoiningCompany", jsonContent);
+            if (!requestJoiningResponse.IsSuccessStatusCode)
+                return View("JoiningIsAlreadyRequested");
+
+            return LocalRedirect(returnUrl);
+        }
     }
 }
