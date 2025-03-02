@@ -72,5 +72,10 @@ namespace CompanyMicroservice.Api.Controllers
             await companyEmployerRepository.DeleteEmployerJoiningAsync(joiningRequestId);
             return Ok();
         }
+
+        [HttpGet]
+        [Route("DidEmployerRequestJoining")]
+        public async Task<IActionResult> DidEmployerRequestJoiningAsync(Guid employerId, Guid companyId)
+            => Ok(await companyEmployerRepository.DidEmployerAlreadyRequestJoiningAsync(employerId, companyId));
     }
 }
