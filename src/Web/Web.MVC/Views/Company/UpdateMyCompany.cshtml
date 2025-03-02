@@ -1,0 +1,118 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Web.MVC.Constants
+@model Web.MVC.DTOs.Company.UpdateCompanyDto
+
+<link rel="stylesheet " href="~/css/placeholder-with-input.css" />
+<link rel="stylesheet" href="~/css/company/add-my-company.css" />
+<link rel="stylesheet" href="~/css/data-updated-modal.css"/>
+
+@if (ViewBag.IsUpdated == true)
+{
+    <input id="isUpdated" type="hidden" value="true" />
+}
+
+<div id="modal" class="modal">
+    <span class="close-modal" id="close-modal">&times;</span>
+    <p class="updated-p">&#9989; Данные успешно обновлены</p>
+</div>
+
+<form method="post" asp-controller="Company" asp-action="UpdateMyCompany">
+    <div asp-validation-summary="ModelOnly"></div>
+    
+    <span asp-validation-for="CompanyName"></span>
+    <span asp-validation-for="CompanyColleaguesCount"></span>
+    <span asp-validation-for="CompanyDescription"></span>
+    
+    <input type="hidden" asp-for="Id"/>
+    
+    <div class="input-container">
+        <input class="text-input" asp-for="CompanyName" placeholder="">
+        <label class="placeholder">Название компании</label>
+    </div>
+    
+    @if (true)
+    {
+        <div class="input-container">
+            <input type="text" class="employees-input" id="toggleButton" value="@Model.CompanyColleaguesCount сотрудников" readonly />
+            <label class="radio-placeholder">Количество сотрудников</label>
+            <div id="radioGroup" class="radio-group">
+                <label>
+                    @if (Model.CompanyColleaguesCount == ColleaguesCountConstants.UnderFifty)
+                    {
+                        <input type="radio" asp-for="CompanyColleaguesCount" value="@ColleaguesCountConstants.UnderFifty" checked/>
+                    }
+                    else
+                    {
+                        <input type="radio" asp-for="CompanyColleaguesCount" value="@ColleaguesCountConstants.UnderFifty" />
+                    }
+                    @ColleaguesCountConstants.UnderFifty
+                </label><br>
+                <label>
+                    @if (Model.CompanyColleaguesCount == ColleaguesCountConstants.FiftyToOneHundred)
+                    {
+                        <input type="radio" asp-for="CompanyColleaguesCount" value="@ColleaguesCountConstants.FiftyToOneHundred" checked/>
+                    }
+                    else
+                    {
+                        <input type="radio" asp-for="CompanyColleaguesCount" value="@ColleaguesCountConstants.FiftyToOneHundred" />
+                    }
+                    @ColleaguesCountConstants.FiftyToOneHundred
+                </label><br />
+                <label>
+                    @if (Model.CompanyColleaguesCount == ColleaguesCountConstants.OneHundredToFiveHundred)
+                    {
+                        <input type="radio" asp-for="CompanyColleaguesCount" value="@ColleaguesCountConstants.OneHundredToFiveHundred" checked/>
+                    }
+                    else
+                    {
+                        <input type="radio" asp-for="CompanyColleaguesCount" value="@ColleaguesCountConstants.OneHundredToFiveHundred" />
+                    }
+                    @ColleaguesCountConstants.OneHundredToFiveHundred
+                </label><br />
+                <label>
+                    @if (Model.CompanyColleaguesCount == ColleaguesCountConstants.FiveHundredToOneThousand)
+                    {
+                        <input type="radio" asp-for="CompanyColleaguesCount" value="@ColleaguesCountConstants.FiveHundredToOneThousand" checked/>
+                    }
+                    else
+                    {
+                        <input type="radio" asp-for="CompanyColleaguesCount" value="@ColleaguesCountConstants.FiveHundredToOneThousand" />
+                    }
+                    @ColleaguesCountConstants.FiveHundredToOneThousand
+                </label><br />
+                <label>
+                    @if (Model.CompanyColleaguesCount == ColleaguesCountConstants.OneThousandToFiveThousand)
+                    {
+                        <input type="radio" asp-for="CompanyColleaguesCount" value="@ColleaguesCountConstants.OneThousandToFiveThousand" checked/>
+                    }
+                    else
+                    {
+                        <input type="radio" asp-for="CompanyColleaguesCount" value="@ColleaguesCountConstants.OneThousandToFiveThousand" />
+                    }
+                    @ColleaguesCountConstants.OneThousandToFiveThousand
+                </label><br />
+                <label>
+                    @if (Model.CompanyColleaguesCount == ColleaguesCountConstants.MoreThanFiveThousand)
+                    {
+                        <input type="radio" asp-for="CompanyColleaguesCount" value="@ColleaguesCountConstants.MoreThanFiveThousand" checked/>
+                    }
+                    else
+                    {
+                        <input type="radio" asp-for="CompanyColleaguesCount" value="@ColleaguesCountConstants.MoreThanFiveThousand" />
+                    }
+                    @ColleaguesCountConstants.MoreThanFiveThousand
+                </label>
+            </div>
+        </div>
+    }
+    
+    <div class="input-container">
+        <input class="text-input" asp-for="CompanyDescription" placeholder="">
+        <label class="placeholder">Описание</label>
+    </div>
+
+    <input type="submit" value="Отправить"/>
+</form>
+
+<script src="~/js/company/add-my-company.js"></script>
+<script src="~/js/data-successfully-updated.js"></script>
