@@ -27,20 +27,26 @@ namespace Web.MVC.Controllers
         {
             using HttpClient httpClient = httpClientFactory.CreateClient();
 
+            var employerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
+            employerResponse.EnsureSuccessStatusCode();
+
+            var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
+
             if (companyQuery is not null)
             {
                 var companyQueryResponse = await httpClient.GetAsync($"{url}/api/Company/GetCompanyByCompanyName/{companyQuery}");
                 if (companyQueryResponse.IsSuccessStatusCode)
                 {
                     var foundCompany = await companyQueryResponse.Content.ReadFromJsonAsync<CompanyResponse>();
+                    var didAlreadyRequestJoiningResponse = await httpClient.GetAsync(
+                        $"{url}/api/CompanyEmployer/DidEmployerRequestJoining?employerId={employer.Id}&companyId={foundCompany.Id}");
+                    didAlreadyRequestJoiningResponse.EnsureSuccessStatusCode();
+                    bool employerAlreadyRequestedJoining =
+                        await didAlreadyRequestJoiningResponse.Content.ReadFromJsonAsync<bool>();
+                    ViewBag.EmployerAlreadyRequestedJoining = employerAlreadyRequestedJoining;
                     ViewBag.FoundCompany = foundCompany;
                 }
             }
-
-            var employerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
-            employerResponse.EnsureSuccessStatusCode();
-
-            var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
 
             if (employer.CompanyId is null)
                 return View();
