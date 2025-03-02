@@ -17,7 +17,7 @@
 
             <p><strong>@ViewBag.FoundCompany.CompanyName</strong></p>
             <p>Описание: @ViewBag.FoundCompany.CompanyDescription</p>
-            <p>Количество сотрудников: @ViewBag.FoundCompany.CompanyColleaguesCount</p>
+            <p>Количество сотрудников: @ViewBag.FoundCompany.CompanyColleaguesCount сотрудников</p>
             if (ViewBag.EmployerAlreadyRequestedJoining)
             {
                 <button>&#10003; Запрос отправлен</button>
@@ -40,5 +40,13 @@ else
 {
     <p>@Model.CompanyName</p>
     <p>@Model.CompanyColleaguesCount сотрудников</p>
-    <a asp-controller="Company">Обновить</a> //ссылка на обновление данных о компании
+    if (Model.CompanyDescription is not null)
+    {
+        <p>Описание: @Model.CompanyDescription</p>
+    }
+    else
+    {
+        <p>Описание отсутствует</p>
+    }
+    <a asp-controller="Company" asp-action="UpdateMyCompany">Обновить</a>
 }
