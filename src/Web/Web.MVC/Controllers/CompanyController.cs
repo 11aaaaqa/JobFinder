@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
@@ -116,6 +117,42 @@ namespace Web.MVC.Controllers
                 return View("JoiningIsAlreadyRequested");
 
             return LocalRedirect(returnUrl);
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("employer/company/my-company/update")]
+        public async Task<IActionResult> UpdateMyCompany(bool? isUpdated)
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+            var employerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
+            employerResponse.EnsureSuccessStatusCode();
+            var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
+
+            var companyResponse = await httpClient.GetAsync($"{url}/api/Company/GetCompanyByCompanyId/{employer.CompanyId}");
+            companyResponse.EnsureSuccessStatusCode();
+            var company = await companyResponse.Content.ReadFromJsonAsync<CompanyResponse>();
+
+            ViewBag.IsUpdated = isUpdated;
+
+            return View(new UpdateCompanyDto
+            {
+                CompanyColleaguesCount = company.CompanyColleaguesCount, CompanyDescription = company.CompanyDescription,
+                CompanyName = company.CompanyName, Id = company.Id
+            });
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("employer/company/my-company/update")]
+        public async Task<IActionResult> UpdateMyCompany(UpdateCompanyDto model)
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+            using StringContent jsonContent = new(JsonSerializer.Serialize(model), Encoding.UTF8, "application/json");
+
+            var response = await httpClient.PatchAsync($"{url}/api/Company/UpdateCompany", jsonContent);
+            response.EnsureSuccessStatusCode();
+            return RedirectToAction("UpdateMyCompany", new { isUpdated = true });
         }
     }
 }
