@@ -1,10 +1,8 @@
 ﻿using System.Net;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 using Web.MVC.DTOs.Company;
 using Web.MVC.Models.ApiResponses.Company;
 using Web.MVC.Models.ApiResponses.Employer;
