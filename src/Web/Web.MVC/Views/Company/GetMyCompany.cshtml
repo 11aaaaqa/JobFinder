@@ -1,5 +1,9 @@
 ﻿@model Web.MVC.Models.ApiResponses.Company.CompanyResponse?
 
+<div>
+    <a asp-controller="Company" asp-action="GetEmployersRequestedJoiningMyCompany">Запросы на присоединение</a>
+</div>
+
 @if (Model is null)
 {
     <form method="get">
