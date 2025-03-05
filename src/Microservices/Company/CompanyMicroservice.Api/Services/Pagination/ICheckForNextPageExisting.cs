@@ -2,6 +2,6 @@
 {
     public interface ICheckForNextPageExisting
     {
-        Task<bool> DoesNextEmployersRequestedJoiningPageExist(Guid companyId, int pageNumber);
+        Task<bool> DoesEmployersRequestedJoiningPageExist(Guid companyId, int pageNumber);
     }
 }
