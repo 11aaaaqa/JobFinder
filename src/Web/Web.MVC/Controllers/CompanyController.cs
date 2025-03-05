@@ -152,5 +152,37 @@ namespace Web.MVC.Controllers
             response.EnsureSuccessStatusCode();
             return RedirectToAction("UpdateMyCompany", new { isUpdated = true });
         }
+
+        [Authorize]
+        [HttpGet]
+        [Route("employer/company/my-company/employers-requested-joining")] 
+        public async Task<IActionResult> GetEmployersRequestedJoiningMyCompany(int index = 1)
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+            var employerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
+            employerResponse.EnsureSuccessStatusCode();
+
+            var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
+
+            var companyId = employer.CompanyId;
+            var nextPage = index + 1;
+
+            var employersRequestedJoiningResponse = await httpClient.GetAsync(
+                $"{url}/api/CompanyEmployer/GetListOfEmployersRequestedJoining/{companyId}?pageNumber={index}");
+            employersRequestedJoiningResponse.EnsureSuccessStatusCode();
+
+            var employers = await employersRequestedJoiningResponse.Content.ReadFromJsonAsync<List<JoiningRequestedEmployerResponse>>();
+
+            var nextPageExistsResponse = await httpClient.GetAsync(
+                $"{url}/api/CompanyEmployer/DoesEmployersRequestedJoiningPageExist/{companyId}?pageNumber={nextPage}");
+            nextPageExistsResponse.EnsureSuccessStatusCode();
+
+            var doesNextPageExist = await nextPageExistsResponse.Content.ReadFromJsonAsync<bool>();
+
+            ViewBag.CurrentPageNumber = index;
+            ViewBag.DoesNextPageExist = doesNextPageExist;
+
+            return View(employers);
+        }
     }
 }
