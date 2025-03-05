@@ -14,14 +14,14 @@ namespace CompanyMicroservice.Api.Controllers
         ICheckForNextPageExisting checkForNextPage) : ControllerBase
     {
         [HttpGet]
-        [Route("GetListOfEmployersRequestedJoining")]
+        [Route("GetListOfEmployersRequestedJoining/{companyId}")]
         public async Task<IActionResult> GetListOfEmployersRequestedJoining(Guid companyId, int pageNumber)
             => Ok(await companyEmployerRepository.GetListOfEmployersRequestedJoiningAsync(companyId, pageNumber));
 
         [HttpGet]
-        [Route("DoesNextEmployersRequestedJoiningPageExist")]
-        public async Task<IActionResult> DoesNextEmployersRequestedJoiningPageExistAsync(Guid companyId, int pageNumber)
-            => Ok(await checkForNextPage.DoesNextEmployersRequestedJoiningPageExist(companyId, pageNumber));
+        [Route("DoesEmployersRequestedJoiningPageExist/{companyId}")]
+        public async Task<IActionResult> DoesEmployersRequestedJoiningPageExistAsync(Guid companyId, int pageNumber)
+            => Ok(await checkForNextPage.DoesEmployersRequestedJoiningPageExist(companyId, pageNumber));
 
         [HttpPatch]
         [Route("RemoveEmployerFromCompany")]
