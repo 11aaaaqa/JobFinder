@@ -42,7 +42,8 @@ namespace CompanyMicroservice.Api.Services
 
         public async Task DeleteEmployerJoiningAsync(Guid joiningRequestId)
         {
-            context.JoiningRequestedEmployers.Remove(new JoiningRequestedEmployer { Id = joiningRequestId });
+            var request = await context.JoiningRequestedEmployers.SingleAsync(x => x.Id == joiningRequestId);
+            context.JoiningRequestedEmployers.Remove(request);
             await context.SaveChangesAsync();
         }
 
