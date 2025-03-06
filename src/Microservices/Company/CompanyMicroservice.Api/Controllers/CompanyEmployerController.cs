@@ -3,6 +3,7 @@ using CompanyMicroservice.Api.Services;
 using Confluent.Kafka;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
+using CompanyMicroservice.Api.Exceptions;
 using CompanyMicroservice.Api.Kafka.Producer;
 using CompanyMicroservice.Api.Services.Pagination;
 
@@ -60,6 +61,15 @@ namespace CompanyMicroservice.Api.Controllers
             {
                 Value = JsonSerializer.Serialize(new { request.EmployerId, request.CompanyId})
             });
+
+            try
+            {
+                await companyEmployerRepository.AddEmployerToCompany(request.CompanyId, request.EmployerId);
+            }
+            catch (EmployerIsAlreadyInCompanyException ex)
+            {
+                return Conflict("Employer is already in company");
+            }
 
             await companyEmployerRepository.DeleteEmployerJoiningAsync(joiningRequestId);
             return Ok();
