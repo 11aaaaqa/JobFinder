@@ -50,7 +50,7 @@ namespace CompanyMicroservice.Api.Controllers
         }
 
         [HttpGet]
-        [Route("AcceptEmployerJoiningRequest")]
+        [Route("AcceptEmployerJoiningRequest/{joiningRequestId}")]
         public async Task<IActionResult> AcceptEmployerJoiningRequestAsync(Guid joiningRequestId)
         {
             var request = await companyEmployerRepository.GetJoiningRequestByRequestId(joiningRequestId);
@@ -66,7 +66,7 @@ namespace CompanyMicroservice.Api.Controllers
         }
 
         [HttpGet]
-        [Route("RejectEmployerJoiningRequest")]
+        [Route("RejectEmployerJoiningRequest/{joiningRequestId}")]
         public async Task<IActionResult> RejectEmployerJoiningRequestAsync(Guid joiningRequestId)
         {
             await companyEmployerRepository.DeleteEmployerJoiningAsync(joiningRequestId);
