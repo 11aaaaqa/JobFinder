@@ -11,7 +11,6 @@ builder.Services.AddDbContext<ApplicationDbContext>(
 
 builder.Services.AddTransient<ICheckForNextPageExisting, CheckForNextPageExisting>();
 builder.Services.AddTransient<ICompanyEmployerRepository, CompanyEmployerRepository>();
-builder.Services.AddTransient<IJoinToCompanyRepository, JoinToCompanyRepository>();
 builder.Services.AddTransient<ICompanyRepository, CompanyRepository>();
 builder.Services.AddTransient<IKafkaProducer, KafkaProducer>();
 
