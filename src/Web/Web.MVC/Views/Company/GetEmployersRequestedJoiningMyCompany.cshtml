@@ -1,13 +1,25 @@
 ﻿@model List<Web.MVC.Models.ApiResponses.Company.JoiningRequestedEmployerResponse>
 
-@foreach (var employer in Model)
+@if (true)
 {
-    <div>
-        <p>@employer.EmployerName @employer.EmployerSurname</p>
-        <p>Время запроса: @employer.JoiningRequestDate</p>
-        @* кнопка принятия *@
-        @* кнопка отклонения *@
-    </div>
+    string returnUrl = Context.Request.Path;
+    if (Context.Request.QueryString.HasValue)
+        returnUrl += Context.Request.QueryString;
+    @foreach (var request in Model)
+    {
+        <div>
+            <p>@request.EmployerName @request.EmployerSurname</p>
+            <p>Время запроса: @request.JoiningRequestDate</p>
+            <form asp-controller="Company" asp-action="AcceptEmployerToJoinCompany" asp-route-returnUrl="@returnUrl">
+                <input name="requestId" value="@request.Id" type="hidden" />
+                <input type="submit" value="Принять"/>
+            </form>
+            <form asp-controller="Company" asp-action="RejectEmployerToJoinCompany" asp-route-returnUrl="@returnUrl">
+                <input name="requestId" value="@request.Id" type="hidden" />
+                <input type="submit" value="Отклонить" />
+            </form>
+        </div>
+    }
 }
 
 <div>
