@@ -184,5 +184,31 @@ namespace Web.MVC.Controllers
 
             return View(employers);
         }
+
+        [Authorize]
+        [HttpPost]
+        [Route("employer/company/my-company/accept-employer-requested-joining")]
+        public async Task<IActionResult> AcceptEmployerToJoinCompany(Guid requestId, string returnUrl)
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+
+            var response = await httpClient.GetAsync($"{url}/api/CompanyEmployer/AcceptEmployerJoiningRequest/{requestId}");
+            response.EnsureSuccessStatusCode();
+
+            return LocalRedirect(returnUrl);
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("employer/company/my-company/reject-employer-requested-joining")]
+        public async Task<IActionResult> RejectEmployerToJoinCompany(Guid requestId, string returnUrl)
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+
+            var response = await httpClient.GetAsync($"{url}/api/CompanyEmployer/RejectEmployerJoiningRequest/{requestId}");
+            response.EnsureSuccessStatusCode();
+
+            return LocalRedirect(returnUrl);
+        }
     }
 }
