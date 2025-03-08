@@ -1,0 +1,35 @@
+﻿@model System.Collections.Generic.List<Web.MVC.Models.ApiResponses.Employer.EmployerResponse>
+
+@foreach (var employer in Model)
+{
+    <p>@employer.Name @employer.Surname</p>
+    <p>Должность: @employer.CompanyPost</p>
+    <p>Почта: @employer.Email</p>
+}
+
+<div>
+    @if (Model.Count > 0)
+    {
+        @if (ViewBag.CurrentPageNumber - 1 > 0)
+        {
+            <a class="" asp-controller="Company" asp-action="GetMyCompanyColleagues" asp-route-index="@(ViewBag.CurrentPageNumber - 1)">
+                Назад
+            </a>
+        }
+        else
+        {
+            <a class="">Назад</a>
+        }
+
+        @if (ViewBag.DoesNextPageExist)
+        {
+            <a class="" asp-controller="Company" asp-action="GetMyCompanyColleagues" asp-route-index="@(ViewBag.CurrentPageNumber + 1)">
+                Вперед
+            </a>
+        }
+        else
+        {
+            <a class="">Вперед</a>
+        }
+    }
+</div>
