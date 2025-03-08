@@ -241,5 +241,20 @@ namespace Web.MVC.Controllers
 
             return View(colleagues);
         }
+
+        [Authorize]
+        [HttpPost]
+        [Route("employer/company/my-company/colleagues/remove-from-company")]
+        public async Task<IActionResult> RemoveEmployerFromCompany(Guid companyId, Guid employerId, string returnUrl)
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+            using StringContent jsonContent = new(JsonSerializer.Serialize(new { EmployerId  = employerId, CompanyId  = companyId}),
+                Encoding.UTF8, "application/json");
+
+            var response = await httpClient.PatchAsync($"{url}/api/CompanyEmployer/RemoveEmployerFromCompany", jsonContent);
+            response.EnsureSuccessStatusCode();
+
+            return LocalRedirect(returnUrl);
+        }
     }
 }
