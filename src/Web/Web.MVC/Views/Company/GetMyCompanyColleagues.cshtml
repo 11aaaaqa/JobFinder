@@ -1,10 +1,23 @@
 ﻿@model System.Collections.Generic.List<Web.MVC.Models.ApiResponses.Employer.EmployerResponse>
 
-@foreach (var employer in Model)
+@if (true)
 {
-    <p>@employer.Name @employer.Surname</p>
-    <p>Должность: @employer.CompanyPost</p>
-    <p>Почта: @employer.Email</p>
+    string returnUrl = Context.Request.Path;
+    if (Context.Request.QueryString.HasValue)
+        returnUrl += Context.Request.QueryString;
+    @foreach (var employer in Model)
+    {
+        <p>@employer.Name @employer.Surname</p>
+        <p>Должность: @employer.CompanyPost</p>
+        <p>Почта: @employer.Email</p>
+        if (employer.Email != User.Identity.Name)
+        {
+            <form method="post" asp-controller="Company" asp-action="RemoveEmployerFromCompany" asp-route-returnUrl="@returnUrl"
+                  asp-route-companyId="@employer.CompanyId" asp-route-employerId="@employer.Id">
+                <input type="submit" value="Исключить"/>
+            </form>
+        }
+    }
 }
 
 <div>
