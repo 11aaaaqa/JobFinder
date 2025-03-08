@@ -1,4 +1,5 @@
-﻿using EmployerMicroservice.Api.Database;
+﻿using EmployerMicroservice.Api.Constants;
+using EmployerMicroservice.Api.Database;
 using EmployerMicroservice.Api.DTOs;
 using EmployerMicroservice.Api.Models;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,14 @@ namespace EmployerMicroservice.Api.Services
 
         public async Task<Employer?> GetEmployerByEmailAsync(string email)
             => await context.Employers.SingleOrDefaultAsync(x => x.Email == email);
+
+        public async Task<List<Employer>> GetEmployersByCompanyId(Guid companyId, int pageNumber)
+        {
+            var employers = await context.Employers.Where(x => x.CompanyId == companyId)
+                .Skip((pageNumber - 1) * PaginationConstants.CompanyEmployersConstant)
+                .Take(PaginationConstants.CompanyEmployersConstant).ToListAsync();
+            return employers;
+        }
 
         public async Task<bool> UpdateEmployerAsync(UpdateEmployerDto model)
         {
