@@ -2,6 +2,7 @@
 using System.Text;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Mvc;
 using Web.MVC.DTOs.Company;
 using Web.MVC.Models.ApiResponses.Company;
@@ -209,6 +210,36 @@ namespace Web.MVC.Controllers
             response.EnsureSuccessStatusCode();
 
             return LocalRedirect(returnUrl);
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("employer/company/my-company/colleagues")]
+        public async Task<IActionResult> GetMyCompanyColleagues(int index = 1)
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+
+            var employerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
+            employerResponse.EnsureSuccessStatusCode();
+
+            var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
+
+            var colleaguesResponse = await httpClient.GetAsync(
+                $"{url}/api/Employer/GetEmployersByCompanyId/{employer.CompanyId}?pageNumber={index}");
+            colleaguesResponse.EnsureSuccessStatusCode();
+
+            var colleagues = await colleaguesResponse.Content.ReadFromJsonAsync<List<EmployerResponse>>();
+
+            var doesNextPageExistResponse = await httpClient.GetAsync(
+                $"{url}/api/Employer/DoesNextEmployersByCompanyIdPageExist/{employer.CompanyId}?currentPageNumber={index}");
+            doesNextPageExistResponse.EnsureSuccessStatusCode();
+
+            bool doesNextPageExist = await doesNextPageExistResponse.Content.ReadFromJsonAsync<bool>();
+
+            ViewBag.DoesNextPageExist = doesNextPageExist;
+            ViewBag.CurrentPageNumber = index;
+
+            return View(colleagues);
         }
     }
 }
