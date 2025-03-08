@@ -1,12 +1,13 @@
 ﻿using EmployerMicroservice.Api.DTOs;
 using EmployerMicroservice.Api.Services;
+using EmployerMicroservice.Api.Services.Pagination;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployerMicroservice.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class EmployerController(IEmployerRepository employerRepository) : ControllerBase
+    public class EmployerController(IEmployerRepository employerRepository, IPaginationService paginationService) : ControllerBase
     {
         [HttpGet]
         [Route("GetEmployerById/{id}")]
@@ -47,5 +48,15 @@ namespace EmployerMicroservice.Api.Controllers
 
             return Ok();
         }
+
+        [HttpGet]
+        [Route("GetEmployersByCompanyId/{companyId}")]
+        public async Task<IActionResult> GetEmployersByCompanyIdAsync(Guid companyId, int pageNumber)
+            => Ok(await employerRepository.GetEmployersByCompanyId(companyId, pageNumber));
+
+        [HttpGet]
+        [Route("DoesNextEmployersByCompanyIdPageExist/{companyId}")]
+        public async Task<IActionResult> DoesNextEmployersByCompanyIdPageExistAsync(Guid companyId, int currentPageNumber)
+            => Ok(await paginationService.DoesNextEmployersByCompanyPageExist(companyId, currentPageNumber));
     }
 }
