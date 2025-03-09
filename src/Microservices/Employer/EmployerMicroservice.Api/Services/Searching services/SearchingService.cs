@@ -15,7 +15,7 @@ namespace EmployerMicroservice.Api.Services.Searching_services
                             x.Email.ToLower().Contains(lowerQuery) | x.CompanyPost.ToLower().Contains(lowerQuery))
                 .Skip((pageNumber - 1) * PaginationConstants.CompanyEmployersCountConstant)
                 .Take(PaginationConstants.CompanyEmployersCountConstant)
-                .ToListAsync();
+                .OrderBy(x => x.Name).ToListAsync();
             return employers;
         }
     }
