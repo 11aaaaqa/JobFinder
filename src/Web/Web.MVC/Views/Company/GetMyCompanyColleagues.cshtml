@@ -1,5 +1,7 @@
 ﻿@model System.Collections.Generic.List<Web.MVC.Models.ApiResponses.Employer.EmployerResponse>
 
+<link rel="stylesheet" href="~/css/company/get-my-company-colleagues.css"/>
+
 @if (true)
 {
     string returnUrl = Context.Request.Path;
@@ -7,16 +9,22 @@
         returnUrl += Context.Request.QueryString;
     @foreach (var employer in Model)
     {
-        <p>@employer.Name @employer.Surname</p>
-        <p>Должность: @employer.CompanyPost</p>
-        <p>Почта: @employer.Email</p>
-        if (employer.Email != User.Identity.Name)
-        {
-            <form method="post" asp-controller="Company" asp-action="RemoveEmployerFromCompany" asp-route-returnUrl="@returnUrl"
-                  asp-route-companyId="@employer.CompanyId" asp-route-employerId="@employer.Id">
-                <input type="submit" value="Исключить"/>
-            </form>
-        }
+        <div class="employer-block">
+            <div class="employer-info">
+                <p class="employer-name">@employer.Name @employer.Surname</p>
+                <p>Должность: @employer.CompanyPost</p>
+                <p>Почта: @employer.Email</p>
+            </div>
+            <div class="remove-employer-block">
+                @if (employer.Email != User.Identity.Name)
+                {
+                    <form method="post" asp-controller="Company" asp-action="RemoveEmployerFromCompany" asp-route-returnUrl="@returnUrl"
+                          asp-route-companyId="@employer.CompanyId" asp-route-employerId="@employer.Id">
+                        <input type="submit" value="Исключить"/>
+                    </form>
+                }
+            </div>
+        </div>
     }
 }
 
