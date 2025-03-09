@@ -17,8 +17,8 @@ namespace EmployerMicroservice.Api.Services
         public async Task<List<Employer>> GetEmployersByCompanyId(Guid companyId, int pageNumber)
         {
             var employers = await context.Employers.Where(x => x.CompanyId == companyId)
-                .Skip((pageNumber - 1) * PaginationConstants.CompanyEmployersConstant)
-                .Take(PaginationConstants.CompanyEmployersConstant).ToListAsync();
+                .Skip((pageNumber - 1) * PaginationConstants.CompanyEmployersCountConstant)
+                .Take(PaginationConstants.CompanyEmployersCountConstant).ToListAsync();
             return employers;
         }
 
