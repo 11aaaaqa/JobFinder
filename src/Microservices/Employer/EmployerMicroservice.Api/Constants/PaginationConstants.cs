@@ -2,6 +2,6 @@
 {
     public class PaginationConstants
     {
-        public const int CompanyEmployersConstant = 30;
+        public const int CompanyEmployersCountConstant = 30;
     }
 }
