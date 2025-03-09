@@ -1,13 +1,15 @@
 ﻿using EmployerMicroservice.Api.DTOs;
 using EmployerMicroservice.Api.Services;
 using EmployerMicroservice.Api.Services.Pagination;
+using EmployerMicroservice.Api.Services.Searching_services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployerMicroservice.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class EmployerController(IEmployerRepository employerRepository, IPaginationService paginationService) : ControllerBase
+    public class EmployerController(IEmployerRepository employerRepository, IPaginationService paginationService,
+        ISearchingService searchingService) : ControllerBase
     {
         [HttpGet]
         [Route("GetEmployerById/{id}")]
@@ -58,5 +60,15 @@ namespace EmployerMicroservice.Api.Controllers
         [Route("DoesNextEmployersByCompanyIdPageExist/{companyId}")]
         public async Task<IActionResult> DoesNextEmployersByCompanyIdPageExistAsync(Guid companyId, int currentPageNumber)
             => Ok(await paginationService.DoesNextEmployersByCompanyPageExist(companyId, currentPageNumber));
+
+        [HttpGet]
+        [Route("FindEmployers/{companyId}")]
+        public async Task<IActionResult> FindEmployersAsync(Guid companyId, int pageNumber, string searchingQuery)
+            => Ok(await searchingService.FindEmployersAsync(companyId, pageNumber, searchingQuery));
+
+        [HttpGet]
+        [Route("DoesNextFindEmployersPageExist/{companyId}")]
+        public async Task<IActionResult> DoesNextFindEmployersPageExistAsync(Guid companyId, int currentPageNumber, string searchingQuery)
+            => Ok(await paginationService.DoesNextSearchingEmployersPageExist(companyId, currentPageNumber, searchingQuery));
     }
 }
