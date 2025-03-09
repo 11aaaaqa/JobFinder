@@ -215,7 +215,7 @@ namespace Web.MVC.Controllers
         [Authorize]
         [HttpGet]
         [Route("employer/company/my-company/colleagues")]
-        public async Task<IActionResult> GetMyCompanyColleagues(int index = 1)
+        public async Task<IActionResult> GetMyCompanyColleagues(string? query, int index = 1)
         {
             using HttpClient httpClient = httpClientFactory.CreateClient();
 
@@ -224,18 +224,38 @@ namespace Web.MVC.Controllers
 
             var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
 
-            var colleaguesResponse = await httpClient.GetAsync(
-                $"{url}/api/Employer/GetEmployersByCompanyId/{employer.CompanyId}?pageNumber={index}");
-            colleaguesResponse.EnsureSuccessStatusCode();
+            bool doesNextPageExist;
+            List<EmployerResponse>? colleagues = new List<EmployerResponse>();
+            if (query is null)
+            {
+                var colleaguesResponse = await httpClient.GetAsync(
+                    $"{url}/api/Employer/GetEmployersByCompanyId/{employer.CompanyId}?pageNumber={index}");
+                colleaguesResponse.EnsureSuccessStatusCode();
 
-            var colleagues = await colleaguesResponse.Content.ReadFromJsonAsync<List<EmployerResponse>>();
+                colleagues = await colleaguesResponse.Content.ReadFromJsonAsync<List<EmployerResponse>>();
 
-            var doesNextPageExistResponse = await httpClient.GetAsync(
-                $"{url}/api/Employer/DoesNextEmployersByCompanyIdPageExist/{employer.CompanyId}?currentPageNumber={index}");
-            doesNextPageExistResponse.EnsureSuccessStatusCode();
+                var doesNextPageExistResponse = await httpClient.GetAsync(
+                    $"{url}/api/Employer/DoesNextEmployersByCompanyIdPageExist/{employer.CompanyId}?currentPageNumber={index}");
+                doesNextPageExistResponse.EnsureSuccessStatusCode();
 
-            bool doesNextPageExist = await doesNextPageExistResponse.Content.ReadFromJsonAsync<bool>();
+                doesNextPageExist = await doesNextPageExistResponse.Content.ReadFromJsonAsync<bool>();
+            }
+            else
+            {
+                var colleaguesResponse = await httpClient.GetAsync(
+                    $"{url}/api/Employer/FindEmployers/{employer.CompanyId}?pageNumber={index}&searchingQuery={query}");
+                colleaguesResponse.EnsureSuccessStatusCode();
 
+                colleagues = await colleaguesResponse.Content.ReadFromJsonAsync<List<EmployerResponse>>();
+
+                var doesNextPageExistResponse = await httpClient.GetAsync(
+                    $"{url}/api/Employer/DoesNextFindEmployersPageExist/{employer.CompanyId}?currentPageNumber={index}&searchingQuery={query}");
+                doesNextPageExistResponse.EnsureSuccessStatusCode();
+
+                doesNextPageExist = await doesNextPageExistResponse.Content.ReadFromJsonAsync<bool>();
+            }
+
+            ViewBag.SearchingQuery = query;
             ViewBag.DoesNextPageExist = doesNextPageExist;
             ViewBag.CurrentPageNumber = index;
 
