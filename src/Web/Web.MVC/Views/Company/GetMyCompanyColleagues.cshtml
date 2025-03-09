@@ -2,6 +2,11 @@
 
 <link rel="stylesheet" href="~/css/company/get-my-company-colleagues.css"/>
 
+<form method="get">
+    <input name="query" placeholder="Поиск"/>
+    <input type="submit" value="Найти"/>
+</form>
+
 @if (true)
 {
     string returnUrl = Context.Request.Path;
@@ -33,9 +38,19 @@
     {
         @if (ViewBag.CurrentPageNumber - 1 > 0)
         {
-            <a class="" asp-controller="Company" asp-action="GetMyCompanyColleagues" asp-route-index="@(ViewBag.CurrentPageNumber - 1)">
-                Назад
-            </a>
+            if (ViewBag.SearchingQuery is null)
+            {
+                <a class="" asp-controller="Company" asp-action="GetMyCompanyColleagues" asp-route-index="@(ViewBag.CurrentPageNumber - 1)">
+                    Назад
+                </a>
+            }
+            else
+            {
+                <a class="" asp-controller="Company" asp-action="GetMyCompanyColleagues" asp-route-index="@(ViewBag.CurrentPageNumber - 1)"
+                   asp-route-query="@ViewBag.SearchingQuery">
+                    Назад
+                </a>
+            }
         }
         else
         {
@@ -44,9 +59,19 @@
 
         @if (ViewBag.DoesNextPageExist)
         {
-            <a class="" asp-controller="Company" asp-action="GetMyCompanyColleagues" asp-route-index="@(ViewBag.CurrentPageNumber + 1)">
-                Вперед
-            </a>
+            if (ViewBag.SearchingQuery is null)
+            {
+                <a class="" asp-controller="Company" asp-action="GetMyCompanyColleagues" asp-route-index="@(ViewBag.CurrentPageNumber + 1)">
+                    Вперед
+                </a>
+            }
+            else
+            {
+                <a class="" asp-controller="Company" asp-action="GetMyCompanyColleagues" asp-route-index="@(ViewBag.CurrentPageNumber + 1)"
+                   asp-route-query="@ViewBag.SearchingQuery">
+                    Вперед
+                </a>
+            }
         }
         else
         {
