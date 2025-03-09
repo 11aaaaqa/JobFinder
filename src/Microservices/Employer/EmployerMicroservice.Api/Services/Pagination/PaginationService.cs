@@ -8,9 +8,19 @@ namespace EmployerMicroservice.Api.Services.Pagination
     {
         public async Task<bool> DoesNextEmployersByCompanyPageExist(Guid companyId, int currentPageNumber)
         {
-            var remainedEmployersCount = await context.Employers.Where(x => x.CompanyId == companyId)
-                .Skip(currentPageNumber * PaginationConstants.CompanyEmployersConstant).CountAsync();
-            return remainedEmployersCount > 0;
+            var remainingEmployersCount = await context.Employers.Where(x => x.CompanyId == companyId)
+                .Skip(currentPageNumber * PaginationConstants.CompanyEmployersCountConstant).CountAsync();
+            return remainingEmployersCount > 0;
+        }
+
+        public async Task<bool> DoesNextSearchingEmployersPageExist(Guid companyId, int currentPageNumber, string searchingQuery)
+        {
+            var lowerQuery = searchingQuery.ToLower();
+            var remainingEmployersCount = await context.Employers.Where(x => x.CompanyId == companyId)
+                .Where(x => x.Name.ToLower().Contains(lowerQuery) | x.Surname.ToLower().Contains(lowerQuery) |
+                            x.Email.ToLower().Contains(lowerQuery) | x.CompanyPost.ToLower().Contains(lowerQuery))
+                .Skip(currentPageNumber * PaginationConstants.CompanyEmployersCountConstant).CountAsync();
+            return remainingEmployersCount > 0;
         }
     }
 }
