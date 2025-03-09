@@ -18,7 +18,9 @@ namespace EmployerMicroservice.Api.Services
         {
             var employers = await context.Employers.Where(x => x.CompanyId == companyId)
                 .Skip((pageNumber - 1) * PaginationConstants.CompanyEmployersCountConstant)
-                .Take(PaginationConstants.CompanyEmployersCountConstant).ToListAsync();
+                .Take(PaginationConstants.CompanyEmployersCountConstant)
+                .OrderBy(x => x.Name)
+                .ToListAsync();
             return employers;
         }
 
