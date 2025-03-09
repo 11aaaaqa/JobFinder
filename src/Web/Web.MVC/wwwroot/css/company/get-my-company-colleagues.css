@@ -24,3 +24,18 @@
 .remove-employer-block {
     margin: 10px;
 }
+
+.remove-employer-btn {
+    border: none;
+    border-radius: 15px;
+    color: white;
+    background-color: deepskyblue;
+    font-size: 16px;
+    padding: 10px;
+}
+
+.remove-employer-btn:hover {
+    cursor: pointer;
+    background-color: dodgerblue;
+    transition: background-color 0.4s;
+}
