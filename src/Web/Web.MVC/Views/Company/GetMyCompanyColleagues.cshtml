@@ -1,6 +1,7 @@
 ﻿@model System.Collections.Generic.List<Web.MVC.Models.ApiResponses.Employer.EmployerResponse>
 
 <link rel="stylesheet" href="~/css/company/get-my-company-colleagues.css"/>
+<link rel="stylesheet" href="~/css/next-previous-page-button.css"/>
 
 <form method="get">
     <input name="query" placeholder="Поиск"/>
@@ -40,13 +41,13 @@
         {
             if (ViewBag.SearchingQuery is null)
             {
-                <a class="" asp-controller="Company" asp-action="GetMyCompanyColleagues" asp-route-index="@(ViewBag.CurrentPageNumber - 1)">
+                <a class="previous-button" asp-controller="Company" asp-action="GetMyCompanyColleagues" asp-route-index="@(ViewBag.CurrentPageNumber - 1)">
                     Назад
                 </a>
             }
             else
             {
-                <a class="" asp-controller="Company" asp-action="GetMyCompanyColleagues" asp-route-index="@(ViewBag.CurrentPageNumber - 1)"
+                <a class="previous-button" asp-controller="Company" asp-action="GetMyCompanyColleagues" asp-route-index="@(ViewBag.CurrentPageNumber - 1)"
                    asp-route-query="@ViewBag.SearchingQuery">
                     Назад
                 </a>
@@ -54,20 +55,20 @@
         }
         else
         {
-            <a class="">Назад</a>
+            <a class="previous-doesnt-exist-button">Назад</a>
         }
 
         @if (ViewBag.DoesNextPageExist)
         {
             if (ViewBag.SearchingQuery is null)
             {
-                <a class="" asp-controller="Company" asp-action="GetMyCompanyColleagues" asp-route-index="@(ViewBag.CurrentPageNumber + 1)">
+                <a class="next-button" asp-controller="Company" asp-action="GetMyCompanyColleagues" asp-route-index="@(ViewBag.CurrentPageNumber + 1)">
                     Вперед
                 </a>
             }
             else
             {
-                <a class="" asp-controller="Company" asp-action="GetMyCompanyColleagues" asp-route-index="@(ViewBag.CurrentPageNumber + 1)"
+                <a class="next-button" asp-controller="Company" asp-action="GetMyCompanyColleagues" asp-route-index="@(ViewBag.CurrentPageNumber + 1)"
                    asp-route-query="@ViewBag.SearchingQuery">
                     Вперед
                 </a>
@@ -75,7 +76,7 @@
         }
         else
         {
-            <a class="">Вперед</a>
+            <a class="next-doesnt-exist-button">Вперед</a>
         }
     }
 </div>
