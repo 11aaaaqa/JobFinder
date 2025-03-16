@@ -8,5 +8,6 @@ namespace EmployerMicroservice.Api.Database
         public ApplicationDbContext(DbContextOptions options) : base(options) { }
 
         public DbSet<Employer> Employers { get; set; }
+        public DbSet<CompanyPermission> CompanyPermissions { get; set; }
     }
 }
