@@ -9,20 +9,20 @@ namespace EmployerMicroservice.Api.Controllers
     public class CompanyPermissionController(ICompanyPermissionsService companyPermissionsService) : ControllerBase
     {
         [HttpGet]
-        [Route("GetEmployerPermissions/{companyId}")]
-        public async Task<IActionResult> GetEmployerPermissionsAsync(Guid employerId, Guid companyId)
-            => Ok(await companyPermissionsService.GetAllPermissionsAsync(employerId, companyId));
+        [Route("GetEmployerPermissions/{employerId}")]
+        public async Task<IActionResult> GetEmployerPermissionsAsync(Guid employerId)
+            => Ok(await companyPermissionsService.GetAllPermissionsAsync(employerId));
 
         [HttpGet]
-        [Route("CheckForPermission/{companyId}")]
-        public async Task<IActionResult> CheckForPermissionAsync(Guid employerId, Guid companyId, string permissionName)
-            => Ok(await companyPermissionsService.CheckForPermissionAsync(employerId, companyId, permissionName));
+        [Route("CheckForPermission/{employerId}")]
+        public async Task<IActionResult> CheckForPermissionAsync(Guid employerId, string permissionName)
+            => Ok(await companyPermissionsService.CheckForPermissionAsync(employerId, permissionName));
 
         [HttpPost]
         [Route("AddPermissions")]
         public async Task<IActionResult> AddPermissionsAsync([FromBody] AddPermissionsDto model)
         {
-            await companyPermissionsService.AddPermissions(model.EmployerId, model.CompanyId, model.Permissions);
+            await companyPermissionsService.AddPermissions(model.EmployerId, model.Permissions);
             return Ok();
         }
     }

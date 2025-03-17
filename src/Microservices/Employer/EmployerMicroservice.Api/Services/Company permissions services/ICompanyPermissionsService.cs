@@ -2,8 +2,8 @@
 {
     public interface ICompanyPermissionsService
     {
-        Task<List<string>> GetAllPermissionsAsync(Guid employerId, Guid companyId);
-        Task<bool> CheckForPermissionAsync(Guid employerId, Guid companyId, string permissionName);
-        Task AddPermissions(Guid employerId, Guid companyId, List<string> permissions);
+        Task<List<string>> GetAllPermissionsAsync(Guid employerId);
+        Task<bool> CheckForPermissionAsync(Guid employerId, string permissionName);
+        Task AddPermissions(Guid employerId, List<string> permissions);
     }
 }
