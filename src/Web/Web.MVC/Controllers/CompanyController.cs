@@ -264,7 +264,7 @@ namespace Web.MVC.Controllers
         [Authorize]
         [HttpPost]
         [Route("employer/company/my-company/colleagues/remove-from-company")]
-        public async Task<IActionResult> RemoveEmployerFromCompany(Guid companyId, Guid employerId, string returnUrl)
+        public async Task<IActionResult> RemoveEmployerFromCompany(Guid companyId, Guid employerId, string returnUrl) //update is needed
         {
             using HttpClient httpClient = httpClientFactory.CreateClient();
             using StringContent jsonContent = new(JsonSerializer.Serialize(new { EmployerId  = employerId, CompanyId  = companyId}),
