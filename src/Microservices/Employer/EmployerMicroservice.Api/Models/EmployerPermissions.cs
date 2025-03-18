@@ -1,8 +1,10 @@
-﻿namespace EmployerMicroservice.Api.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace EmployerMicroservice.Api.Models
 {
     public class EmployerPermissions
     {
-        public Guid Id { get; set; }
+        [Key]
         public Guid EmployerId { get; set; }
         public List<string> Permissions { get; set; }
     }
