@@ -1,6 +1,6 @@
 ﻿namespace EmployerMicroservice.Api.Models
 {
-    public class CompanyPermission
+    public class EmployerPermissions
     {
         public Guid Id { get; set; }
         public Guid EmployerId { get; set; }

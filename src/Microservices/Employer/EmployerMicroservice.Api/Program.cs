@@ -11,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ApplicationDbContext>(
     x => x.UseNpgsql(builder.Configuration["Database:ConnectionString"]));
 
-builder.Services.AddTransient<ICompanyPermissionsService, CompanyPermissionsService>();
+builder.Services.AddTransient<IEmployerPermissionsService, EmployerPermissionsService>();
 builder.Services.AddTransient<ISearchingService, SearchingService> ();
 builder.Services.AddTransient<IPaginationService, PaginationService>();
 builder.Services.AddTransient<IEmployerRepository, EmployerRepository>();
