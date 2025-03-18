@@ -1,6 +1,6 @@
 ﻿namespace EmployerMicroservice.Api.Services.Company_permissions_services
 {
-    public interface ICompanyPermissionsService
+    public interface IEmployerPermissionsService
     {
         Task<List<string>> GetAllPermissionsAsync(Guid employerId);
         Task<bool> CheckForPermissionAsync(Guid employerId, string permissionName);
