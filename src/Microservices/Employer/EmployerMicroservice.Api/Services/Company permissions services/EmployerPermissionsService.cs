@@ -32,12 +32,21 @@ namespace EmployerMicroservice.Api.Services.Company_permissions_services
             if (employerPermissions is null)
             {
                 await context.EmployersPermissions.AddAsync(new EmployerPermissions
-                    { EmployerId = employerId, Id = Guid.NewGuid(), Permissions = permissions });
+                    { EmployerId = employerId, Permissions = permissions });
             }
             else
             {
                 employerPermissions.Permissions = permissions;
             }
+            await context.SaveChangesAsync();
+        }
+
+        public async Task RemoveAllEmployerPermissions(Guid employerId)
+        {
+            var employerPermissions = await context.EmployersPermissions.SingleOrDefaultAsync(x => x.EmployerId == employerId);
+            if (employerPermissions is null)
+                throw new EmployerHasntPermissionsException();
+            context.EmployersPermissions.Remove(employerPermissions);
             await context.SaveChangesAsync();
         }
     }
