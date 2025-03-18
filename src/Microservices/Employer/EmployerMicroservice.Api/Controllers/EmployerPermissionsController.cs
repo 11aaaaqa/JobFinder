@@ -49,5 +49,21 @@ namespace EmployerMicroservice.Api.Controllers
             await companyPermissionsService.AddPermissions(model.EmployerId, model.Permissions);
             return Ok();
         }
+
+        [HttpGet]
+        [Route("RemoveAllEmployerPermissions/{employerId}")]
+        public async Task<IActionResult> RemoveAllEmployerPermissionsAsync(Guid employerId)
+        {
+            try
+            {
+                await companyPermissionsService.RemoveAllEmployerPermissions(employerId);
+            }
+            catch (EmployerHasntPermissionsException e)
+            {
+                return NotFound();
+            }
+
+            return Ok();
+        }
     }
 }

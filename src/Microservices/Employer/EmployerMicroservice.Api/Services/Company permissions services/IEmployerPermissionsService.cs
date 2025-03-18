@@ -5,5 +5,6 @@
         Task<List<string>> GetAllPermissionsAsync(Guid employerId);
         Task<bool> CheckForPermissionAsync(Guid employerId, string permissionName);
         Task AddPermissions(Guid employerId, List<string> permissions);
+        Task RemoveAllEmployerPermissions(Guid employerId);
     }
 }
