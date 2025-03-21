@@ -31,7 +31,7 @@ namespace Web.MVC.Controllers
 
             var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
 
-            if (companyQuery is not null)
+            if (companyQuery is not null && employer.CompanyId is null)
             {
                 var companyQueryResponse = await httpClient.GetAsync($"{url}/api/Company/GetCompanyByCompanyName/{companyQuery}");
                 if (companyQueryResponse.IsSuccessStatusCode)
