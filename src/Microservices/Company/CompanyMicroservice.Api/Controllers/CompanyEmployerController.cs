@@ -71,7 +71,7 @@ namespace CompanyMicroservice.Api.Controllers
                 return Conflict("Employer is already in company");
             }
 
-            await companyEmployerRepository.DeleteEmployerJoiningAsync(joiningRequestId);
+            await companyEmployerRepository.RemoveAllEmployerRequestsAsync(request.EmployerId);
             return Ok();
         }
 
