@@ -67,6 +67,9 @@ namespace Web.MVC.Controllers
 
             var employer = await response.Content.ReadFromJsonAsync<EmployerResponse>();
 
+            if (employer.CompanyId is not null)
+                return View("EmployerIsAlreadyInCompanyError");
+
             return View(new AddCompanyDto{FounderEmployerId = employer.Id});
         }
 
@@ -105,6 +108,9 @@ namespace Web.MVC.Controllers
             response.EnsureSuccessStatusCode();
 
             var employer = await response.Content.ReadFromJsonAsync<EmployerResponse>();
+
+            if (employer.CompanyId is not null)
+                return View("EmployerIsAlreadyInCompanyError");
 
             using StringContent jsonContent = new(JsonSerializer.Serialize(new
             {
