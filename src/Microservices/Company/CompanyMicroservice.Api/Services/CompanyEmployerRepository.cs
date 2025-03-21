@@ -23,6 +23,14 @@ namespace CompanyMicroservice.Api.Services
             await context.SaveChangesAsync();
         }
 
+        public async Task RemoveAllEmployerRequestsAsync(Guid employerId)
+        {
+            var requests = await context.JoiningRequestedEmployers
+                .Where(x => x.EmployerId == employerId).ToListAsync();
+            context.JoiningRequestedEmployers.RemoveRange(requests);
+            await context.SaveChangesAsync();
+        }
+
         public async Task RequestJoiningCompanyAsync(Guid companyId, Guid employerId, string employerName, string employerSurname)
         {
             await context.JoiningRequestedEmployers.AddAsync(new JoiningRequestedEmployer
