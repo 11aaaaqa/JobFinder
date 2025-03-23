@@ -1,6 +1,5 @@
 ﻿using CompanyMicroservice.Api.Constants;
 using CompanyMicroservice.Api.Database;
-using CompanyMicroservice.Api.Exceptions;
 using CompanyMicroservice.Api.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,14 +12,6 @@ namespace CompanyMicroservice.Api.Services
             var employers = await context.JoiningRequestedEmployers.Where(x => x.CompanyId == companyId)
                 .Skip(PaginationConstants.EmployersPageSize * (pageNumber - 1)).Take(PaginationConstants.EmployersPageSize).ToListAsync();
             return employers;
-        }
-
-        public async Task RemoveEmployerFromCompanyAsync(Guid companyId, Guid employerId)
-        {
-            var company = await context.Companies.SingleAsync(x => x.Id == companyId);
-
-            company.CompanyEmployersIds.Remove(employerId);
-            await context.SaveChangesAsync();
         }
 
         public async Task RemoveAllEmployerRequestsAsync(Guid employerId)
@@ -58,16 +49,5 @@ namespace CompanyMicroservice.Api.Services
 
         public async Task<JoiningRequestedEmployer?> GetJoiningRequestByRequestId(Guid id)
             => await context.JoiningRequestedEmployers.SingleOrDefaultAsync(x => x.Id == id);
-
-        public async Task AddEmployerToCompany(Guid companyId, Guid employerId)
-        {
-            var company = await context.Companies.SingleAsync(x => x.Id == companyId);
-
-            if (company.CompanyEmployersIds.Contains(employerId))
-                throw new EmployerIsAlreadyInCompanyException();
-
-            company.CompanyEmployersIds.Add(employerId);
-            await context.SaveChangesAsync();
-        }
     }
 }
