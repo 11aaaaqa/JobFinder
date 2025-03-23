@@ -10,5 +10,6 @@ namespace EmployerMicroservice.Api.Services
         Task<List<Employer>> GetEmployersByCompanyId(Guid companyId, int pageNumber);
         Task<bool> UpdateEmployerAsync(UpdateEmployerDto model);
         Task<bool> AssignCompanyAsync(Guid employerId, Guid companyId);
+        Task<bool> RemoveEmployerFromCompanyAsync(Guid employerId);
     }
 }
