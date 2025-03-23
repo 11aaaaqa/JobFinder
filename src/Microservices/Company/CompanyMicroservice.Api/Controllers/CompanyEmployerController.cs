@@ -1,17 +1,13 @@
 ﻿using CompanyMicroservice.Api.DTOs;
 using CompanyMicroservice.Api.Services;
-using Confluent.Kafka;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
-using CompanyMicroservice.Api.Exceptions;
-using CompanyMicroservice.Api.Kafka.Producer;
 using CompanyMicroservice.Api.Services.Pagination;
 
 namespace CompanyMicroservice.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CompanyEmployerController(IKafkaProducer kafkaProducer, ICompanyEmployerRepository companyEmployerRepository,
+    public class CompanyEmployerController(ICompanyEmployerRepository companyEmployerRepository, 
         ICheckForNextPageExisting checkForNextPage) : ControllerBase
     {
         [HttpGet]
@@ -24,19 +20,6 @@ namespace CompanyMicroservice.Api.Controllers
         public async Task<IActionResult> DoesEmployersRequestedJoiningPageExistAsync(Guid companyId, int pageNumber)
             => Ok(await checkForNextPage.DoesEmployersRequestedJoiningPageExist(companyId, pageNumber));
 
-        [HttpPatch]
-        [Route("RemoveEmployerFromCompany")]
-        public async Task<IActionResult> RemoveEmployerFromCompanyAsync([FromBody] RemoveEmployerFromCompanyDto model)
-        {
-            await companyEmployerRepository.RemoveEmployerFromCompanyAsync(model.CompanyId, model.EmployerId);
-
-            await kafkaProducer.ProduceAsync("employer-removed-from-company-topic", new Message<Null, string>
-            {
-                Value = JsonSerializer.Serialize(new { model.EmployerId })
-            });
-            return Ok();
-        }
-
         [HttpPost]
         [Route("RequestJoiningCompany")]
         public async Task<IActionResult> RequestJoiningCompanyAsync([FromBody] RequestJoiningCompanyDto model)
@@ -47,31 +30,6 @@ namespace CompanyMicroservice.Api.Controllers
 
             await companyEmployerRepository.RequestJoiningCompanyAsync(model.CompanyId, model.EmployerId, model.EmployerName,
                 model.EmployerSurname);
-            return Ok();
-        }
-
-        [HttpGet]
-        [Route("AcceptEmployerJoiningRequest/{joiningRequestId}")]
-        public async Task<IActionResult> AcceptEmployerJoiningRequestAsync(Guid joiningRequestId)
-        {
-            var request = await companyEmployerRepository.GetJoiningRequestByRequestId(joiningRequestId);
-            if(request is null) return BadRequest();
-
-            await kafkaProducer.ProduceAsync("employer-joined-company-topic", new Message<Null, string>
-            {
-                Value = JsonSerializer.Serialize(new { request.EmployerId, request.CompanyId})
-            });
-
-            try
-            {
-                await companyEmployerRepository.AddEmployerToCompany(request.CompanyId, request.EmployerId);
-            }
-            catch (EmployerIsAlreadyInCompanyException ex)
-            {
-                return Conflict("Employer is already in company");
-            }
-
-            await companyEmployerRepository.RemoveAllEmployerRequestsAsync(request.EmployerId);
             return Ok();
         }
 
