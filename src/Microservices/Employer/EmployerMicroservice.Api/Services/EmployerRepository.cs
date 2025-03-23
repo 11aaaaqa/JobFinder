@@ -45,5 +45,15 @@ namespace EmployerMicroservice.Api.Services
             await context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<bool> RemoveEmployerFromCompanyAsync(Guid employerId)
+        {
+            var employer = await context.Employers.SingleOrDefaultAsync(x => x.Id == employerId);
+            if(employer is null) return false;
+
+            employer.CompanyId = null;
+            await context.SaveChangesAsync();
+            return true;
+        }
     }
 }
