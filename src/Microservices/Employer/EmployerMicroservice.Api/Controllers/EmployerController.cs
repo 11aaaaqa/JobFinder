@@ -70,5 +70,15 @@ namespace EmployerMicroservice.Api.Controllers
         [Route("DoesNextFindEmployersPageExist/{companyId}")]
         public async Task<IActionResult> DoesNextFindEmployersPageExistAsync(Guid companyId, int currentPageNumber, string searchingQuery)
             => Ok(await paginationService.DoesNextSearchingEmployersPageExist(companyId, currentPageNumber, searchingQuery));
+
+        [HttpGet]
+        [Route("RemoveEmployerFromCompany/{employerId}")]
+        public async Task<IActionResult> RemoveEmployerFromCompanyAsync(Guid employerId)
+        {
+            bool isRemoved = await employerRepository.RemoveEmployerFromCompanyAsync(employerId);
+            if (!isRemoved)
+                return BadRequest();
+            return Ok();
+        }
     }
 }
