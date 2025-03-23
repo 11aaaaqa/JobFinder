@@ -198,8 +198,19 @@ namespace Web.MVC.Controllers
         {
             using HttpClient httpClient = httpClientFactory.CreateClient();
 
-            var response = await httpClient.GetAsync($"{url}/api/CompanyEmployer/AcceptEmployerJoiningRequest/{requestId}");
-            response.EnsureSuccessStatusCode();
+            var requestResponse = await httpClient.GetAsync($"{url}/api/CompanyEmployer/GetJoiningRequestByRequestId/{requestId}");
+            requestResponse.EnsureSuccessStatusCode();
+
+            var request = await requestResponse.Content.ReadFromJsonAsync<JoiningRequestedEmployerResponse>();
+
+            using StringContent jsonContent = new(JsonSerializer.Serialize(new { request.EmployerId , request.CompanyId}),
+                Encoding.UTF8, "application/json");
+            var assignCompanyResponse = await httpClient.PatchAsync($"{url}/api/Employer/AssignCompany", jsonContent);
+            assignCompanyResponse.EnsureSuccessStatusCode();
+
+            var removeAllEmployerRequestsResponse = await httpClient.GetAsync(
+                $"{url}/api/CompanyEmployer/RemoveAllEmployerRequestsByEmployerId/{request.EmployerId}");
+            removeAllEmployerRequestsResponse.EnsureSuccessStatusCode();
 
             return LocalRedirect(returnUrl);
         }
@@ -270,13 +281,11 @@ namespace Web.MVC.Controllers
         [Authorize]
         [HttpPost]
         [Route("employer/company/my-company/colleagues/remove-from-company")]
-        public async Task<IActionResult> RemoveEmployerFromCompany(Guid companyId, Guid employerId, string returnUrl) //update is needed
+        public async Task<IActionResult> RemoveEmployerFromCompany(Guid employerId, string returnUrl)
         {
             using HttpClient httpClient = httpClientFactory.CreateClient();
-            using StringContent jsonContent = new(JsonSerializer.Serialize(new { EmployerId  = employerId, CompanyId  = companyId}),
-                Encoding.UTF8, "application/json");
-
-            var response = await httpClient.PatchAsync($"{url}/api/CompanyEmployer/RemoveEmployerFromCompany", jsonContent);
+            
+            var response = await httpClient.GetAsync($"{url}/api/Employer/RemoveEmployerFromCompany/{employerId}");
             response.EnsureSuccessStatusCode();
 
             return LocalRedirect(returnUrl);
