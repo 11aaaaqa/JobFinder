@@ -290,5 +290,22 @@ namespace Web.MVC.Controllers
 
             return LocalRedirect(returnUrl);
         }
+
+        [Authorize]
+        [HttpPost]
+        [Route("employer/company/my-company/leave")]
+        public async Task<IActionResult> LeaveFromCompany(string returnUrl)
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+            var employerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
+            employerResponse.EnsureSuccessStatusCode();
+
+            var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
+
+            var removeEmployerFromCompanyResponse = await httpClient.GetAsync($"{url}/api/Employer/RemoveEmployerFromCompany/{employer.Id}");
+            removeEmployerFromCompanyResponse.EnsureSuccessStatusCode();
+
+            return LocalRedirect(returnUrl);
+        }
     }
 }
