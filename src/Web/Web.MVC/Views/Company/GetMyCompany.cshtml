@@ -1,57 +1,62 @@
 ﻿@model Web.MVC.Models.ApiResponses.Company.CompanyResponse?
 
-<div>
-    <a asp-controller="Company" asp-action="GetMyCompanyColleagues">Коллеги</a>
-    <a asp-controller="Company" asp-action="GetEmployersRequestedJoiningMyCompany">Запросы на присоединение</a>
-</div>
-
-@if (Model is null)
+@if (true)
 {
-    <form method="get">
-        <input name="companyQuery" placeholder="Найти компанию"/>
-        <input type="submit" value="Найти"/>
-    </form>
-    <a asp-controller="Company" asp-action="AddMyCompany">Добавить</a>
-    if (Context.Request.QueryString.Value.Contains("companyQuery"))
-    {
-        if (ViewBag.FoundCompany is not null)
-        {
-            string returnUrl = Context.Request.Path;
-            if (Context.Request.QueryString.HasValue)
-                returnUrl += Context.Request.QueryString;
+    string returnUrl = Context.Request.Path;
+    if (Context.Request.QueryString.HasValue)
+        returnUrl += Context.Request.QueryString;
+    <div>
+        <a asp-controller="Company" asp-action="GetMyCompanyColleagues">Коллеги</a>
+        <a asp-controller="Company" asp-action="GetEmployersRequestedJoiningMyCompany">Запросы на присоединение</a>
+        <form method="post" asp-controller="Company" asp-action="LeaveFromCompany" asp-route-returnUrl="@returnUrl">
+            <input type="submit" value="Выйти из компании" />
+        </form>
+    </div>
 
-            <p><strong>@ViewBag.FoundCompany.CompanyName</strong></p>
-            <p>Описание: @ViewBag.FoundCompany.CompanyDescription</p>
-            <p>Количество сотрудников: @ViewBag.FoundCompany.CompanyColleaguesCount сотрудников</p>
-            if (ViewBag.EmployerAlreadyRequestedJoining)
+    @if (Model is null)
+    {
+        <form method="get">
+            <input name="companyQuery" placeholder="Найти компанию" />
+            <input type="submit" value="Найти" />
+        </form>
+        <a asp-controller="Company" asp-action="AddMyCompany">Добавить</a>
+        if (Context.Request.QueryString.Value.Contains("companyQuery"))
+        {
+            if (ViewBag.FoundCompany is not null)
             {
-                <button>&#10003; Запрос отправлен</button>
+                <p><strong>@ViewBag.FoundCompany.CompanyName</strong></p>
+                <p>Описание: @ViewBag.FoundCompany.CompanyDescription</p>
+                <p>Количество сотрудников: @ViewBag.FoundCompany.CompanyColleaguesCount сотрудников</p>
+                if (ViewBag.EmployerAlreadyRequestedJoining)
+                {
+                    <button>&#10003; Запрос отправлен</button>
+                }
+                else
+                {
+                    <form method="post" asp-controller="Company" asp-action="RequestJoiningCompany" asp-route-returnUrl="@returnUrl">
+                        <input type="hidden" name="companyId" value="@ViewBag.FoundCompany.Id" />
+                        <input type="submit" value="Запросить вступление" />
+                    </form>
+                }
             }
             else
             {
-                <form method="post" asp-controller="Company" asp-action="RequestJoiningCompany" asp-route-returnUrl="@returnUrl">
-                    <input type="hidden" name="companyId"  value="@ViewBag.FoundCompany.Id"/>
-                    <input type="submit" value="Запросить вступление"/>
-                </form>
+                <p>Такой компании не существует</p>
             }
         }
-        else
-        {
-            <p>Такой компании не существует</p>
-        }
-    }
-}
-else
-{
-    <p>@Model.CompanyName</p>
-    <p>@Model.CompanyColleaguesCount сотрудников</p>
-    if (Model.CompanyDescription is not null)
-    {
-        <p>Описание: @Model.CompanyDescription</p>
     }
     else
     {
-        <p>Описание отсутствует</p>
+        <p>@Model.CompanyName</p>
+        <p>@Model.CompanyColleaguesCount сотрудников</p>
+        if (Model.CompanyDescription is not null)
+        {
+            <p>Описание: @Model.CompanyDescription</p>
+        }
+        else
+        {
+            <p>Описание отсутствует</p>
+        }
+        <a asp-controller="Company" asp-action="UpdateMyCompany">Обновить</a>
     }
-    <a asp-controller="Company" asp-action="UpdateMyCompany">Обновить</a>
 }
