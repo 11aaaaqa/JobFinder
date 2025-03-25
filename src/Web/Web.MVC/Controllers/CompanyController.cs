@@ -307,5 +307,43 @@ namespace Web.MVC.Controllers
 
             return LocalRedirect(returnUrl);
         }
+
+        [Authorize]
+        [HttpGet]
+        [Route("employer/company/my-company/colleagues/update-permissions")]
+        public async Task<IActionResult> UpdateEmployerCompanyPermissions(Guid employerId, bool? isUpdated)
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+
+            var employerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerById/{employerId}");
+            employerResponse.EnsureSuccessStatusCode();
+            var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
+
+            ViewBag.EmployerName = employer.Name; ViewBag.EmployerSurname = employer.Surname; 
+            ViewBag.EmployerEmail = employer.Email; ViewBag.EmployerCompanyPost = employer.CompanyPost;
+            ViewBag.IsUpdated = isUpdated;
+
+            var employerPermissionsResponse = await httpClient.GetAsync($"{url}/api/EmployerPermissions/GetEmployerPermissions/{employerId}");
+            if (employerPermissionsResponse.StatusCode == HttpStatusCode.NotFound)
+                return View(new UpdateEmployerCompanyPermissionsDto{EmployerId = employerId, Permissions = new List<string>()});
+            employerPermissionsResponse.EnsureSuccessStatusCode();
+            var employerPermissions = await employerPermissionsResponse.Content.ReadFromJsonAsync<List<string>>();
+
+            return View(new UpdateEmployerCompanyPermissionsDto{EmployerId = employerId, Permissions = employerPermissions});
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("employer/company/my-company/colleagues/update-permissions")]
+        public async Task<IActionResult> UpdateEmployerCompanyPermissions(UpdateEmployerCompanyPermissionsDto model)
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+            using StringContent jsonContent = new(JsonSerializer.Serialize(model), Encoding.UTF8, "application/json");
+            
+            var response = await httpClient.PostAsync($"{url}/api/EmployerPermissions/AddPermissions", jsonContent);
+            response.EnsureSuccessStatusCode();
+
+            return RedirectToAction("UpdateEmployerCompanyPermissions", new { isUpdated = true, employerId = model.EmployerId });
+        }
     }
 }
