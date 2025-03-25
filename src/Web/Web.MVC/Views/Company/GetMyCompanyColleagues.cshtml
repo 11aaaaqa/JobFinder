@@ -24,6 +24,7 @@
             <div class="remove-employer-block">
                 @if (employer.Email != User.Identity.Name)
                 {
+                    <a asp-controller="Company" asp-action="UpdateEmployerCompanyPermissions" asp-route-employerId="@employer.Id">Управление ролями</a>
                     <form method="post" asp-controller="Company" asp-action="RemoveEmployerFromCompany" asp-route-returnUrl="@returnUrl"
                           asp-route-companyId="@employer.CompanyId" asp-route-employerId="@employer.Id">
                         <input class="remove-employer-btn" type="submit" value="Исключить"/>
