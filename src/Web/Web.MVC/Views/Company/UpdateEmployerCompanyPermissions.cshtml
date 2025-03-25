@@ -1,0 +1,141 @@
+﻿@using Web.MVC.Constants.Permissions_constants
+@model Web.MVC.DTOs.Company.UpdateEmployerCompanyPermissionsDto
+
+<p>@ViewBag.EmployerName @ViewBag.EmployerSurname</p>
+<p>Почта: @ViewBag.EmployerEmail</p>
+<p>Должность: @ViewBag.EmployerCompanyPost</p>
+
+<form method="post">
+    <input type="hidden" asp-for="EmployerId" value="@Model.EmployerId"/>
+    <h4>Коллеги</h4>
+    @if (Model.Permissions.Contains(ColleaguesPermissionsConstants.ViewTheListOfColleaguesPermission))
+    {
+        <p>
+            <input type="checkbox" name="Permissions" value="@ColleaguesPermissionsConstants.ViewTheListOfColleaguesPermission" checked />
+            @ColleaguesPermissionsConstants.ViewTheListOfColleaguesPermission
+        </p>
+    }
+    else
+    {
+        <p>
+            <input type="checkbox" name="Permissions" value="@ColleaguesPermissionsConstants.ViewTheListOfColleaguesPermission" />
+            @ColleaguesPermissionsConstants.ViewTheListOfColleaguesPermission
+        </p>
+    }
+    @if (Model.Permissions.Contains(ColleaguesPermissionsConstants.ViewColleaguesPermissionsPermission))
+    {
+        <p>
+            <input type="checkbox" name="Permissions" value="@ColleaguesPermissionsConstants.ViewColleaguesPermissionsPermission" checked />
+            @ColleaguesPermissionsConstants.ViewColleaguesPermissionsPermission
+        </p>
+    }
+    else
+    {
+        <p>
+            <input type="checkbox" name="Permissions" value="@ColleaguesPermissionsConstants.ViewColleaguesPermissionsPermission" />
+            @ColleaguesPermissionsConstants.ViewColleaguesPermissionsPermission
+        </p>
+    }
+    @if (Model.Permissions.Contains(ColleaguesPermissionsConstants.GivePermissionsToColleaguesPermission))
+    {
+        <p>
+            <input type="checkbox" name="Permissions" value="@ColleaguesPermissionsConstants.GivePermissionsToColleaguesPermission" checked />
+            @ColleaguesPermissionsConstants.GivePermissionsToColleaguesPermission
+        </p>
+    }
+    else
+    {
+        <p>
+            <input type="checkbox" name="Permissions" value="@ColleaguesPermissionsConstants.GivePermissionsToColleaguesPermission" />
+            @ColleaguesPermissionsConstants.GivePermissionsToColleaguesPermission
+        </p>
+    }
+    @if (Model.Permissions.Contains(ColleaguesPermissionsConstants.RemoveColleaguesPermission))
+    {
+        <p>
+            <input type="checkbox" name="Permissions" value="@ColleaguesPermissionsConstants.RemoveColleaguesPermission" checked />
+            @ColleaguesPermissionsConstants.RemoveColleaguesPermission
+        </p>
+    }
+    else
+    {
+        <p>
+            <input type="checkbox" name="Permissions" value="@ColleaguesPermissionsConstants.RemoveColleaguesPermission" />
+            @ColleaguesPermissionsConstants.RemoveColleaguesPermission
+        </p>
+    }
+    <h3>Компания</h3>
+    @if (Model.Permissions.Contains(CompanyPermissionsConstants.UpdateCompanyInformationDataPermission))
+    {
+        <p>
+            <input type="checkbox" name="Permissions" value="@CompanyPermissionsConstants.UpdateCompanyInformationDataPermission" checked />
+            @CompanyPermissionsConstants.UpdateCompanyInformationDataPermission
+        </p>
+    }
+    else
+    {
+        <p>
+            <input type="checkbox" name="Permissions" value="@CompanyPermissionsConstants.UpdateCompanyInformationDataPermission" />
+            @CompanyPermissionsConstants.UpdateCompanyInformationDataPermission
+        </p>
+    }
+    @if (Model.Permissions.Contains(CompanyPermissionsConstants.DeleteCompanyPermission))
+    {
+        <p>
+            <input type="checkbox" name="Permissions" value="@CompanyPermissionsConstants.DeleteCompanyPermission" checked />
+            @CompanyPermissionsConstants.DeleteCompanyPermission
+        </p>
+    }
+    else
+    {
+        <p>
+            <input type="checkbox" name="Permissions" value="@CompanyPermissionsConstants.DeleteCompanyPermission" />
+            @CompanyPermissionsConstants.DeleteCompanyPermission
+        </p>
+    }
+    <h3>Вакансии</h3>
+    @if (Model.Permissions.Contains(VacancyPermissionsConstants.AddVacancyPermission))
+    {
+        <p>
+            <input type="checkbox" name="Permissions" value="@VacancyPermissionsConstants.AddVacancyPermission" checked />
+            @VacancyPermissionsConstants.AddVacancyPermission
+        </p>
+    }
+    else
+    {
+        <p>
+            <input type="checkbox" name="Permissions" value="@VacancyPermissionsConstants.AddVacancyPermission" />
+            @VacancyPermissionsConstants.AddVacancyPermission
+        </p>
+    }
+    @if (Model.Permissions.Contains(VacancyPermissionsConstants.EditVacancyPermission))
+    {
+        <p>
+            <input type="checkbox" name="Permissions" value="@VacancyPermissionsConstants.EditVacancyPermission" checked />
+            @VacancyPermissionsConstants.EditVacancyPermission
+        </p>
+    }
+    else
+    {
+        <p>
+            <input type="checkbox" name="Permissions" value="@VacancyPermissionsConstants.EditVacancyPermission" />
+            @VacancyPermissionsConstants.EditVacancyPermission
+        </p>
+    }
+    @if (Model.Permissions.Contains(VacancyPermissionsConstants.DeleteVacancyPermission))
+    {
+        <p>
+            <input type="checkbox" name="Permissions" value="@VacancyPermissionsConstants.DeleteVacancyPermission" checked />
+            @VacancyPermissionsConstants.DeleteVacancyPermission
+        </p>
+    }
+    else
+    {
+        <p>
+            <input type="checkbox" name="Permissions" value="@VacancyPermissionsConstants.DeleteVacancyPermission" />
+            @VacancyPermissionsConstants.DeleteVacancyPermission
+        </p>
+    }
+
+    <input type="submit" value="Сохранить"/>
+</form>
