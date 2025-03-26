@@ -22,9 +22,12 @@
                 <p>Почта: @employer.Email</p>
             </div>
             <div class="remove-employer-block">
-                @if (employer.Email != User.Identity.Name)
+                @if (employer.Email != User.Identity.Name && ViewBag.FounderEmployerId != employer.Id)
                 {
-                    <a asp-controller="Company" asp-action="UpdateEmployerCompanyPermissions" asp-route-employerId="@employer.Id">Управление ролями</a>
+                    if (ViewBag.DoesEmployerHasPermissionToViewColleaguesPermissions)
+                    {
+                        <a asp-controller="Company" asp-action="UpdateEmployerCompanyPermissions" asp-route-employerId="@employer.Id">Управление ролями</a>
+                    }
                     <form method="post" asp-controller="Company" asp-action="RemoveEmployerFromCompany" asp-route-returnUrl="@returnUrl"
                           asp-route-companyId="@employer.CompanyId" asp-route-employerId="@employer.Id">
                         <input class="remove-employer-btn" type="submit" value="Исключить"/>
