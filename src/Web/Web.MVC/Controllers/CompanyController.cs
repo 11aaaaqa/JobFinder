@@ -337,6 +337,9 @@ namespace Web.MVC.Controllers
             var employerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerById/{employerId}");
             employerResponse.EnsureSuccessStatusCode();
             var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
+            
+            if (employer.Email == User.Identity.Name)
+                return View("ActionError");
 
             ViewBag.EmployerName = employer.Name; ViewBag.EmployerSurname = employer.Surname; 
             ViewBag.EmployerEmail = employer.Email; ViewBag.EmployerCompanyPost = employer.CompanyPost;
