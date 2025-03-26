@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Web.MVC.Constants.Permissions_constants;
 using Web.MVC.DTOs.Company;
 using Web.MVC.Models.ApiResponses.Company;
 using Web.MVC.Models.ApiResponses.Employer;
@@ -240,6 +241,23 @@ namespace Web.MVC.Controllers
 
             var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
 
+            var companyResponse = await httpClient.GetAsync($"{url}/api/Company/GetCompanyByCompanyId/{employer.CompanyId}");
+            companyResponse.EnsureSuccessStatusCode();
+            var company = await companyResponse.Content.ReadFromJsonAsync<CompanyResponse>();
+
+            if (company.FounderEmployerId == employer.Id)
+            {
+                ViewBag.DoesEmployerHasPermissionToViewColleaguesPermissions = true;
+            }
+            else
+            {
+                var employerPermissionResponse = await httpClient.GetAsync(
+                    $"{url}/api/EmployerPermissions/CheckForPermission/{employer.Id}?permissionName={ColleaguesPermissionsConstants.ViewColleaguesPermissionsPermission}");
+                employerPermissionResponse.EnsureSuccessStatusCode();
+                bool doesEmployerHasPermissionToViewColleaguesPermissions = await employerPermissionResponse.Content.ReadFromJsonAsync<bool>();
+                ViewBag.DoesEmployerHasPermissionToViewColleaguesPermissions = doesEmployerHasPermissionToViewColleaguesPermissions;
+            }
+
             bool doesNextPageExist;
             List<EmployerResponse>? colleagues = new List<EmployerResponse>();
             if (query is null)
@@ -274,6 +292,7 @@ namespace Web.MVC.Controllers
             ViewBag.SearchingQuery = query;
             ViewBag.DoesNextPageExist = doesNextPageExist;
             ViewBag.CurrentPageNumber = index;
+            ViewBag.FounderEmployerId = company.FounderEmployerId;
 
             return View(colleagues);
         }
