@@ -1,5 +1,16 @@
 ﻿@using Web.MVC.Constants.Permissions_constants
 @model Web.MVC.DTOs.Company.UpdateEmployerCompanyPermissionsDto
+<link rel="stylesheet" href="~/css/data-updated-modal.css"/>
+
+@if (ViewBag.IsUpdated == true)
+{
+    <input id="isUpdated" type="hidden" value="true" />
+}
+
+<div id="modal" class="modal">
+    <span class="close-modal" id="close-modal">&times;</span>
+    <p class="updated-p">&#9989; Данные успешно обновлены</p>
+</div>
 
 <p>@ViewBag.EmployerName @ViewBag.EmployerSurname</p>
 <p>Почта: @ViewBag.EmployerEmail</p>
@@ -139,3 +150,4 @@
 
     <input type="submit" value="Сохранить"/>
 </form>
+<script src="~/js/data-successfully-updated.js"></script>
