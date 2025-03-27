@@ -26,7 +26,9 @@
                 {
                     if (ViewBag.DoesEmployerHasPermissionToViewColleaguesPermissions)
                     {
-                        <a asp-controller="Company" asp-action="UpdateEmployerCompanyPermissions" asp-route-employerId="@employer.Id">Управление ролями</a>
+                        <a class="manage-roles-link" asp-controller="Company" asp-action="UpdateEmployerCompanyPermissions" asp-route-employerId="@employer.Id">
+                            Управление ролями
+                        </a>
                     }
                     <form method="post" asp-controller="Company" asp-action="RemoveEmployerFromCompany" asp-route-returnUrl="@returnUrl"
                           asp-route-companyId="@employer.CompanyId" asp-route-employerId="@employer.Id">
