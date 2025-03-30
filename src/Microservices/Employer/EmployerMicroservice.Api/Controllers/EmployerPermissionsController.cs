@@ -1,5 +1,4 @@
 ﻿using EmployerMicroservice.Api.DTOs.Permissions_dtos;
-using EmployerMicroservice.Api.Exceptions;
 using EmployerMicroservice.Api.Services.Company_permissions_services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,15 +12,7 @@ namespace EmployerMicroservice.Api.Controllers
         [Route("GetEmployerPermissions/{employerId}")]
         public async Task<IActionResult> GetEmployerPermissionsAsync(Guid employerId)
         {
-            List<string> permissions;
-            try
-            {
-                permissions = await companyPermissionsService.GetAllPermissionsAsync(employerId);
-            }
-            catch (EmployerHasntPermissionsException e)
-            {
-                return NotFound();
-            }
+            var permissions = await companyPermissionsService.GetAllPermissionsAsync(employerId);
 
             return Ok(permissions);
         }
@@ -30,15 +21,7 @@ namespace EmployerMicroservice.Api.Controllers
         [Route("CheckForPermission/{employerId}")]
         public async Task<IActionResult> CheckForPermissionAsync(Guid employerId, string permissionName)
         {
-            bool doesEmployerHavePermission;
-            try
-            {
-                doesEmployerHavePermission = await companyPermissionsService.CheckForPermissionAsync(employerId, permissionName);
-            }
-            catch (EmployerHasntPermissionsException e)
-            {
-                return NotFound();
-            }
+            bool doesEmployerHavePermission = await companyPermissionsService.CheckForPermissionAsync(employerId, permissionName);
             return Ok(doesEmployerHavePermission);
         }
 
@@ -54,15 +37,7 @@ namespace EmployerMicroservice.Api.Controllers
         [Route("RemoveAllEmployerPermissions/{employerId}")]
         public async Task<IActionResult> RemoveAllEmployerPermissionsAsync(Guid employerId)
         {
-            try
-            {
-                await companyPermissionsService.RemoveAllEmployerPermissions(employerId);
-            }
-            catch (EmployerHasntPermissionsException e)
-            {
-                return NotFound();
-            }
-
+            await companyPermissionsService.RemoveAllEmployerPermissions(employerId);
             return Ok();
         }
     }
