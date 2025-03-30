@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web.MVC.Constants.Permissions_constants;
 using Web.MVC.DTOs.Company;
+using Web.MVC.Filters.Authorization_filters.Company_filters;
 using Web.MVC.Models.ApiResponses.Company;
 using Web.MVC.Models.ApiResponses.Employer;
 
@@ -125,6 +126,7 @@ namespace Web.MVC.Controllers
         }
 
         [Authorize]
+        [CompanyPermissionChecker(CompanyPermissionsConstants.UpdateCompanyInformationDataPermission)]
         [HttpGet]
         [Route("employer/company/my-company/update")]
         public async Task<IActionResult> UpdateMyCompany(bool? isUpdated)
@@ -148,6 +150,7 @@ namespace Web.MVC.Controllers
         }
 
         [Authorize]
+        [CompanyPermissionChecker(CompanyPermissionsConstants.UpdateCompanyInformationDataPermission)]
         [HttpPost]
         [Route("employer/company/my-company/update")]
         public async Task<IActionResult> UpdateMyCompany(UpdateCompanyDto model)
