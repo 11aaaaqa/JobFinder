@@ -58,6 +58,11 @@ app.UseStatusCodePages(context =>
         var encodedReturnUrl = HttpUtility.UrlEncode(returnUrl);
         response.Redirect($"auth/login?returnUrl={encodedReturnUrl}");
     }
+
+    if (response.StatusCode == (int)HttpStatusCode.Forbidden)
+    {
+        response.Redirect("/forbidden");
+    }
     return Task.CompletedTask;
 });
 
