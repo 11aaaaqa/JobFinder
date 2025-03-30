@@ -1,5 +1,4 @@
 ﻿using EmployerMicroservice.Api.Database;
-using EmployerMicroservice.Api.Exceptions;
 using EmployerMicroservice.Api.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,7 +11,7 @@ namespace EmployerMicroservice.Api.Services.Company_permissions_services
             var employerPermissions = await context.EmployersPermissions
                 .SingleOrDefaultAsync(x => x.EmployerId == employerId);
             if (employerPermissions is null)
-                throw new EmployerHasntPermissionsException();
+                return new List<string>();
             return employerPermissions.Permissions;
         }
 
@@ -21,7 +20,7 @@ namespace EmployerMicroservice.Api.Services.Company_permissions_services
             var employerPermissions = await context.EmployersPermissions
                 .SingleOrDefaultAsync(x => x.EmployerId == employerId);
             if (employerPermissions is null)
-                throw new EmployerHasntPermissionsException();
+                return false;
             return employerPermissions.Permissions.Contains(permissionName);
         }
 
@@ -45,7 +44,7 @@ namespace EmployerMicroservice.Api.Services.Company_permissions_services
         {
             var employerPermissions = await context.EmployersPermissions.SingleOrDefaultAsync(x => x.EmployerId == employerId);
             if (employerPermissions is null)
-                throw new EmployerHasntPermissionsException();
+                return;
             context.EmployersPermissions.Remove(employerPermissions);
             await context.SaveChangesAsync();
         }
