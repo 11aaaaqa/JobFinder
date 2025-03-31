@@ -1,5 +1,6 @@
 ﻿using EmployerMicroservice.Api.DTOs;
 using EmployerMicroservice.Api.Services;
+using EmployerMicroservice.Api.Services.Company_permissions_services;
 using EmployerMicroservice.Api.Services.Pagination;
 using EmployerMicroservice.Api.Services.Searching_services;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +10,7 @@ namespace EmployerMicroservice.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     public class EmployerController(IEmployerRepository employerRepository, IPaginationService paginationService,
-        ISearchingService searchingService) : ControllerBase
+        ISearchingService searchingService, IEmployerPermissionsService employerPermissionsService) : ControllerBase
     {
         [HttpGet]
         [Route("GetEmployerById/{id}")]
@@ -78,6 +79,7 @@ namespace EmployerMicroservice.Api.Controllers
             bool isRemoved = await employerRepository.RemoveEmployerFromCompanyAsync(employerId);
             if (!isRemoved)
                 return BadRequest();
+            await employerPermissionsService.RemoveAllEmployerPermissions(employerId);
             return Ok();
         }
     }
