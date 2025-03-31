@@ -329,6 +329,13 @@ namespace Web.MVC.Controllers
 
             var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
 
+            var companyResponse = await httpClient.GetAsync($"{url}/api/Company/GetCompanyByCompanyId/{employer.CompanyId}");
+            companyResponse.EnsureSuccessStatusCode();
+            var company = await companyResponse.Content.ReadFromJsonAsync<CompanyResponse>();
+
+            if (company.FounderEmployerId == employer.Id)
+                return View("ActionError");
+
             var removeEmployerFromCompanyResponse = await httpClient.GetAsync($"{url}/api/Employer/RemoveEmployerFromCompany/{employer.Id}");
             removeEmployerFromCompanyResponse.EnsureSuccessStatusCode();
 
