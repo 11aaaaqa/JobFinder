@@ -115,6 +115,34 @@ else
                 @CompanyPermissionsConstants.DeleteCompanyPermission
             </p>
         }
+        @if (Model.Permissions.Contains(CompanyPermissionsConstants.ViewListOfEmployersRequestedJoiningPermission))
+        {
+            <p>
+                <input type="checkbox" name="Permissions" value="@CompanyPermissionsConstants.ViewListOfEmployersRequestedJoiningPermission" checked />
+                @CompanyPermissionsConstants.ViewListOfEmployersRequestedJoiningPermission
+            </p>
+        }
+        else
+        {
+            <p>
+                <input type="checkbox" name="Permissions" value="@CompanyPermissionsConstants.ViewListOfEmployersRequestedJoiningPermission" />
+                @CompanyPermissionsConstants.ViewListOfEmployersRequestedJoiningPermission
+            </p>
+        }
+        @if (Model.Permissions.Contains(CompanyPermissionsConstants.AcceptRejectEmployersRequestedJoiningPermission))
+        {
+            <p>
+                <input type="checkbox" name="Permissions" value="@CompanyPermissionsConstants.AcceptRejectEmployersRequestedJoiningPermission" checked />
+                @CompanyPermissionsConstants.AcceptRejectEmployersRequestedJoiningPermission
+            </p>
+        }
+        else
+        {
+            <p>
+                <input type="checkbox" name="Permissions" value="@CompanyPermissionsConstants.AcceptRejectEmployersRequestedJoiningPermission" />
+                @CompanyPermissionsConstants.AcceptRejectEmployersRequestedJoiningPermission
+            </p>
+        }
     </div>
     <h4>Вакансии</h4>
     <div class="permissions-block">
