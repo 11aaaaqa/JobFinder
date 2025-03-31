@@ -164,6 +164,7 @@ namespace Web.MVC.Controllers
         }
 
         [Authorize]
+        [CompanyPermissionChecker(CompanyPermissionsConstants.ViewListOfEmployersRequestedJoiningPermission)]
         [HttpGet]
         [Route("employer/company/my-company/employers-requested-joining")] 
         public async Task<IActionResult> GetEmployersRequestedJoiningMyCompany(int index = 1)
@@ -196,6 +197,7 @@ namespace Web.MVC.Controllers
         }
 
         [Authorize]
+        [CompanyPermissionChecker(CompanyPermissionsConstants.AcceptRejectEmployersRequestedJoiningPermission)]
         [HttpPost]
         [Route("employer/company/my-company/accept-employer-requested-joining")]
         public async Task<IActionResult> AcceptEmployerToJoinCompany(Guid requestId, string returnUrl)
@@ -220,6 +222,7 @@ namespace Web.MVC.Controllers
         }
 
         [Authorize]
+        [CompanyPermissionChecker(CompanyPermissionsConstants.AcceptRejectEmployersRequestedJoiningPermission)]
         [HttpPost]
         [Route("employer/company/my-company/reject-employer-requested-joining")]
         public async Task<IActionResult> RejectEmployerToJoinCompany(Guid requestId, string returnUrl)
@@ -233,6 +236,7 @@ namespace Web.MVC.Controllers
         }
 
         [Authorize]
+        [CompanyPermissionChecker(ColleaguesPermissionsConstants.ViewTheListOfColleaguesPermission)]
         [HttpGet]
         [Route("employer/company/my-company/colleagues")]
         public async Task<IActionResult> GetMyCompanyColleagues(string? query, int index = 1)
@@ -301,6 +305,7 @@ namespace Web.MVC.Controllers
         }
 
         [Authorize]
+        [CompanyPermissionChecker(ColleaguesPermissionsConstants.RemoveColleaguesPermission)]
         [HttpPost]
         [Route("employer/company/my-company/colleagues/remove-from-company")]
         public async Task<IActionResult> RemoveEmployerFromCompany(Guid employerId, string returnUrl)
@@ -331,6 +336,7 @@ namespace Web.MVC.Controllers
         }
 
         [Authorize]
+        [CompanyPermissionChecker(ColleaguesPermissionsConstants.ViewColleaguesPermissionsPermission)]
         [HttpGet]
         [Route("employer/company/my-company/colleagues/update-permissions")]
         public async Task<IActionResult> UpdateEmployerCompanyPermissions(Guid employerId, bool? isUpdated)
@@ -358,6 +364,7 @@ namespace Web.MVC.Controllers
         }
 
         [Authorize]
+        [CompanyPermissionChecker(ColleaguesPermissionsConstants.GivePermissionsToColleaguesPermission)]
         [HttpPost]
         [Route("employer/company/my-company/colleagues/update-permissions")]
         public async Task<IActionResult> UpdateEmployerCompanyPermissions(UpdateEmployerCompanyPermissionsDto model)
