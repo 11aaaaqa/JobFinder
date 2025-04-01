@@ -384,5 +384,23 @@ namespace Web.MVC.Controllers
 
             return RedirectToAction("UpdateEmployerCompanyPermissions", new { isUpdated = true, employerId = model.EmployerId });
         }
+
+        [Authorize]
+        [CompanyPermissionChecker(CompanyPermissionsConstants.DeleteCompanyPermission)]
+        [HttpPost]
+        [Route("employer/company/my-company/delete")]
+        public async Task<IActionResult> DeleteMyCompany()
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+
+            var employerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
+            employerResponse.EnsureSuccessStatusCode();
+
+            var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
+            
+            var deleteCompanyResponse = await httpClient.DeleteAsync($"{url}/api/Company/DeleteCompany/{employer.CompanyId}");
+            deleteCompanyResponse.EnsureSuccessStatusCode();
+            return RedirectToAction("GetMyCompany", "Company");
+        }
     }
 }
