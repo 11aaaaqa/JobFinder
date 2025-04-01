@@ -401,6 +401,6 @@ namespace Web.MVC.Controllers
             var deleteCompanyResponse = await httpClient.DeleteAsync($"{url}/api/Company/DeleteCompany/{employer.CompanyId}");
             deleteCompanyResponse.EnsureSuccessStatusCode();
             return RedirectToAction("GetMyCompany", "Company");
-        }
+        } 
     }
 }
