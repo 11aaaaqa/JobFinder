@@ -43,10 +43,15 @@ namespace CompanyMicroservice.Api.Controllers
         }
 
         [HttpDelete]
-        [Route("DeleteCompany")]
-        public async Task<IActionResult> DeleteCompanyAsync([FromBody] DeleteCompanyDto model)
+        [Route("DeleteCompany/{companyId}")]
+        public async Task<IActionResult> DeleteCompanyAsync(Guid companyId)
         {
-            await companyRepository.DeleteCompanyAsync(model.CompanyId);
+            await companyRepository.DeleteCompanyAsync(companyId);
+
+            await kafkaProducer.ProduceAsync("company-deleted-topic", new Message<Null, string>
+            {
+                Value = JsonSerializer.Serialize(new { CompanyId = companyId })
+            });
 
             return Ok();
         }
