@@ -16,6 +16,7 @@ builder.Services.AddTransient<ISearchingService, SearchingService> ();
 builder.Services.AddTransient<IPaginationService, PaginationService>();
 builder.Services.AddTransient<IEmployerRepository, EmployerRepository>();
 
+builder.Services.AddHostedService<CompanyDeletedKafkaConsumer>();
 builder.Services.AddHostedService<UserRegisteredKafkaConsumer>();
 builder.Services.AddHostedService<CompanyAddedKafkaConsumer>();
 
