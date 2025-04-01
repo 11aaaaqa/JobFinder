@@ -138,7 +138,7 @@ namespace CompanyMicroservice.UnitTests
             mock.Setup(x => x.DeleteCompanyAsync(id));
             var controller = new CompanyController(mock.Object, new Mock<IKafkaProducer>().Object);
 
-            var result = await controller.DeleteCompanyAsync(new DeleteCompanyDto { CompanyId = id });
+            var result = await controller.DeleteCompanyAsync(id);
 
             Assert.IsType<OkResult>(result);
             mock.VerifyAll();
