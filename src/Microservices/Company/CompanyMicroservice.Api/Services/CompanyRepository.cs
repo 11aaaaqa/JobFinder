@@ -33,7 +33,8 @@ namespace CompanyMicroservice.Api.Services
 
         public async Task DeleteCompanyAsync(Guid id)
         {
-            context.Companies.Remove(new Company{Id = id});
+            var company = await context.Companies.SingleAsync(x => x.Id == id);
+            context.Companies.Remove(company);
             await context.SaveChangesAsync();
         }
     }
