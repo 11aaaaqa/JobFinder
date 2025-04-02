@@ -45,6 +45,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{12FCFCFA
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CompanyMicroservice.UnitTests", "src\Microservices\Company\tests\CompanyMicroservice.UnitTests\CompanyMicroservice.UnitTests.csproj", "{6E8A2909-1EA5-4D69-A48F-01D40CC69E50}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Vacancy", "Vacancy", "{27157472-E0FE-4054-9006-7417364A8C77}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VacancyMicroservice.Api", "src\Microservices\Vacancy\VacancyMicroservice.Api\VacancyMicroservice.Api.csproj", "{DCF09C19-E151-45BC-A873-B1C1C05F71DB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -91,6 +95,10 @@ Global
 		{6E8A2909-1EA5-4D69-A48F-01D40CC69E50}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6E8A2909-1EA5-4D69-A48F-01D40CC69E50}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6E8A2909-1EA5-4D69-A48F-01D40CC69E50}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DCF09C19-E151-45BC-A873-B1C1C05F71DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCF09C19-E151-45BC-A873-B1C1C05F71DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCF09C19-E151-45BC-A873-B1C1C05F71DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCF09C19-E151-45BC-A873-B1C1C05F71DB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -115,5 +123,7 @@ Global
 		{6F7DA3CF-023A-4BEB-9B11-576A8974491A} = {54D04853-DA03-4F89-8991-4AE2BF940F46}
 		{12FCFCFA-68C9-4B08-A27F-08CBE327A3E3} = {54D04853-DA03-4F89-8991-4AE2BF940F46}
 		{6E8A2909-1EA5-4D69-A48F-01D40CC69E50} = {12FCFCFA-68C9-4B08-A27F-08CBE327A3E3}
+		{27157472-E0FE-4054-9006-7417364A8C77} = {62C5CF3F-E56E-4E4D-9192-FB9B689CFFD6}
+		{DCF09C19-E151-45BC-A873-B1C1C05F71DB} = {27157472-E0FE-4054-9006-7417364A8C77}
 	EndGlobalSection
 EndGlobal
