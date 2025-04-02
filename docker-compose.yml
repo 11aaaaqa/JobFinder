@@ -81,6 +81,32 @@ services:
       - gateway-api
       - kafka
 
+  vacancy-microservice-api:
+    image: ${DOCKER_REGISTRY-}vacancymicroservice-api
+    build:
+      context: .
+      dockerfile: src/Microservices/Vacancy/VacancyMicroservice.Api/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - 25912:8080
+    depends_on:
+      - postgres-vacancy
+      - gateway-api
+      - kafka
+
+  postgres-vacancy:
+    container_name: postgres-vacancy
+    image: postgres:latest
+    expose:
+      - 5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: JobFinderVacancyMicroservice
+    volumes: 
+      - postgres-vacancy-data:/var/lib/postgresql/data
+
   postgres-company:
     container_name: postgres-company
     image: postgres:latest
@@ -162,3 +188,4 @@ volumes:
   postgres-employee-data: {}
   postgres-employer-data: {}
   postgres-company-data: {}
+  postgres-vacancy-data: {}
