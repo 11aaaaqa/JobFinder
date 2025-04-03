@@ -29,16 +29,16 @@ namespace VacancyMicroservice.Api.Services
             return vacancies;
         }
 
-        public async Task<List<Vacancy>> GetFilteredVacanciesAsync(string profession, string? position, int? salaryFrom, int? salaryTo,
+        public async Task<List<Vacancy>> GetFilteredVacanciesAsync(string? profession, string? position, int? salaryFrom,
             string? workExperience, string? employmentType, bool? remoteWork, List<string>? vacancyCities, int pageNumber)
         {
-            var vacancies = context.Vacancies.Where(x => x.Profession.ToLower() == profession.ToLower()).AsQueryable();
+            var vacancies = context.Vacancies.AsQueryable();
+            if (profession is not null)
+                vacancies = vacancies.Where(x => x.Profession.ToLower() == profession.ToLower());
             if (position is not null)
                 vacancies = vacancies.Where(x => x.Position.ToLower() == position.ToLower());
             if (salaryFrom is not null)
                 vacancies = vacancies.Where(x => x.SalaryTo >= salaryFrom);
-            if (salaryTo is not null)
-                vacancies = vacancies.Where(x => x.SalaryFrom <= salaryTo );
             if (workExperience is not null)
                 vacancies = vacancies.Where(x => x.WorkExperience.ToLower() == workExperience);
             if (employmentType is not null)

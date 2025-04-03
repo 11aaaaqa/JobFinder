@@ -8,7 +8,7 @@ namespace VacancyMicroservice.Api.Services
         Task<Vacancy?> GetVacancyByIdAsync(Guid vacancyId);
         Task<List<Vacancy>> GetAllVacanciesAsync(int pageNumber);
         Task<List<Vacancy>> SearchVacanciesAsync(string searchingQuery, int pageNumber);
-        Task<List<Vacancy>> GetFilteredVacanciesAsync(string profession, string? position, int? salaryFrom, int? salaryTo, string? workExperience,
+        Task<List<Vacancy>> GetFilteredVacanciesAsync(string profession, string? position, int? salaryFrom, string? workExperience,
             string? employmentType, bool? remoteWork, List<string>? vacancyCities, int pageNumber);
         Task<List<Vacancy>> GetVacanciesByCompanyIdAsync(Guid companyId, int pageNumber);
         Task AddVacancyAsync(Vacancy vacancy);
