@@ -29,26 +29,25 @@ namespace VacancyMicroservice.Api.Services
             return vacancies;
         }
 
-        public async Task<List<Vacancy>> GetFilteredVacanciesAsync(string? profession, string? position, int? salaryFrom,
-            string? workExperience, string? employmentType, bool? remoteWork, List<string>? vacancyCities, int pageNumber)
+        public async Task<List<Vacancy>> GetFilteredVacanciesAsync(GetFilteredVacanciesDto model)
         {
             var vacancies = context.Vacancies.AsQueryable();
-            if (profession is not null)
-                vacancies = vacancies.Where(x => x.Profession.ToLower() == profession.ToLower());
-            if (position is not null)
-                vacancies = vacancies.Where(x => x.Position.ToLower() == position.ToLower());
-            if (salaryFrom is not null)
-                vacancies = vacancies.Where(x => x.SalaryTo >= salaryFrom);
-            if (workExperience is not null)
-                vacancies = vacancies.Where(x => x.WorkExperience.ToLower() == workExperience);
-            if (employmentType is not null)
-                vacancies = vacancies.Where(x => x.EmploymentType.ToLower() == employmentType.ToLower());
-            if (remoteWork is not null)
-                vacancies = vacancies.Where(x => x.RemoteWork == remoteWork);
-            if (vacancyCities is not null)
-                vacancies = vacancies.Where(x => vacancyCities.Contains(x.VacancyCity));
+            if (model.Profession is not null)
+                vacancies = vacancies.Where(x => x.Profession.ToLower() == model.Profession.ToLower());
+            if (model.Position is not null)
+                vacancies = vacancies.Where(x => x.Position.ToLower() == model.Position.ToLower());
+            if (model.SalaryFrom is not null)
+                vacancies = vacancies.Where(x => x.SalaryTo >= model.SalaryFrom);
+            if (model.WorkExperience is not null)
+                vacancies = vacancies.Where(x => x.WorkExperience.ToLower() == model.WorkExperience);
+            if (model.EmploymentType is not null)
+                vacancies = vacancies.Where(x => x.EmploymentType.ToLower() == model.EmploymentType.ToLower());
+            if (model.RemoteWork is not null)
+                vacancies = vacancies.Where(x => x.RemoteWork == model.RemoteWork);
+            if (model.VacancyCities is not null)
+                vacancies = vacancies.Where(x => model.VacancyCities.Contains(x.VacancyCity));
 
-            return await vacancies.Skip((pageNumber - 1) * PaginationConstants.VacancyPageSize)
+            return await vacancies.Skip((model.PageNumber - 1) * PaginationConstants.VacancyPageSize)
                 .Take(PaginationConstants.VacancyPageSize).ToListAsync();
         }
 
