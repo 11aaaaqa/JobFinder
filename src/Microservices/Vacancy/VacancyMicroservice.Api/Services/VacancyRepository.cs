@@ -21,25 +21,22 @@ namespace VacancyMicroservice.Api.Services
         {
             searchingQuery = searchingQuery.ToLower();
             var vacancies = await context.Vacancies.Where(x => x.CompanyName.ToLower().Contains(searchingQuery)
-                                                               | x.Position.ToLower().Contains(searchingQuery) |
-                                                               x.Profession.ToLower().Contains(searchingQuery))
+                                                               | x.Position.ToLower().Contains(searchingQuery))
                 .Skip((pageNumber - 1) * PaginationConstants.VacancyPageSize)
                 .Take(PaginationConstants.VacancyPageSize)
                 .ToListAsync();
             return vacancies;
         }
 
-        public async Task<List<Vacancy>> GetFilteredVacanciesAsync(GetFilteredVacanciesDto model)
+        public async Task<List<Vacancy>> GetFilteredVacanciesAsync(GetFilteredVacanciesDto model, int pageNumber)
         {
             var vacancies = context.Vacancies.AsQueryable();
-            if (model.Profession is not null)
-                vacancies = vacancies.Where(x => x.Profession.ToLower() == model.Profession.ToLower());
             if (model.Position is not null)
                 vacancies = vacancies.Where(x => x.Position.ToLower() == model.Position.ToLower());
             if (model.SalaryFrom is not null)
                 vacancies = vacancies.Where(x => x.SalaryTo >= model.SalaryFrom);
             if (model.WorkExperience is not null)
-                vacancies = vacancies.Where(x => x.WorkExperience.ToLower() == model.WorkExperience);
+                vacancies = vacancies.Where(x => x.WorkExperience.ToLower() == model.WorkExperience.ToLower());
             if (model.EmploymentType is not null)
                 vacancies = vacancies.Where(x => x.EmploymentType.ToLower() == model.EmploymentType.ToLower());
             if (model.RemoteWork is not null)
@@ -47,7 +44,7 @@ namespace VacancyMicroservice.Api.Services
             if (model.VacancyCities is not null)
                 vacancies = vacancies.Where(x => model.VacancyCities.Contains(x.VacancyCity));
 
-            return await vacancies.Skip((model.PageNumber - 1) * PaginationConstants.VacancyPageSize)
+            return await vacancies.Skip((pageNumber - 1) * PaginationConstants.VacancyPageSize)
                 .Take(PaginationConstants.VacancyPageSize).ToListAsync();
         }
 
@@ -77,12 +74,10 @@ namespace VacancyMicroservice.Api.Services
             var updatedVacancy = new Vacancy
             {
                 Id = model.Id, Address = model.Address, CompanyId = vacancy.CompanyId,
-                CompanyName = vacancy.CompanyName,
-                Position = model.Position, Description = model.Description,
+                CompanyName = vacancy.CompanyName, Position = model.Position, Description = model.Description, 
                 EmployerContactEmail = model.EmployerContactEmail,
                 EmployerContactPhoneNumber = model.EmployerContactPhoneNumber, EmploymentType = model.EmploymentType,
-                Profession = model.Profession, RemoteWork = model.RemoteWork, SalaryFrom = model.SalaryFrom,
-                SalaryTo = model.SalaryTo,
+                RemoteWork = model.RemoteWork, SalaryFrom = model.SalaryFrom, SalaryTo = model.SalaryTo,
                 VacancyCity = model.VacancyCity, WorkExperience = model.WorkExperience,
                 WorkerResponsibilities = model.WorkerResponsibilities
             };
