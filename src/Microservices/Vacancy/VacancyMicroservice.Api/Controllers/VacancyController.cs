@@ -2,12 +2,13 @@
 using VacancyMicroservice.Api.DTOs;
 using VacancyMicroservice.Api.Models;
 using VacancyMicroservice.Api.Services;
+using VacancyMicroservice.Api.Services.Pagination;
 
 namespace VacancyMicroservice.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class VacancyController(IVacancyRepository vacancyRepository) : ControllerBase
+    public class VacancyController(IVacancyRepository vacancyRepository, IPaginationService paginationService) : ControllerBase
     {
         [HttpGet]
         [Route("GetVacancyById/{vacancyId}")]
@@ -31,8 +32,8 @@ namespace VacancyMicroservice.Api.Controllers
 
         [HttpGet]
         [Route("GetFilteredVacancies")]
-        public async Task<IActionResult> GetFilteredVacanciesAsync(GetFilteredVacanciesDto model)
-            => Ok(await vacancyRepository.GetFilteredVacanciesAsync(model));
+        public async Task<IActionResult> GetFilteredVacanciesAsync(GetFilteredVacanciesDto model, int pageNumber)
+            => Ok(await vacancyRepository.GetFilteredVacanciesAsync(model, pageNumber));
 
         [HttpGet]
         [Route("GetVacanciesByCompanyId/{companyId}")]
@@ -62,5 +63,25 @@ namespace VacancyMicroservice.Api.Controllers
             await vacancyRepository.UpdateVacancyAsync(model);
             return Ok();
         }
+
+        [HttpGet]
+        [Route("DoesNextAllVacanciesPageExist")]
+        public async Task<IActionResult> DoesNextAllVacanciesPageExistAsync(int currentPageNumber)
+            => Ok(await paginationService.DoesNextAllVacanciesPageExist(currentPageNumber));
+
+        [HttpGet]
+        [Route("DoesNextSearchVacanciesPageExist")]
+        public async Task<IActionResult> DoesNextSearchVacanciesPageExistAsync(string searchingQuery, int currentPageNumber)
+            => Ok(await paginationService.DoesNextSearchVacanciesPageExist(searchingQuery, currentPageNumber));
+
+        [HttpGet]
+        [Route("DoesNextFilteredVacanciesPageExist")]
+        public async Task<IActionResult> DoesNextFilteredVacanciesPageExistAsync(GetFilteredVacanciesDto model, int currentPageNumber)
+            => Ok(await paginationService.DoesNextFilteredVacanciesPageExist(model, currentPageNumber));
+
+        [HttpGet]
+        [Route("DoesNextVacanciesByCompanyIdPageExist/{companyId}")]
+        public async Task<IActionResult> DoesNextVacanciesByCompanyIdPageExistAsync(Guid companyId, int currentPageNumber)
+            => Ok(await paginationService.DoesNextVacanciesByCompanyIdPageExist(companyId, currentPageNumber));
     }
 }
