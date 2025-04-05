@@ -9,6 +9,5 @@
         public string? EmploymentType { get; set; }
         public bool? RemoteWork { get; set; }
         public List<string>? VacancyCities { get; set; }
-        public int PageNumber { get; set; }
     }
 }
