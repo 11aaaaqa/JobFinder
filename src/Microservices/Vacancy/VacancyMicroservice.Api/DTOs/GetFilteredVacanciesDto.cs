@@ -2,7 +2,6 @@
 {
     public class GetFilteredVacanciesDto
     {
-        public string? Profession { get; set; }
         public string? Position { get; set; }
         public int? SalaryFrom { get; set; }
         public string? WorkExperience { get; set; }
