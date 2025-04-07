@@ -155,12 +155,17 @@ namespace Web.MVC.Controllers
         [Route("employer/company/my-company/update")]
         public async Task<IActionResult> UpdateMyCompany(UpdateCompanyDto model)
         {
-            using HttpClient httpClient = httpClientFactory.CreateClient();
-            using StringContent jsonContent = new(JsonSerializer.Serialize(model), Encoding.UTF8, "application/json");
+            if (ModelState.IsValid)
+            {
+                using HttpClient httpClient = httpClientFactory.CreateClient();
+                using StringContent jsonContent = new(JsonSerializer.Serialize(model), Encoding.UTF8, "application/json");
 
-            var response = await httpClient.PatchAsync($"{url}/api/Company/UpdateCompany", jsonContent);
-            response.EnsureSuccessStatusCode();
-            return RedirectToAction("UpdateMyCompany", new { isUpdated = true });
+                var response = await httpClient.PatchAsync($"{url}/api/Company/UpdateCompany", jsonContent);
+                response.EnsureSuccessStatusCode();
+                return RedirectToAction("UpdateMyCompany", new { isUpdated = true });
+            }
+
+            return View(model);
         }
 
         [Authorize]
@@ -378,7 +383,7 @@ namespace Web.MVC.Controllers
         {
             using HttpClient httpClient = httpClientFactory.CreateClient();
             using StringContent jsonContent = new(JsonSerializer.Serialize(model), Encoding.UTF8, "application/json");
-            
+
             var response = await httpClient.PostAsync($"{url}/api/EmployerPermissions/AddPermissions", jsonContent);
             response.EnsureSuccessStatusCode();
 
