@@ -18,7 +18,6 @@ namespace VacancyMicroservice.Api.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     CompanyId = table.Column<Guid>(type: "uuid", nullable: false),
                     CompanyName = table.Column<string>(type: "text", nullable: false),
-                    Profession = table.Column<string>(type: "text", nullable: false),
                     Position = table.Column<string>(type: "text", nullable: false),
                     SalaryFrom = table.Column<int>(type: "integer", nullable: true),
                     SalaryTo = table.Column<int>(type: "integer", nullable: true),
@@ -29,8 +28,8 @@ namespace VacancyMicroservice.Api.Migrations
                     Address = table.Column<string>(type: "text", nullable: false),
                     WorkerResponsibilities = table.Column<string>(type: "text", nullable: true),
                     Description = table.Column<string>(type: "text", nullable: true),
-                    EmployerContactPhoneNumber = table.Column<string>(type: "text", nullable: false),
-                    EmployerContactEmail = table.Column<string>(type: "text", nullable: false)
+                    EmployerContactPhoneNumber = table.Column<string>(type: "text", nullable: true),
+                    EmployerContactEmail = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {

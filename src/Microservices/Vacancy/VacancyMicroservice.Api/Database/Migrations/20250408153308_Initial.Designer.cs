@@ -12,8 +12,8 @@ using VacancyMicroservice.Api.Database;
 namespace VacancyMicroservice.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250405151031_remove_profession_column")]
-    partial class remove_profession_column
+    [Migration("20250408153308_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -46,11 +46,9 @@ namespace VacancyMicroservice.Api.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("EmployerContactEmail")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("EmployerContactPhoneNumber")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("EmploymentType")
