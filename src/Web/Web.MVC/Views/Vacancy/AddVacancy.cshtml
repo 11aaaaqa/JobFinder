@@ -1,0 +1,90 @@
+﻿@using Web.MVC.Constants.Vacancy
+@model Web.MVC.DTOs.Vacancy.AddVacancyDto
+
+<form method="post">
+    <div asp-validation-summary="ModelOnly"></div>
+    
+    <input asp-for="Id" type="hidden"/>
+    <input asp-for="CompanyId" type="hidden"/>
+    <input asp-for="CompanyName" type="hidden" />
+    
+    <h2>Размещение вакансии</h2>
+    
+    <div class="mb-2">
+        <h3>Долность</h3>
+        <input asp-for="Position" placeholder="Например: Менеджер по продажам"/>
+    </div>
+    
+    <div class="mb-2">
+        <h3>Зарплата (в месяц)</h3>
+        <input asp-for="SalaryFrom" placeholder="от"/>
+        <input asp-for="SalaryTo" placeholder="до"/>
+    </div>
+    
+    <div class="mb-2">
+        <h3>Опыт работы</h3>
+        <p>
+            <input type="radio" asp-for="WorkExperience" value="@WorkExperienceConstants.NoExperience" />
+            @WorkExperienceConstants.NoExperience
+        </p>
+        <p>
+            <input type="radio" asp-for="WorkExperience" value="@WorkExperienceConstants.LessThanOneYear" />
+            @WorkExperienceConstants.LessThanOneYear
+        </p>
+        <p>
+            <input type="radio" asp-for="WorkExperience" value="@WorkExperienceConstants.FromOneToThreeYears" />
+            @WorkExperienceConstants.FromOneToThreeYears
+        </p>
+        <p>
+            <input type="radio" asp-for="WorkExperience" value="@WorkExperienceConstants.FromThreeToSixYears" />
+            @WorkExperienceConstants.FromThreeToSixYears
+        </p>
+        <p>
+            <input type="radio" asp-for="WorkExperience" value="@WorkExperienceConstants.MoreThanSixYears" />
+            @WorkExperienceConstants.MoreThanSixYears
+        </p>
+    </div>
+    
+    <div class="mb-2">
+        <h3>Занятость</h3>
+        <p>
+            <input type="radio" asp-for="EmploymentType" value="@EmploymentTypeConstants.FullTimeEmploymentTypeConstant" />
+            @EmploymentTypeConstants.FullTimeEmploymentTypeConstant
+        </p>
+        <p>
+            <input type="radio" asp-for="EmploymentType" value="@EmploymentTypeConstants.PartTimeEmploymentTypeConstant" />
+            @EmploymentTypeConstants.PartTimeEmploymentTypeConstant
+        </p>
+        <p>
+            <input type="checkbox" asp-for="RemoteWork" /> Удаленная работа
+        </p>
+    </div>
+    
+    <div class="mb-2">
+        <h3>Где искать сотрудника</h3>
+        <input asp-for="VacancyCity" placeholder="Введите название города"/>
+    </div>
+    
+    <div class="mb-2">
+        <h3>Адрес места работы</h3>
+        <input asp-for="Address" placeholder="Введите адрес"/>
+    </div>
+    
+    <div class="mb-2">
+        <h3>Обязанности работника</h3>
+        <input asp-for="WorkerResponsibilities" placeholder="Введите обязанности работника"/>
+    </div>
+    
+    <div class="mb-2">
+        <h3>Описание вакансии</h3>
+        <input asp-for="Description" placeholder="Введите описание вакасии"/>
+    </div>
+    
+    <div>
+        <h3>Укажите вашу контактную информацию</h3>
+        <input asp-for="EmployerContactEmail" placeholder="Введите вашу эл. почту"/>
+        <input asp-for="EmployerContactPhoneNumber" placeholder="Введите ваш номер телефона"/>
+    </div>
+    
+    <input type="submit" value="Создать"/>
+</form>
