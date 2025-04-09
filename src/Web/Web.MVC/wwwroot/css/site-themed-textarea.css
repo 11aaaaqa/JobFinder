@@ -1,0 +1,17 @@
+﻿.textarea {
+    border: 1.8px solid #ccc;
+    padding: 11px;
+    font-size: 16px;
+    outline: none;
+    border-radius: 5px;
+    width: 35%;
+    overflow: hidden;
+    resize: none;
+    transition: border-color 0.1s, box-shadow 0.1s;
+}
+
+.textarea:focus {
+    border-color: deepskyblue;
+    box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
+    outline: none;
+}
