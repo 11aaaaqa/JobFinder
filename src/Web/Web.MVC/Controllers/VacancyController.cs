@@ -76,6 +76,11 @@ namespace Web.MVC.Controllers
         {
             if (ModelState.IsValid)
             {
+                if (model.SalaryFrom > model.SalaryTo)
+                {
+                    ModelState.AddModelError(string.Empty, "Укажите корректную зарплату");
+                    return View(model);
+                }
                 using HttpClient httpClient = httpClientFactory.CreateClient();
                 using StringContent jsonContent = new(JsonSerializer.Serialize(model), Encoding.UTF8, "application/json");
                 var response = await httpClient.PostAsync($"{url}/api/Vacancy/AddVacancy", jsonContent);
