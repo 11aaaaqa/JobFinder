@@ -18,7 +18,9 @@ namespace Web.MVC.DTOs.Vacancy
         public string VacancyCity { get; set; }
         [Required]
         public string Address { get; set; }
+        [StringLength(1500)]
         public string? WorkerResponsibilities { get; set; }
+        [StringLength(1000)]
         public string? Description { get; set; }
         [DataType(DataType.PhoneNumber)]
         public string? EmployerContactPhoneNumber { get; set; }
