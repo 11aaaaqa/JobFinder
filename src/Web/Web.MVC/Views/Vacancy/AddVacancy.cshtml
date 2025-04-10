@@ -1,9 +1,24 @@
 ﻿@using Web.MVC.Constants.Vacancy
 @model Web.MVC.DTOs.Vacancy.AddVacancyDto
+<link rel="stylesheet" href="~/css/vacancy/add-vacancy.css"/>
+<link rel="stylesheet" href="~/css/site-themed-textarea.css"/>
 
 <form method="post">
     <div asp-validation-summary="ModelOnly"></div>
     
+    <span asp-validation-for="Position"></span>
+    <span asp-validation-for="SalaryFrom"></span>
+    <span asp-validation-for="SalaryTo"></span>
+    <span asp-validation-for="WorkExperience"></span>
+    <span asp-validation-for="EmploymentType"></span>
+    <span asp-validation-for="RemoteWork"></span>
+    <span asp-validation-for="VacancyCity"></span>
+    <span asp-validation-for="Address"></span>
+    <span asp-validation-for="WorkerResponsibilities"></span>
+    <span asp-validation-for="Description"></span>
+    <span asp-validation-for="EmployerContactPhoneNumber"></span>
+    <span asp-validation-for="EmployerContactEmail"></span>
+
     <input asp-for="Id" type="hidden"/>
     <input asp-for="CompanyId" type="hidden"/>
     <input asp-for="CompanyName" type="hidden" />
@@ -11,14 +26,14 @@
     <h2>Размещение вакансии</h2>
     
     <div class="mb-2">
-        <h3>Долность</h3>
-        <input asp-for="Position" placeholder="Например: Менеджер по продажам"/>
+        <h3>Должность</h3>
+        <input class="add-vacancy-text-base add-vacancy-text" asp-for="Position" placeholder="Например: Менеджер по продажам" />
     </div>
     
     <div class="mb-2">
         <h3>Зарплата (в месяц)</h3>
-        <input asp-for="SalaryFrom" placeholder="от"/>
-        <input asp-for="SalaryTo" placeholder="до"/>
+        <input class="add-vacancy-text-base add-vacancy-salary" asp-for="SalaryFrom" placeholder="от" />
+        <input class="add-vacancy-text-base add-vacancy-salary" asp-for="SalaryTo" placeholder="до" />
     </div>
     
     <div class="mb-2">
@@ -62,29 +77,32 @@
     
     <div class="mb-2">
         <h3>Где искать сотрудника</h3>
-        <input asp-for="VacancyCity" placeholder="Введите название города"/>
+        <input class="add-vacancy-text-base add-vacancy-text" asp-for="VacancyCity" placeholder="Введите название города" />
     </div>
     
     <div class="mb-2">
         <h3>Адрес места работы</h3>
-        <input asp-for="Address" placeholder="Введите адрес"/>
+        <input class="add-vacancy-text-base add-vacancy-text" asp-for="Address" placeholder="Введите адрес" />
     </div>
     
     <div class="mb-2">
         <h3>Обязанности работника</h3>
-        <input asp-for="WorkerResponsibilities" placeholder="Введите обязанности работника"/>
+        <textarea class="textarea" rows="2" asp-for="WorkerResponsibilities" placeholder="Введите обязанности работника" 
+        oninput="autoResize(this)"></textarea>
     </div>
     
     <div class="mb-2">
         <h3>Описание вакансии</h3>
-        <input asp-for="Description" placeholder="Введите описание вакасии"/>
+        <textarea class="textarea" rows="2" asp-for="Description" placeholder="Введите описание вакасии" oninput="autoResize(this)"></textarea>
     </div>
     
     <div>
         <h3>Укажите вашу контактную информацию</h3>
-        <input asp-for="EmployerContactEmail" placeholder="Введите вашу эл. почту"/>
-        <input asp-for="EmployerContactPhoneNumber" placeholder="Введите ваш номер телефона"/>
+        <input class="mb-2 add-vacancy-text-base add-vacancy-text" asp-for="EmployerContactEmail" placeholder="Введите вашу эл. почту" /><br />
+        <input class="add-vacancy-text-base add-vacancy-text" asp-for="EmployerContactPhoneNumber" placeholder="Введите ваш номер телефона" />
     </div>
     
     <input type="submit" value="Создать"/>
 </form>
+
+<script src="~/js/textarea-resizing.js"></script>
