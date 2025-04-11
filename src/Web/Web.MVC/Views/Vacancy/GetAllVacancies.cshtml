@@ -1,52 +1,62 @@
 ﻿@using Web.MVC.Constants.Vacancy
 @model List<Web.MVC.Models.ApiResponses.Vacancy.VacancyResponse>
 
+<link rel="stylesheet" href="~/css/vacancy/get-all-vacancies.css"/>
+
 @foreach (var vacancy in Model)
 {
-    <a asp-controller="Vacancy" asp-action="GetVacancy">
-        <div>
+    <a class="get-vacancy-link" asp-controller="Vacancy" asp-action="GetVacancy">
+        <div class="vacancy-block">
             <h4>@vacancy.Position</h4>
-            <div>
+            <div class="vacancy-info mb-1">
                 @if (vacancy.SalaryFrom is not null && vacancy.SalaryTo is not null)
                 {
-                    <p>@vacancy.SalaryFrom - @vacancy.SalaryTo ₽ за месяц</p>
+                    @if (vacancy.SalaryTo == vacancy.SalaryFrom)
+                    {
+                        <p class="salary-p">@vacancy.SalaryFrom ₽ за месяц</p>
+                    }
+                    else
+                    {
+                        <p class="salary-p">@vacancy.SalaryFrom - @vacancy.SalaryTo ₽ за месяц</p>
+                    }
                 }
                 @if (vacancy.SalaryFrom is not null && vacancy.SalaryTo is null)
                 {
-                    <p>от @vacancy.SalaryFrom ₽ за месяц</p>
+                    <p class="salary-p">от @vacancy.SalaryFrom ₽ за месяц</p>
                 }
                 @if (vacancy.SalaryFrom is null && vacancy.SalaryTo is not null)
                 {
-                    <p>до @vacancy.SalaryTo ₽ за месяц</p>
-                }
-
-
-                @if (vacancy.WorkExperience == WorkExperienceConstants.NoExperience)
-                {
-                    <p>Без опыта</p>
-                }
-                @if (vacancy.WorkExperience == WorkExperienceConstants.LessThanOneYear)
-                {
-                    <p>Опыт менее года</p>
-                }
-                @if (vacancy.WorkExperience == WorkExperienceConstants.FromOneToThreeYears)
-                {
-                    <p>Опыт 1-3 года</p>
-                }
-                @if (vacancy.WorkExperience == WorkExperienceConstants.FromThreeToSixYears)
-                {
-                    <p>Опыт 3-6 лет</p>
-                }
-                @if (vacancy.WorkExperience == WorkExperienceConstants.MoreThanSixYears)
-                {
-                    <p>Опыт более 6 лет</p>
+                    <p class="salary-p">до @vacancy.SalaryTo ₽ за месяц</p>
                 }
                 
+                <div class="vacancy-info-internal">
+                    @if (vacancy.WorkExperience == WorkExperienceConstants.NoExperience)
+                    {
+                        <p class="experience-p">Без опыта</p>
+                    }
+                    @if (vacancy.WorkExperience == WorkExperienceConstants.LessThanOneYear)
+                    {
+                        <p class="experience-p">Опыт менее года</p>
+                    }
+                    @if (vacancy.WorkExperience == WorkExperienceConstants.FromOneToThreeYears)
+                    {
+                        <p class="experience-p">Опыт 1-3 года</p>
+                    }
+                    @if (vacancy.WorkExperience == WorkExperienceConstants.FromThreeToSixYears)
+                    {
+                        <p class="experience-p">Опыт 3-6 лет</p>
+                    }
+                    @if (vacancy.WorkExperience == WorkExperienceConstants.MoreThanSixYears)
+                    {
+                        <p class="experience-p">Опыт более 6 лет</p>
+                    }
 
-                @if (vacancy.RemoteWork)
-                {
-                    <p>Можно удаленно</p>
-                }
+
+                    @if (vacancy.RemoteWork)
+                    {
+                        <p class="remote-work-p">Можно удаленно</p>
+                    }
+                </div>
             </div>
             <p>@vacancy.CompanyName</p>
             <p>@vacancy.VacancyCity</p>
