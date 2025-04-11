@@ -13,20 +13,20 @@
                 {
                     @if (vacancy.SalaryTo == vacancy.SalaryFrom)
                     {
-                        <p class="salary-p">@vacancy.SalaryFrom ₽ за месяц</p>
+                        <p class="salary-p format-number">@vacancy.SalaryFrom ₽ за месяц</p>
                     }
                     else
                     {
-                        <p class="salary-p">@vacancy.SalaryFrom - @vacancy.SalaryTo ₽ за месяц</p>
+                        <p class="salary-p format-number">@vacancy.SalaryFrom - @vacancy.SalaryTo ₽ за месяц</p>
                     }
                 }
                 @if (vacancy.SalaryFrom is not null && vacancy.SalaryTo is null)
                 {
-                    <p class="salary-p">от @vacancy.SalaryFrom ₽ за месяц</p>
+                    <p class="salary-p format-number">от @vacancy.SalaryFrom ₽ за месяц</p>
                 }
                 @if (vacancy.SalaryFrom is null && vacancy.SalaryTo is not null)
                 {
-                    <p class="salary-p">до @vacancy.SalaryTo ₽ за месяц</p>
+                    <p class="salary-p format-number">до @vacancy.SalaryTo ₽ за месяц</p>
                 }
                 
                 <div class="vacancy-info-internal">
@@ -90,3 +90,4 @@
         }
     }
 </div>
+<script src="~/js/vacancy/format-number-displaying-in-p.js"></script>
