@@ -1,18 +1,22 @@
 ﻿.vacancy-additional-info-block {
     display: flex;
     flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
 }
 
 .vacancy-company-info {
     border: 1px solid #ccc;
     border-radius: 13px;
     padding: 13px;
+    width: 32%;
 }
 
 .short-vacancy-info {
     border: 1px solid #ccc;
     border-radius: 13px;
     padding: 13px;
+    width: 63%;
 }
 
 .short-vacancy-info p {
@@ -25,4 +29,8 @@
 
 .margin-0 {
     margin: 0;
+}
+
+.get-vacancy-page-block {
+    margin: 0 10%;
 }
