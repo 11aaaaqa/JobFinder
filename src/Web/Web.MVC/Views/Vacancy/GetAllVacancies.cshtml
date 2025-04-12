@@ -5,7 +5,7 @@
 
 @foreach (var vacancy in Model)
 {
-    <a class="get-vacancy-link" asp-controller="Vacancy" asp-action="GetVacancy">
+    <a class="get-vacancy-link" asp-controller="Vacancy" asp-action="GetVacancy" asp-route-vacancyId="@vacancy.Id">
         <div class="vacancy-block">
             <h4>@vacancy.Position</h4>
             <div class="vacancy-info mb-1">
