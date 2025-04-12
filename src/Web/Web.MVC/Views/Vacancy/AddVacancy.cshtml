@@ -76,6 +76,17 @@
     </div>
     
     <div class="mb-2">
+        <h3>Описание вакансии</h3>
+        <textarea class="textarea" rows="2" asp-for="Description" placeholder="Введите описание вакасии" oninput="autoResize(this)"></textarea>
+    </div>
+
+    <div class="mb-2">
+        <h3>Обязанности работника</h3>
+        <textarea class="textarea" rows="2" asp-for="WorkerResponsibilities" placeholder="Введите обязанности работника"
+                  oninput="autoResize(this)"></textarea>
+    </div>
+
+    <div class="mb-2">
         <h3>Где искать сотрудника</h3>
         <input class="add-vacancy-text-base add-vacancy-text" asp-for="VacancyCity" placeholder="Введите название города" />
     </div>
@@ -83,17 +94,6 @@
     <div class="mb-2">
         <h3>Адрес места работы</h3>
         <input class="add-vacancy-text-base add-vacancy-text" asp-for="Address" placeholder="Введите адрес" />
-    </div>
-    
-    <div class="mb-2">
-        <h3>Обязанности работника</h3>
-        <textarea class="textarea" rows="2" asp-for="WorkerResponsibilities" placeholder="Введите обязанности работника" 
-        oninput="autoResize(this)"></textarea>
-    </div>
-    
-    <div class="mb-2">
-        <h3>Описание вакансии</h3>
-        <textarea class="textarea" rows="2" asp-for="Description" placeholder="Введите описание вакасии" oninput="autoResize(this)"></textarea>
     </div>
     
     <div>
