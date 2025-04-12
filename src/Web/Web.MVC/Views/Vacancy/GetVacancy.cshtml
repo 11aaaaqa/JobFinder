@@ -1,0 +1,76 @@
+﻿@model Web.MVC.Models.ApiResponses.Vacancy.VacancyResponse
+<link rel="stylesheet" href="~/css/vacancy/get-vacancy.css"/>
+
+<div class="vacancy-additional-info-block">
+    <div class="short-vacancy-info mb-2">
+        <h3>@Model.Position</h3>
+
+        @if (Model.SalaryFrom is not null && Model.SalaryTo is not null)
+        {
+            @if (Model.SalaryTo == Model.SalaryFrom)
+            {
+                <p class="salary format-number">@Model.SalaryFrom ₽ за месяц</p>
+            }
+            else
+            {
+                <p class="salary format-number">@Model.SalaryFrom - @Model.SalaryTo ₽ за месяц</p>
+            }
+        }
+        @if (Model.SalaryFrom is not null && Model.SalaryTo is null)
+        {
+            <p class="salary format-number">от @Model.SalaryFrom ₽ за месяц</p>
+        }
+        @if (Model.SalaryFrom is null && Model.SalaryTo is not null)
+        {
+            <p class="salary format-number">до @Model.SalaryTo ₽ за месяц</p>
+        }
+        @if (Model.SalaryTo is null && Model.SalaryFrom is null)
+        {
+            <p class="salary">Уровень дохода не указан</p>
+        }
+
+        @if (Model.WorkExperience is not null)
+        {
+            <p>Опыт работы: @Model.WorkExperience</p>
+        }
+    
+        <p>Тип занятости: @Model.EmploymentType</p>
+
+        @if (Model.RemoteWork)
+        {
+            <p>Формат работы: в офисе или удаленно</p>
+        }
+        else
+        {
+            <p>Формат работы: офис</p>
+        }
+        @* кнопки откликнуться и добавить в избранное *@
+    </div>
+
+    <div class="vacancy-company-info">
+        <h5>@Model.CompanyName</h5>
+        @* рейтинг и переход к отзывам *@
+    </div>
+</div>
+
+@if (ViewBag.CompanyDescription is not null)
+{
+    <h4>О компании</h4>
+    <p class="margin-0">@ViewBag.CompanyDescription</p>
+}
+
+@if (Model.Description is not null)
+{
+    <h4>Описание</h4>
+    <p class="margin-0">@Model.Description</p>
+}
+
+@if (Model.WorkerResponsibilities is not null)
+{
+    <h4>Обязанности работника</h4>
+    <p class="margin-0">@Model.WorkerResponsibilities</p>
+}
+
+<p><strong>Адрес: @Model.VacancyCity, @Model.Address</strong></p>
+
+<script src="~/js/vacancy/format-number-displaying-in-p.js"></script>
