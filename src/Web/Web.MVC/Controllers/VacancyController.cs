@@ -86,9 +86,30 @@ namespace Web.MVC.Controllers
                 var response = await httpClient.PostAsync($"{url}/api/Vacancy/AddVacancy", jsonContent);
                 response.EnsureSuccessStatusCode();
 
-                return RedirectToAction("GetAllVacancies"); //change to redirection to created vacancy
+                return RedirectToAction("GetVacancy", new { vacancyId = model.Id});
             }
             return View(model);
+        }
+
+        [HttpGet]
+        [Route("vacancy/{vacancyId}")]
+        public async Task<IActionResult> GetVacancy(Guid vacancyId)
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+
+            var response = await httpClient.GetAsync($"{url}/api/Vacancy/GetVacancyById/{vacancyId}");
+            response.EnsureSuccessStatusCode();
+
+            var vacancy = await response.Content.ReadFromJsonAsync<VacancyResponse>();
+
+            var companyResponse = await httpClient.GetAsync($"{url}/api/Company/GetCompanyByCompanyId/{vacancy.CompanyId}");
+            companyResponse.EnsureSuccessStatusCode();
+
+            var company = await companyResponse.Content.ReadFromJsonAsync<CompanyResponse>();
+
+            ViewBag.CompanyDescription = company.CompanyDescription;
+
+            return View(vacancy);
         }
     }
 }
