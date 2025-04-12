@@ -1,0 +1,28 @@
+﻿.vacancy-additional-info-block {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.vacancy-company-info {
+    border: 1px solid #ccc;
+    border-radius: 13px;
+    padding: 13px;
+}
+
+.short-vacancy-info {
+    border: 1px solid #ccc;
+    border-radius: 13px;
+    padding: 13px;
+}
+
+.short-vacancy-info p {
+    margin: 0;
+}
+
+.salary {
+    margin-bottom: 15px;
+}
+
+.margin-0 {
+    margin: 0;
+}
