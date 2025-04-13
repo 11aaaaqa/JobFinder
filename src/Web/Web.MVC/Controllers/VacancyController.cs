@@ -101,14 +101,6 @@ namespace Web.MVC.Controllers
             response.EnsureSuccessStatusCode();
 
             var vacancy = await response.Content.ReadFromJsonAsync<VacancyResponse>();
-
-            var companyResponse = await httpClient.GetAsync($"{url}/api/Company/GetCompanyByCompanyId/{vacancy.CompanyId}");
-            companyResponse.EnsureSuccessStatusCode();
-
-            var company = await companyResponse.Content.ReadFromJsonAsync<CompanyResponse>();
-
-            ViewBag.CompanyDescription = company.CompanyDescription;
-
             return View(vacancy);
         }
     }
