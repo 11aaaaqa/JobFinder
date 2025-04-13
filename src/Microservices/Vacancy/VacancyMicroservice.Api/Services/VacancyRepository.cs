@@ -78,8 +78,7 @@ namespace VacancyMicroservice.Api.Services
                 EmployerContactEmail = model.EmployerContactEmail,
                 EmployerContactPhoneNumber = model.EmployerContactPhoneNumber, EmploymentType = model.EmploymentType,
                 RemoteWork = model.RemoteWork, SalaryFrom = model.SalaryFrom, SalaryTo = model.SalaryTo,
-                VacancyCity = model.VacancyCity, WorkExperience = model.WorkExperience,
-                WorkerResponsibilities = model.WorkerResponsibilities
+                VacancyCity = model.VacancyCity, WorkExperience = model.WorkExperience
             };
             context.Vacancies.Update(updatedVacancy);
             await context.SaveChangesAsync();
