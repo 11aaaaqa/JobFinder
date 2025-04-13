@@ -89,6 +89,46 @@
         <h4>Адрес места работы</h4>
         <p>@Model.VacancyCity, @Model.Address</p>
     }
+
+    @switch (Model.CreatedAt.Month)
+    {
+        case 1:
+            <p style="color: gray;">Вакансия опубликована @Model.CreatedAt.Day января @Model.CreatedAt.Year года</p>
+            break;
+        case 2:
+            <p style="color: gray;">Вакансия опубликована @Model.CreatedAt.Day февраля @Model.CreatedAt.Year года</p>
+            break;
+        case 3:
+            <p style="color: gray;">Вакансия опубликована @Model.CreatedAt.Day марта @Model.CreatedAt.Year года</p>
+            break;
+        case 4:
+            <p style="color: gray;">Вакансия опубликована @Model.CreatedAt.Day апреля @Model.CreatedAt.Year года</p>
+            break;
+        case 5:
+            <p style="color: gray;">Вакансия опубликована @Model.CreatedAt.Day мая @Model.CreatedAt.Year года</p>
+            break;
+        case 6:
+            <p style="color: gray;">Вакансия опубликована @Model.CreatedAt.Day июня @Model.CreatedAt.Year года</p>
+            break;
+        case 7:
+            <p style="color: gray;">Вакансия опубликована @Model.CreatedAt.Day июля @Model.CreatedAt.Year года</p>
+            break;
+        case 8:
+            <p style="color: gray;">Вакансия опубликована @Model.CreatedAt.Day августа @Model.CreatedAt.Year года</p>
+            break;
+        case 9:
+            <p style="color: gray;">Вакансия опубликована @Model.CreatedAt.Day сентября @Model.CreatedAt.Year года</p>
+            break;
+        case 10:
+            <p style="color: gray;">Вакансия опубликована @Model.CreatedAt.Day октября @Model.CreatedAt.Year года</p>
+            break;
+        case 11:
+            <p style="color: gray;">Вакансия опубликована @Model.CreatedAt.Day ноября @Model.CreatedAt.Year года</p>
+            break;
+        case 12:
+            <p style="color: gray;">Вакансия опубликована @Model.CreatedAt.Day декабря @Model.CreatedAt.Year года</p>
+            break;
+    }
 </div>
 
 <script src="~/js/vacancy/format-number-displaying-in-p.js"></script>
