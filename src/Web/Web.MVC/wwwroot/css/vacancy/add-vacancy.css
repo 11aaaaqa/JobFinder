@@ -27,9 +27,18 @@
 
 #worker-responsibilities-input {
     border: 1px solid #ccc;
+    border-radius: 5px;
+    min-height: 150px;
     padding: 10px;
-    width: 600px;
-    height: 400px;
-    overflow-y: auto;
+    width: 45%;
+    overflow-y: hidden;
     margin-bottom: 10px;
+    resize: none;
+    outline: none;
+    transition: border-color 0.1s, box-shadow 0.1s;
+}
+
+#worker-responsibilities-input:focus {
+    border-color: deepskyblue;
+    box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
 }
