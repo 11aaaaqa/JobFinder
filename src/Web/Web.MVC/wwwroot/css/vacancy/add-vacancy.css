@@ -49,10 +49,13 @@
     background-color: deepskyblue;
     color: white;
     padding: 7px 10px;
-    transition: background-color 0.4s;
 }
 
 .tool-button:hover {
     cursor: pointer;
+    background-color: dodgerblue;
+}
+
+.active {
     background-color: dodgerblue;
 }
