@@ -62,38 +62,33 @@
         </div>
     </div>
 
-    @if (ViewBag.CompanyDescription is not null)
-    {
-        <h4>О компании</h4>
-        <p class="margin-0">@ViewBag.CompanyDescription</p>
-    }
-
-    @if (Model.Description is not null)
-    {
-        <h4>Описание</h4>
-        <p class="margin-0">@Model.Description</p>
-    }
-
-    @if (Model.WorkerResponsibilities is not null)
-    {
-        <h4>Обязанности работника</h4>
-        <p class="margin-0">@Model.WorkerResponsibilities</p>
-    }
+    <div>
+        <p>@Html.Raw(Model.Description)</p>
+    </div>
     
     @if (Model.EmployerContactEmail is not null || Model.EmployerContactPhoneNumber is not null)
     {
         <h4>Контактная информация</h4>
-        if (Model.EmployerContactEmail is not null)
+        if (Model.EmployerContactEmail is not null && Model.EmployerContactPhoneNumber is not null)
+        {
+            <p class="mb-0">Почта: @Model.EmployerContactEmail</p>
+        }
+        if (Model.EmployerContactEmail is not null && Model.EmployerContactPhoneNumber is null)
         {
             <p>Почта: @Model.EmployerContactEmail</p>
         }
+
         if (Model.EmployerContactPhoneNumber is not null)
         {
             <p>Телефон: @Model.EmployerContactPhoneNumber</p>
         }
     }
-
-    <p><strong>Адрес: @Model.VacancyCity, @Model.Address</strong></p>
+    
+    @if (Model.Address is not null)
+    {
+        <h4>Адрес места работы</h4>
+        <p>@Model.VacancyCity, @Model.Address</p>
+    }
 </div>
 
 <script src="~/js/vacancy/format-number-displaying-in-p.js"></script>

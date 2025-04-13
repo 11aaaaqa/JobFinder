@@ -14,7 +14,6 @@
     <span asp-validation-for="RemoteWork"></span>
     <span asp-validation-for="VacancyCity"></span>
     <span asp-validation-for="Address"></span>
-    <span asp-validation-for="WorkerResponsibilities"></span>
     <span asp-validation-for="Description"></span>
     <span asp-validation-for="EmployerContactPhoneNumber"></span>
     <span asp-validation-for="EmployerContactEmail"></span>
@@ -77,13 +76,15 @@
     
     <div class="mb-2">
         <h3>Описание вакансии</h3>
-        <textarea class="textarea" rows="2" asp-for="Description" placeholder="Введите описание вакасии" oninput="autoResize(this)"></textarea>
-    </div>
-
-    <div class="mb-2">
-        <h3>Обязанности работника</h3>
-        <textarea class="textarea" rows="2" asp-for="WorkerResponsibilities" placeholder="Введите обязанности работника"
-                  oninput="autoResize(this)"></textarea>
+        <div class="toolbar">
+            <button type="button" onclick="document.execCommand('formatBlock', false, 'h4')">Заголовок</button>
+            <button type="button" onclick="document.execCommand('bold', false, null)">Жирный</button>
+            <button type="button" onclick="document.execCommand('italic', false, null)">Курсив</button>
+            <button type="button" onclick="document.execCommand('insertUnorderedList', false, null)">Маркированный список</button>
+            <button type="button" onclick="document.execCommand('insertOrderedList', false, null)">Нумерованный список</button>
+        </div>
+        <div id="worker-responsibilities-input" contenteditable="true" oninput="updateWorkerResponsibilitiesTextarea()"></div>
+        <textarea id="worker-responsibilities-hidden-textarea" style="display: none;" asp-for="Description"></textarea>
     </div>
 
     <div class="mb-2">
@@ -106,3 +107,9 @@
 </form>
 
 <script src="~/js/textarea-resizing.js"></script>
+<script>
+    function updateWorkerResponsibilitiesTextarea() {
+        const content = document.getElementById('worker-responsibilities-input').innerHTML;
+        document.getElementById('worker-responsibilities-hidden-textarea').value = content;
+    }
+</script>
