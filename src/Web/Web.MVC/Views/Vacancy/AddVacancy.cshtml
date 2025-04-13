@@ -77,11 +77,11 @@
     <div class="mb-2">
         <h3>Описание вакансии</h3>
         <div class="toolbar">
-            <button class="tool-button" type="button" onclick="document.execCommand('formatBlock', false, 'h4')">Заголовок</button>
-            <button class="tool-button" type="button" onclick="document.execCommand('bold', false, null)">Жирный</button>
-            <button class="tool-button" type="button" onclick="document.execCommand('italic', false, null)">Курсив</button>
+            <button id="boldBtn" class="tool-button" type="button" onclick="execCmd('bold')">Жирный</button>
+            <button id="italicBtn" class="tool-button" type="button" onclick="execCmd('italic')">Курсив</button>
             <button class="tool-button" type="button" onclick="document.execCommand('insertUnorderedList', false, null)">Маркированный список</button>
             <button class="tool-button" type="button" onclick="document.execCommand('insertOrderedList', false, null)">Нумерованный список</button>
+            <button class="tool-button" type="button" onclick="document.execCommand('formatBlock', false, 'h4')">Заголовок</button>
         </div>
         <div id="worker-responsibilities-input" contenteditable="true" oninput="updateWorkerResponsibilitiesTextarea()"></div>
         <textarea id="worker-responsibilities-hidden-textarea" style="display: none;" asp-for="Description"></textarea>
