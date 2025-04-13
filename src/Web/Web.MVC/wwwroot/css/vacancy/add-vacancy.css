@@ -20,3 +20,16 @@
 .add-vacancy-text {
     width: 35%;
 }
+
+.toolbar {
+    margin-bottom: 10px;
+}
+
+#worker-responsibilities-input {
+    border: 1px solid #ccc;
+    padding: 10px;
+    width: 600px;
+    height: 400px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+}
