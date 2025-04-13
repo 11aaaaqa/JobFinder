@@ -42,9 +42,16 @@ namespace VacancyMicroservice.Api.Controllers
 
         [HttpPost]
         [Route("AddVacancy")]
-        public async Task<IActionResult> AddVacancyAsync([FromBody] Vacancy vacancy)
+        public async Task<IActionResult> AddVacancyAsync([FromBody] AddVacancyDto model)
         {
-            await vacancyRepository.AddVacancyAsync(vacancy);
+            await vacancyRepository.AddVacancyAsync(new Vacancy
+            {
+                CompanyId = model.CompanyId, CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow), Address = model.Address,
+                CompanyName = model.CompanyName, Description = model.Description, EmployerContactEmail = model.EmployerContactEmail,
+                EmployerContactPhoneNumber = model.EmployerContactPhoneNumber, EmploymentType = model.EmploymentType, Id = model.Id,
+                SalaryTo = model.SalaryTo, SalaryFrom = model.SalaryFrom, WorkExperience = model.WorkExperience, Position = model.Position,
+                VacancyCity = model.VacancyCity, RemoteWork = model.RemoteWork
+            });
             return Ok();
         }
 
