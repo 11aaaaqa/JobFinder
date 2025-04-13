@@ -42,3 +42,17 @@
     border-color: deepskyblue;
     box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
 }
+
+.tool-button {
+    border: none;
+    border-radius: 15px;
+    background-color: deepskyblue;
+    color: white;
+    padding: 7px 10px;
+    transition: background-color 0.4s;
+}
+
+.tool-button:hover {
+    cursor: pointer;
+    background-color: dodgerblue;
+}
