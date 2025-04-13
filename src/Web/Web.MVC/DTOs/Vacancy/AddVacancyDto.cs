@@ -17,12 +17,8 @@ namespace Web.MVC.DTOs.Vacancy
         public bool RemoteWork { get; set; }
         [Required(ErrorMessage = "Поле \"Город\" обязательно")]
         public string VacancyCity { get; set; }
-        [Required(ErrorMessage = "Поле \"Адрес\" обязательно")]
-        public string Address { get; set; }
-        [StringLength(1500)]
-        public string? WorkerResponsibilities { get; set; }
-        [StringLength(1000)]
-        public string? Description { get; set; }
+        public string? Address { get; set; }
+        public string Description { get; set; }
         [DataType(DataType.PhoneNumber)]
         public string? EmployerContactPhoneNumber { get; set; }
         [DataType(DataType.EmailAddress)]
