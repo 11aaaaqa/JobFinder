@@ -2,8 +2,6 @@
 using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.FileProviders;
-using Microsoft.IdentityModel.Tokens;
 using Web.MVC.Constants.Permissions_constants;
 using Web.MVC.DTOs.Vacancy;
 using Web.MVC.Filters.Authorization_filters.Company_filters;
