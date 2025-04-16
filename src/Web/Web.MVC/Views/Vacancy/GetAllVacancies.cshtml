@@ -3,6 +3,11 @@
 
 <link rel="stylesheet" href="~/css/vacancy/get-all-vacancies.css"/>
 
+<form method="get">
+    <input name="query" placeholder="Профессия, должность или компания"/>
+    <input type="submit" value="Найти"/>
+</form>
+
 @foreach (var vacancy in Model)
 {
     <a class="get-vacancy-link" asp-controller="Vacancy" asp-action="GetVacancy" asp-route-vacancyId="@vacancy.Id">
@@ -69,9 +74,19 @@
     {
         @if (ViewBag.CurrentPageNumber - 1 > 0)
         {
-            <a class="" asp-controller="Vacancy" asp-action="GetAllVacancies" asp-route-index="@(ViewBag.CurrentPageNumber - 1)">
-                Назад
-            </a>
+            if (ViewBag.SearchingQuery is null)
+            {
+                <a class="" asp-controller="Vacancy" asp-action="GetAllVacancies" asp-route-index="@(ViewBag.CurrentPageNumber - 1)">
+                    Назад
+                </a>
+            }
+            else
+            {
+                <a class="" asp-controller="Vacancy" asp-action="GetAllVacancies" asp-route-index="@(ViewBag.CurrentPageNumber - 1)"
+                   asp-route-query="@ViewBag.SearchingQuery">
+                    Назад
+                </a>
+            }
         }
         else
         {
@@ -80,9 +95,19 @@
 
         @if (ViewBag.DoesNextPageExist)
         {
-            <a class="" asp-controller="Vacancy" asp-action="GetAllVacancies" asp-route-index="@(ViewBag.CurrentPageNumber + 1)">
-                Вперед
-            </a>
+            if (ViewBag.SearchingQuery is null)
+            {
+                <a class="" asp-controller="Vacancy" asp-action="GetAllVacancies" asp-route-index="@(ViewBag.CurrentPageNumber + 1)">
+                    Вперед
+                </a>
+            }
+            else
+            {
+                <a class="" asp-controller="Vacancy" asp-action="GetAllVacancies" asp-route-index="@(ViewBag.CurrentPageNumber + 1)"
+                   asp-route-query="@ViewBag.SearchingQuery">
+                    Вперед
+                </a>
+            }
         }
         else
         {
