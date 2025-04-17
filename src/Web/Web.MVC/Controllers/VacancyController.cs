@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using System.Text.Json;
+using System.Web;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web.MVC.Constants.Permissions_constants;
@@ -23,20 +24,40 @@ namespace Web.MVC.Controllers
 
         [HttpGet]
         [Route("vacancy/all")]
-        public async Task<IActionResult> GetAllVacancies(int pageNumber = 1)
+        public async Task<IActionResult> GetAllVacancies(string? query, int index = 1)
         {
             using HttpClient httpClient = httpClientFactory.CreateClient();
-            var response = await httpClient.GetAsync($"{url}/api/Vacancy/GetAllVacancies?pageNumber={pageNumber}");
-            response.EnsureSuccessStatusCode();
 
-            var vacancies = await response.Content.ReadFromJsonAsync<List<VacancyResponse>>();
+            List<VacancyResponse>? vacancies = new();
+            if (query is null)
+            {
+                var response = await httpClient.GetAsync($"{url}/api/Vacancy/GetAllVacancies?pageNumber={index}");
+                response.EnsureSuccessStatusCode();
 
-            var doesNextPageExistResponse =
-                await httpClient.GetAsync($"{url}/api/Vacancy/DoesNextAllVacanciesPageExist?currentPageNumber={pageNumber}");
-            doesNextPageExistResponse.EnsureSuccessStatusCode();
+                vacancies = await response.Content.ReadFromJsonAsync<List<VacancyResponse>>();
 
-            ViewBag.DoesNextPageExist = await doesNextPageExistResponse.Content.ReadFromJsonAsync<bool>();
-            ViewBag.CurrentPageNumber = pageNumber;
+                var doesNextPageExistResponse =
+                    await httpClient.GetAsync($"{url}/api/Vacancy/DoesNextAllVacanciesPageExist?currentPageNumber={index}");
+                doesNextPageExistResponse.EnsureSuccessStatusCode();
+                ViewBag.DoesNextPageExist = await doesNextPageExistResponse.Content.ReadFromJsonAsync<bool>();
+            }
+            else
+            {
+                var encodedQuery = HttpUtility.UrlEncode(query);
+                var findVacanciesResponse = await httpClient.GetAsync(
+                    $"{url}/api/Vacancy/FindVacancies?pageNumber={index}&searchingQuery={encodedQuery}");
+                findVacanciesResponse.EnsureSuccessStatusCode();
+
+                vacancies = await findVacanciesResponse.Content.ReadFromJsonAsync<List<VacancyResponse>>();
+
+                var doesNextPageExistResponse = await httpClient.GetAsync(
+                    $"{url}/api/Vacancy/DoesNextSearchVacanciesPageExist?searchingQuery={encodedQuery}&currentPageNumber={index}");
+                doesNextPageExistResponse.EnsureSuccessStatusCode();
+                ViewBag.DoesNextPageExist = await doesNextPageExistResponse.Content.ReadFromJsonAsync<bool>();
+                ViewBag.SearchingQuery = query;
+            }
+
+            ViewBag.CurrentPageNumber = index;
 
             return View(vacancies);
         }
