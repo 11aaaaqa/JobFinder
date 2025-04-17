@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Text;
 using System.Text.Json;
+using System.Web;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web.MVC.Constants.Permissions_constants;
@@ -35,7 +36,8 @@ namespace Web.MVC.Controllers
 
             if (companyQuery is not null && employer.CompanyId is null)
             {
-                var companyQueryResponse = await httpClient.GetAsync($"{url}/api/Company/GetCompanyByCompanyName/{companyQuery}");
+                var encodedQuery = HttpUtility.UrlEncode(companyQuery);
+                var companyQueryResponse = await httpClient.GetAsync($"{url}/api/Company/GetCompanyByCompanyName?companyName={encodedQuery}");
                 if (companyQueryResponse.IsSuccessStatusCode)
                 {
                     var foundCompany = await companyQueryResponse.Content.ReadFromJsonAsync<CompanyResponse>();
