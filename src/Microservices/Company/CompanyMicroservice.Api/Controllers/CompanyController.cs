@@ -23,7 +23,7 @@ namespace CompanyMicroservice.Api.Controllers
         }
 
         [HttpGet]
-        [Route("GetCompanyByCompanyName/{companyName}")]
+        [Route("GetCompanyByCompanyName")]
         public async Task<IActionResult> GetCompanyByCompanyNameAsync(string companyName)
         {
             var company = await companyRepository.GetCompanyByCompanyNameAsync(companyName);
