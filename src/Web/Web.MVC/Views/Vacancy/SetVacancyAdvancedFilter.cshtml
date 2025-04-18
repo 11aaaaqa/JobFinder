@@ -1,0 +1,124 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Web.MVC.Constants.Vacancy
+@model Web.MVC.DTOs.Vacancy.SetVacancyAdvancedFilterDto
+
+<h2>Поиск вакансий</h2>
+
+<form method="post">
+    <div asp-validation-summary="ModelOnly"></div>
+    
+    <span asp-validation-for="Position"></span>
+    <span asp-validation-for="SalaryFrom"></span>
+    <span asp-validation-for="WorkExperience"></span>
+    <span asp-validation-for="EmploymentType"></span>
+    <span asp-validation-for="OfficeWorkType"></span>
+    <span asp-validation-for="RemoteWorkType"></span>
+    <span asp-validation-for="VacancyCities"></span>
+    
+    <div>
+        <h3>Профессия или должность</h3>
+        <input asp-for="Position" placeholder="Введите профессию или должность"/>
+    </div>
+    
+    <div>
+        <h3>Желаемая зарплата</h3>
+        <input asp-for="SalaryFrom" placeholder="от"/>
+    </div>
+    
+    <div class="mb-2">
+        <h3>Опыт работы</h3>
+        <p>
+            <input type="radio" asp-for="WorkExperience" value="@WorkExperienceConstants.NoExperience" />
+            @WorkExperienceConstants.NoExperience
+        </p>
+        <p>
+            <input type="radio" asp-for="WorkExperience" value="@WorkExperienceConstants.LessThanOneYear" />
+            @WorkExperienceConstants.LessThanOneYear
+        </p>
+        <p>
+            <input type="radio" asp-for="WorkExperience" value="@WorkExperienceConstants.FromOneToThreeYears" />
+            @WorkExperienceConstants.FromOneToThreeYears
+        </p>
+        <p>
+            <input type="radio" asp-for="WorkExperience" value="@WorkExperienceConstants.FromThreeToSixYears" />
+            @WorkExperienceConstants.FromThreeToSixYears
+        </p>
+        <p>
+            <input type="radio" asp-for="WorkExperience" value="@WorkExperienceConstants.MoreThanSixYears" />
+            @WorkExperienceConstants.MoreThanSixYears
+        </p>
+    </div>
+
+    <div class="mb-2">
+        <h3>Занятость</h3>
+        <p>
+            <input type="radio" asp-for="EmploymentType" value="@EmploymentTypeConstants.FullTimeEmploymentTypeConstant" />
+            @EmploymentTypeConstants.FullTimeEmploymentTypeConstant
+        </p>
+        <p>
+            <input type="radio" asp-for="EmploymentType" value="@EmploymentTypeConstants.PartTimeEmploymentTypeConstant" />
+            @EmploymentTypeConstants.PartTimeEmploymentTypeConstant
+        </p>
+    </div>
+    
+    <div>
+        <h3>Формат работы</h3>
+        <p>
+            <input type="checkbox" asp-for="OfficeWorkType" /> В офисе
+        </p>
+        <p>
+            <input type="checkbox" asp-for="RemoteWorkType" /> Удаленно
+        </p>
+    </div>
+    
+    <div>
+        <h3>Город</h3>
+        <div id="cityList"></div>
+        
+        <input id="cityInput" placeholder="Введите название города"/>
+        <button type="button" id="addCityButton">Добавить</button>
+    </div>
+
+    <input type="submit" value="Найти"/>
+</form>
+
+<script>
+    const cityList = document.getElementById("cityList");
+    const cityInput = document.getElementById("cityInput");
+    const cities = [];
+
+    document.getElementById("addCityButton").addEventListener("click", function() {
+        const cityName = cityInput.value.trim();
+        if (cityName && !cities.includes(cityName)) {
+            cities.push(cityName);
+            updateCityList();
+            cityInput.value = "";
+        }
+    });
+
+    function updateCityList() {
+        cityList.innerHTML = "";
+        cities.forEach((city, index) => {
+            const cityDiv = document.createElement("div");
+            cityDiv.textContent = city;
+
+            const hiddenInput = document.createElement("input");
+            hiddenInput.type = "hidden";
+            hiddenInput.name = "VacancyCities";
+            hiddenInput.value = city;
+                
+            cityDiv.appendChild(hiddenInput);
+
+            const removeButton = document.createElement("button");
+            removeButton.textContent = "Удалить";
+            removeButton.type = "button";
+            removeButton.onclick = () => {
+                cities.splice(index, 1);
+                updateCityList();
+            };
+
+            cityDiv.appendChild(removeButton);
+            cityList.appendChild(cityDiv);
+        });
+    }
+</script>
