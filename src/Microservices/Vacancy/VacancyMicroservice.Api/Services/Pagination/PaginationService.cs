@@ -2,6 +2,7 @@
 using VacancyMicroservice.Api.Constants;
 using VacancyMicroservice.Api.Database;
 using VacancyMicroservice.Api.DTOs;
+using VacancyMicroservice.Api.Models;
 
 namespace VacancyMicroservice.Api.Services.Pagination
 {
@@ -38,6 +39,29 @@ namespace VacancyMicroservice.Api.Services.Pagination
                 vacancies = vacancies.Where(x => x.RemoteWork == model.RemoteWork);
             if (model.VacancyCities is not null)
                 vacancies = vacancies.Where(x => model.VacancyCities.Contains(x.VacancyCity));
+
+            return await vacancies.Skip(currentPageNumber * PaginationConstants.VacancyPageSize).CountAsync() > 0;
+        }
+
+        public async Task<bool> DoesNextSearchFilteredVacanciesPageExist(GetFilteredVacanciesDto model, string searchingQuery,
+            int currentPageNumber)
+        {
+            var vacancies = context.Vacancies.AsQueryable();
+            if (model.Position is not null)
+                vacancies = vacancies.Where(x => x.Position.ToLower() == model.Position.ToLower());
+            if (model.SalaryFrom is not null)
+                vacancies = vacancies.Where(x => x.SalaryTo >= model.SalaryFrom);
+            if (model.WorkExperience is not null)
+                vacancies = vacancies.Where(x => x.WorkExperience.ToLower() == model.WorkExperience.ToLower());
+            if (model.EmploymentType is not null)
+                vacancies = vacancies.Where(x => x.EmploymentType.ToLower() == model.EmploymentType.ToLower());
+            if (model.RemoteWork is not null)
+                vacancies = vacancies.Where(x => x.RemoteWork == model.RemoteWork);
+            if (model.VacancyCities is not null)
+                vacancies = vacancies.Where(x => model.VacancyCities.Contains(x.VacancyCity));
+
+            vacancies = vacancies.Where(x =>
+                x.Position.ToLower().Contains(searchingQuery) | x.CompanyName.ToLower().Contains(searchingQuery));
 
             return await vacancies.Skip(currentPageNumber * PaginationConstants.VacancyPageSize).CountAsync() > 0;
         }
