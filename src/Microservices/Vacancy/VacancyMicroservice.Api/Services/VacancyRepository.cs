@@ -48,6 +48,29 @@ namespace VacancyMicroservice.Api.Services
                 .Take(PaginationConstants.VacancyPageSize).ToListAsync();
         }
 
+        public async Task<List<Vacancy>> SearchFilteredVacanciesAsync(GetFilteredVacanciesDto model, string searchingQuery, int pageNumber)
+        {
+            var vacancies = context.Vacancies.AsQueryable();
+            if (model.Position is not null)
+                vacancies = vacancies.Where(x => x.Position.ToLower() == model.Position.ToLower());
+            if (model.SalaryFrom is not null)
+                vacancies = vacancies.Where(x => x.SalaryTo >= model.SalaryFrom);
+            if (model.WorkExperience is not null)
+                vacancies = vacancies.Where(x => x.WorkExperience.ToLower() == model.WorkExperience.ToLower());
+            if (model.EmploymentType is not null)
+                vacancies = vacancies.Where(x => x.EmploymentType.ToLower() == model.EmploymentType.ToLower());
+            if (model.RemoteWork is not null)
+                vacancies = vacancies.Where(x => x.RemoteWork == model.RemoteWork);
+            if (model.VacancyCities is not null)
+                vacancies = vacancies.Where(x => model.VacancyCities.Contains(x.VacancyCity));
+
+            vacancies = vacancies.Where(x =>
+                x.Position.ToLower().Contains(searchingQuery) | x.CompanyName.ToLower().Contains(searchingQuery));
+
+            return await vacancies.Skip((pageNumber - 1) * PaginationConstants.VacancyPageSize)
+                .Take(PaginationConstants.VacancyPageSize).ToListAsync();
+        }
+
         public async Task<List<Vacancy>> GetVacanciesByCompanyIdAsync(Guid companyId, int pageNumber)
             => await context.Vacancies.Where(x => x.CompanyId == companyId)
                 .Skip((pageNumber - 1) * PaginationConstants.VacancyPageSize).Take(PaginationConstants.VacancyPageSize)
