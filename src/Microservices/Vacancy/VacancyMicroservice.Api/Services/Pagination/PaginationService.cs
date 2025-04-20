@@ -30,7 +30,7 @@ namespace VacancyMicroservice.Api.Services.Pagination
             if (model.Position is not null)
                 vacancies = vacancies.Where(x => x.Position.ToLower() == model.Position.ToLower());
             if (model.SalaryFrom is not null)
-                vacancies = vacancies.Where(x => x.SalaryTo >= model.SalaryFrom);
+                vacancies = vacancies.Where(x => x.SalaryTo >= model.SalaryFrom | (x.SalaryTo == null && x.SalaryFrom >= model.SalaryFrom));
             if (model.WorkExperience is not null)
                 vacancies = vacancies.Where(x => x.WorkExperience.ToLower() == model.WorkExperience.ToLower());
             if (model.EmploymentType is not null)
@@ -50,7 +50,7 @@ namespace VacancyMicroservice.Api.Services.Pagination
             if (model.Position is not null)
                 vacancies = vacancies.Where(x => x.Position.ToLower() == model.Position.ToLower());
             if (model.SalaryFrom is not null)
-                vacancies = vacancies.Where(x => x.SalaryTo >= model.SalaryFrom);
+                vacancies = vacancies.Where(x => x.SalaryTo >= model.SalaryFrom | (x.SalaryTo == null && x.SalaryFrom >= model.SalaryFrom));
             if (model.WorkExperience is not null)
                 vacancies = vacancies.Where(x => x.WorkExperience.ToLower() == model.WorkExperience.ToLower());
             if (model.EmploymentType is not null)
