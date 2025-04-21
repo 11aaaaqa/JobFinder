@@ -2,7 +2,6 @@
 using VacancyMicroservice.Api.Constants;
 using VacancyMicroservice.Api.Database;
 using VacancyMicroservice.Api.DTOs;
-using VacancyMicroservice.Api.Models;
 
 namespace VacancyMicroservice.Api.Services.Pagination
 {
