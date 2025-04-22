@@ -27,13 +27,13 @@ namespace VacancyMicroservice.Api.Services.Pagination
         {
             var vacancies = context.Vacancies.AsQueryable();
             if (model.Position is not null)
-                vacancies = vacancies.Where(x => x.Position.ToLower() == model.Position.ToLower());
+                vacancies = vacancies.Where(x => x.Position.ToLower().Contains(model.Position.ToLower()));
             if (model.SalaryFrom is not null)
                 vacancies = vacancies.Where(x => x.SalaryTo >= model.SalaryFrom | (x.SalaryTo == null && x.SalaryFrom >= model.SalaryFrom));
             if (model.WorkExperience is not null)
-                vacancies = vacancies.Where(x => x.WorkExperience.ToLower() == model.WorkExperience.ToLower());
+                vacancies = vacancies.Where(x => x.WorkExperience.ToLower().Contains(model.WorkExperience.ToLower()));
             if (model.EmploymentType is not null)
-                vacancies = vacancies.Where(x => x.EmploymentType.ToLower() == model.EmploymentType.ToLower());
+                vacancies = vacancies.Where(x => x.EmploymentType.ToLower().Contains(model.EmploymentType.ToLower()));
             if (model.RemoteWork is not null)
                 vacancies = vacancies.Where(x => x.RemoteWork == model.RemoteWork);
             if (model.VacancyCities is not null)
@@ -47,13 +47,13 @@ namespace VacancyMicroservice.Api.Services.Pagination
         {
             var vacancies = context.Vacancies.AsQueryable();
             if (model.Position is not null)
-                vacancies = vacancies.Where(x => x.Position.ToLower() == model.Position.ToLower());
+                vacancies = vacancies.Where(x => x.Position.ToLower().Contains(model.Position.ToLower()));
             if (model.SalaryFrom is not null)
                 vacancies = vacancies.Where(x => x.SalaryTo >= model.SalaryFrom | (x.SalaryTo == null && x.SalaryFrom >= model.SalaryFrom));
             if (model.WorkExperience is not null)
-                vacancies = vacancies.Where(x => x.WorkExperience.ToLower() == model.WorkExperience.ToLower());
+                vacancies = vacancies.Where(x => x.WorkExperience.ToLower().Contains(model.WorkExperience.ToLower()));
             if (model.EmploymentType is not null)
-                vacancies = vacancies.Where(x => x.EmploymentType.ToLower() == model.EmploymentType.ToLower());
+                vacancies = vacancies.Where(x => x.EmploymentType.ToLower().Contains(model.EmploymentType.ToLower()));
             if (model.RemoteWork is not null)
                 vacancies = vacancies.Where(x => x.RemoteWork == model.RemoteWork);
             if (model.VacancyCities is not null)
