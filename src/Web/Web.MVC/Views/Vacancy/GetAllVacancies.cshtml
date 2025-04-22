@@ -5,6 +5,37 @@
 
 <form method="get">
     <input name="query" placeholder="Профессия, должность или компания"/>
+    @if (ViewBag.FilterModel is not null)
+    {
+        if (ViewBag.FilterModel.Position is not null)
+        {
+            <input type="hidden" name="Position" value="@ViewBag.FilterModel.Position" />
+        }
+        if (ViewBag.FilterModel.SalaryFrom is not null)
+        {
+            <input type="hidden" name="SalaryFrom" value="@ViewBag.FilterModel.SalaryFrom" />
+        }
+        if (ViewBag.FilterModel.WorkExperience is not null)
+        {
+            <input type="hidden" name="WorkExperience" value="@ViewBag.FilterModel.WorkExperience" />
+        }
+        if (ViewBag.FilterModel.EmploymentType is not null)
+        {
+            <input type="hidden" name="EmploymentType" value="@ViewBag.FilterModel.EmploymentType" />
+        }
+        if (ViewBag.FilterModel.RemoteWork is not null)
+        {
+            <input type="hidden" name="RemoteWork" value="@ViewBag.FilterModel.RemoteWork" />
+        }
+        @if (ViewBag.FilterModel.VacancyCities is not null)
+        {
+            @foreach (string vacancyCity in ViewBag.FilterModel.VacancyCities)
+            {
+                <input type="hidden" name="VacancyCities" value="@vacancyCity" />
+            }
+        }
+        
+    }
     <input type="submit" value="Найти"/>
 </form>
 
