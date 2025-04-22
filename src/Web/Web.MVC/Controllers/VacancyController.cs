@@ -1,9 +1,13 @@
-﻿using System.Text;
+﻿using System.Linq;
+using System.Numerics;
+using System.Text;
 using System.Text.Json;
 using System.Web;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Abstractions;
 using Web.MVC.Constants.Permissions_constants;
+using Web.MVC.Constants.Vacancy;
 using Web.MVC.DTOs.Vacancy;
 using Web.MVC.Filters.Authorization_filters.Company_filters;
 using Web.MVC.Models.ApiResponses.Company;
@@ -24,12 +28,23 @@ namespace Web.MVC.Controllers
 
         [HttpGet]
         [Route("vacancy/all")]
-        public async Task<IActionResult> GetAllVacancies(string? query, int index = 1)
+        public async Task<IActionResult> GetAllVacancies(string? query, GetFilteredVacancies? filterModel, int index = 1)
         {
             using HttpClient httpClient = httpClientFactory.CreateClient();
 
+            if (filterModel.SalaryFrom is null && filterModel.WorkExperience is null && filterModel.RemoteWork is null &&
+                filterModel.EmploymentType is null && filterModel.Position is null && filterModel.VacancyCities is null)
+            {
+                filterModel = null;
+            }
+
+            if (filterModel is not null && filterModel.Position is not null)
+            {
+                filterModel.Position = HttpUtility.UrlEncode(filterModel.Position);
+            }
+
             List<VacancyResponse>? vacancies = new();
-            if (query is null)
+            if (query is null && filterModel is null)
             {
                 var response = await httpClient.GetAsync($"{url}/api/Vacancy/GetAllVacancies?pageNumber={index}");
                 response.EnsureSuccessStatusCode();
@@ -39,6 +54,41 @@ namespace Web.MVC.Controllers
                 var doesNextPageExistResponse =
                     await httpClient.GetAsync($"{url}/api/Vacancy/DoesNextAllVacanciesPageExist?currentPageNumber={index}");
                 doesNextPageExistResponse.EnsureSuccessStatusCode();
+                ViewBag.DoesNextPageExist = await doesNextPageExistResponse.Content.ReadFromJsonAsync<bool>();
+            }
+            else if (query is null && filterModel is not null)
+            {
+                string vacanciesUrl = filterModel.VacancyCities is not null
+                    ? $"{url}/api/Vacancy/GetFilteredVacancies?Position={filterModel.Position}&SalaryFrom={filterModel.SalaryFrom}&WorkExperience={filterModel.WorkExperience}&EmploymentType={filterModel.EmploymentType}&RemoteWork={filterModel.RemoteWork}&VacancyCities={filterModel.VacancyCities}&pageNumber={index}"
+                    : $"{url}/api/Vacancy/GetFilteredVacancies?Position={filterModel.Position}&SalaryFrom={filterModel.SalaryFrom}&WorkExperience={filterModel.WorkExperience}&EmploymentType={filterModel.EmploymentType}&RemoteWork={filterModel.RemoteWork}&pageNumber={index}";
+                var response = await httpClient.GetAsync(vacanciesUrl);
+                response.EnsureSuccessStatusCode();
+
+                vacancies = await response.Content.ReadFromJsonAsync<List<VacancyResponse>>();
+
+                string doesNextPageExistUrl = filterModel.VacancyCities is not null
+                    ? $"{url}/api/Vacancy/DoesNextFilteredVacanciesPageExist?Position={filterModel.Position}&SalaryFrom={filterModel.SalaryFrom}&WorkExperience={filterModel.WorkExperience}&EmploymentType={filterModel.EmploymentType}&RemoteWork={filterModel.RemoteWork}&VacancyCities={filterModel.VacancyCities}&currentPageNumber={index}"
+                    : $"{url}/api/Vacancy/DoesNextFilteredVacanciesPageExist?Position={filterModel.Position}&SalaryFrom={filterModel.SalaryFrom}&WorkExperience={filterModel.WorkExperience}&EmploymentType={filterModel.EmploymentType}&RemoteWork={filterModel.RemoteWork}&currentPageNumber={index}";
+                var doesNextPageExistResponse = await httpClient.GetAsync(doesNextPageExistUrl);
+                doesNextPageExistResponse.EnsureSuccessStatusCode();
+                ViewBag.DoesNextPageExist = await doesNextPageExistResponse.Content.ReadFromJsonAsync<bool>();
+            }
+            else if (query is not null && filterModel is not null)
+            {
+                var encodedQuery = HttpUtility.UrlEncode(query);
+                string vacanciesUrl = filterModel.VacancyCities is not null 
+                    ? $"{url}/api/Vacancy/FindFilteredVacancies?Position={filterModel.Position}&SalaryFrom={filterModel.SalaryFrom}&WorkExperience={filterModel.WorkExperience}&EmploymentType={filterModel.EmploymentType}&RemoteWork={filterModel.RemoteWork}&VacancyCities={filterModel.VacancyCities}&pageNumber={index}&searchingQuery={encodedQuery}" 
+                    : $"{url}/api/Vacancy/FindFilteredVacancies?Position={filterModel.Position}&SalaryFrom={filterModel.SalaryFrom}&WorkExperience={filterModel.WorkExperience}&EmploymentType={filterModel.EmploymentType}&RemoteWork={filterModel.RemoteWork}&pageNumber={index}&searchingQuery={encodedQuery}";
+                var response = await httpClient.GetAsync(vacanciesUrl);
+                response.EnsureSuccessStatusCode();
+
+                vacancies = await response.Content.ReadFromJsonAsync<List<VacancyResponse>>();
+
+                string doesNextPageExistUrl = filterModel.VacancyCities is not null
+                    ? $"{url}/api/Vacancy/DoesNextSearchFilteredVacanciesPageExist?Position={filterModel.Position}&SalaryFrom={filterModel.SalaryFrom}&WorkExperience={filterModel.WorkExperience}&EmploymentType={filterModel.EmploymentType}&RemoteWork={filterModel.RemoteWork}&VacancyCities={filterModel.VacancyCities}&currentPageNumber={index}&searchingQuery={encodedQuery}"
+                    : $"{url}/api/Vacancy/DoesNextSearchFilteredVacanciesPageExist?Position={filterModel.Position}&SalaryFrom={filterModel.SalaryFrom}&WorkExperience={filterModel.WorkExperience}&EmploymentType={filterModel.EmploymentType}&RemoteWork={filterModel.RemoteWork}&currentPageNumber={index}&searchingQuery={encodedQuery}";
+                var doesNextPageExistResponse = await httpClient.GetAsync(doesNextPageExistUrl);
+                    doesNextPageExistResponse.EnsureSuccessStatusCode();
                 ViewBag.DoesNextPageExist = await doesNextPageExistResponse.Content.ReadFromJsonAsync<bool>();
             }
             else
@@ -54,10 +104,11 @@ namespace Web.MVC.Controllers
                     $"{url}/api/Vacancy/DoesNextSearchVacanciesPageExist?searchingQuery={encodedQuery}&currentPageNumber={index}");
                 doesNextPageExistResponse.EnsureSuccessStatusCode();
                 ViewBag.DoesNextPageExist = await doesNextPageExistResponse.Content.ReadFromJsonAsync<bool>();
-                ViewBag.SearchingQuery = query;
             }
 
             ViewBag.CurrentPageNumber = index;
+            ViewBag.SearchingQuery = query;
+            ViewBag.FilterModel = filterModel;
 
             return View(vacancies);
         }
@@ -121,6 +172,44 @@ namespace Web.MVC.Controllers
 
             var vacancy = await response.Content.ReadFromJsonAsync<VacancyResponse>();
             return View(vacancy);
+        }
+
+        [HttpGet]
+        [Route("vacancy/search/advanced")]
+        public IActionResult SetVacancyAdvancedFilter()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [Route("vacancy/search/advanced")]
+        public IActionResult SetVacancyAdvancedFilter(SetVacancyAdvancedFilterDto model)
+        {
+            if (ModelState.IsValid)
+            {
+                if (!model.OfficeWorkType && model.RemoteWorkType)
+                {
+                    return RedirectToAction("GetAllVacancies", new
+                    {
+                        model.SalaryFrom,
+                        model.WorkExperience,
+                        model.EmploymentType,
+                        model.Position,
+                        model.VacancyCities,
+                        RemoteWork = true
+                    });
+                }
+                return RedirectToAction("GetAllVacancies", new
+                {
+                    model.SalaryFrom,
+                    model.WorkExperience,
+                    model.EmploymentType,
+                    model.Position,
+                    model.VacancyCities
+                });
+            }
+
+            return View(model);
         }
     }
 }
