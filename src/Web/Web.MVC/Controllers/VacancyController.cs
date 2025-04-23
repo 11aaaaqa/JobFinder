@@ -37,12 +37,7 @@ namespace Web.MVC.Controllers
             {
                 filterModel = null;
             }
-
-            if (filterModel is not null && filterModel.Position is not null)
-            {
-                filterModel.Position = HttpUtility.UrlEncode(filterModel.Position);
-            }
-
+            
             List<VacancyResponse>? vacancies = new();
             if (query is null && filterModel is null)
             {
@@ -58,37 +53,30 @@ namespace Web.MVC.Controllers
             }
             else if (query is null && filterModel is not null)
             {
-                string vacanciesUrl = filterModel.VacancyCities is not null
-                    ? $"{url}/api/Vacancy/GetFilteredVacancies?Position={filterModel.Position}&SalaryFrom={filterModel.SalaryFrom}&WorkExperience={filterModel.WorkExperience}&EmploymentType={filterModel.EmploymentType}&RemoteWork={filterModel.RemoteWork}&VacancyCities={filterModel.VacancyCities}&pageNumber={index}"
-                    : $"{url}/api/Vacancy/GetFilteredVacancies?Position={filterModel.Position}&SalaryFrom={filterModel.SalaryFrom}&WorkExperience={filterModel.WorkExperience}&EmploymentType={filterModel.EmploymentType}&RemoteWork={filterModel.RemoteWork}&pageNumber={index}";
-                var response = await httpClient.GetAsync(vacanciesUrl);
+                using StringContent jsonContent = new(JsonSerializer.Serialize(filterModel), Encoding.UTF8, "application/json");
+                var response = await httpClient.PostAsync($"{url}/api/Vacancy/GetFilteredVacancies?pageNumber={index}", jsonContent);
                 response.EnsureSuccessStatusCode();
 
                 vacancies = await response.Content.ReadFromJsonAsync<List<VacancyResponse>>();
 
-                string doesNextPageExistUrl = filterModel.VacancyCities is not null
-                    ? $"{url}/api/Vacancy/DoesNextFilteredVacanciesPageExist?Position={filterModel.Position}&SalaryFrom={filterModel.SalaryFrom}&WorkExperience={filterModel.WorkExperience}&EmploymentType={filterModel.EmploymentType}&RemoteWork={filterModel.RemoteWork}&VacancyCities={filterModel.VacancyCities}&currentPageNumber={index}"
-                    : $"{url}/api/Vacancy/DoesNextFilteredVacanciesPageExist?Position={filterModel.Position}&SalaryFrom={filterModel.SalaryFrom}&WorkExperience={filterModel.WorkExperience}&EmploymentType={filterModel.EmploymentType}&RemoteWork={filterModel.RemoteWork}&currentPageNumber={index}";
-                var doesNextPageExistResponse = await httpClient.GetAsync(doesNextPageExistUrl);
+                var doesNextPageExistResponse = await httpClient.PostAsync(
+                    $"{url}/api/Vacancy/DoesNextFilteredVacanciesPageExist?currentPageNumber={index}", jsonContent);
                 doesNextPageExistResponse.EnsureSuccessStatusCode();
                 ViewBag.DoesNextPageExist = await doesNextPageExistResponse.Content.ReadFromJsonAsync<bool>();
             }
             else if (query is not null && filterModel is not null)
             {
+                using StringContent jsonContent = new(JsonSerializer.Serialize(filterModel), Encoding.UTF8, "application/json");
                 var encodedQuery = HttpUtility.UrlEncode(query);
-                string vacanciesUrl = filterModel.VacancyCities is not null 
-                    ? $"{url}/api/Vacancy/FindFilteredVacancies?Position={filterModel.Position}&SalaryFrom={filterModel.SalaryFrom}&WorkExperience={filterModel.WorkExperience}&EmploymentType={filterModel.EmploymentType}&RemoteWork={filterModel.RemoteWork}&VacancyCities={filterModel.VacancyCities}&pageNumber={index}&searchingQuery={encodedQuery}" 
-                    : $"{url}/api/Vacancy/FindFilteredVacancies?Position={filterModel.Position}&SalaryFrom={filterModel.SalaryFrom}&WorkExperience={filterModel.WorkExperience}&EmploymentType={filterModel.EmploymentType}&RemoteWork={filterModel.RemoteWork}&pageNumber={index}&searchingQuery={encodedQuery}";
-                var response = await httpClient.GetAsync(vacanciesUrl);
+                var response = await httpClient.PostAsync($"{url}/api/Vacancy/FindFilteredVacancies?searchingQuery={encodedQuery}&pageNumber={index}",
+                    jsonContent);
                 response.EnsureSuccessStatusCode();
 
                 vacancies = await response.Content.ReadFromJsonAsync<List<VacancyResponse>>();
 
-                string doesNextPageExistUrl = filterModel.VacancyCities is not null
-                    ? $"{url}/api/Vacancy/DoesNextSearchFilteredVacanciesPageExist?Position={filterModel.Position}&SalaryFrom={filterModel.SalaryFrom}&WorkExperience={filterModel.WorkExperience}&EmploymentType={filterModel.EmploymentType}&RemoteWork={filterModel.RemoteWork}&VacancyCities={filterModel.VacancyCities}&currentPageNumber={index}&searchingQuery={encodedQuery}"
-                    : $"{url}/api/Vacancy/DoesNextSearchFilteredVacanciesPageExist?Position={filterModel.Position}&SalaryFrom={filterModel.SalaryFrom}&WorkExperience={filterModel.WorkExperience}&EmploymentType={filterModel.EmploymentType}&RemoteWork={filterModel.RemoteWork}&currentPageNumber={index}&searchingQuery={encodedQuery}";
-                var doesNextPageExistResponse = await httpClient.GetAsync(doesNextPageExistUrl);
-                    doesNextPageExistResponse.EnsureSuccessStatusCode();
+                var doesNextPageExistResponse = await httpClient.PostAsync(
+                    $"{url}/api/Vacancy/DoesNextSearchFilteredVacanciesPageExist?searchingQuery={encodedQuery}&currentPageNumber={index}", jsonContent);
+                doesNextPageExistResponse.EnsureSuccessStatusCode();
                 ViewBag.DoesNextPageExist = await doesNextPageExistResponse.Content.ReadFromJsonAsync<bool>();
             }
             else
