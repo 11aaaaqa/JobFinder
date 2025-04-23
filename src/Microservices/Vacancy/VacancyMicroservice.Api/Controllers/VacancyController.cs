@@ -30,14 +30,15 @@ namespace VacancyMicroservice.Api.Controllers
         public async Task<IActionResult> FindVacanciesAsync(string searchingQuery, int pageNumber)
             => Ok(await vacancyRepository.SearchVacanciesAsync(searchingQuery, pageNumber));
 
-        [HttpGet]
+        [HttpPost]
         [Route("GetFilteredVacancies")]
-        public async Task<IActionResult> GetFilteredVacanciesAsync([FromQuery]GetFilteredVacanciesDto model, int pageNumber)
+        public async Task<IActionResult> GetFilteredVacanciesAsync([FromBody]GetFilteredVacanciesDto model, [FromQuery]int pageNumber)
             => Ok(await vacancyRepository.GetFilteredVacanciesAsync(model, pageNumber));
 
-        [HttpGet]
+        [HttpPost]
         [Route("FindFilteredVacancies")]
-        public async Task<IActionResult> FindFilteredVacanciesAsync([FromQuery] GetFilteredVacanciesDto model, string searchingQuery, int pageNumber)
+        public async Task<IActionResult> FindFilteredVacanciesAsync([FromBody] GetFilteredVacanciesDto model,
+            [FromQuery]string searchingQuery, [FromQuery]int pageNumber)
             => Ok(await vacancyRepository.SearchFilteredVacanciesAsync(model, searchingQuery, pageNumber));
 
         [HttpGet]
@@ -86,15 +87,15 @@ namespace VacancyMicroservice.Api.Controllers
         public async Task<IActionResult> DoesNextSearchVacanciesPageExistAsync(string searchingQuery, int currentPageNumber)
             => Ok(await paginationService.DoesNextSearchVacanciesPageExist(searchingQuery, currentPageNumber));
 
-        [HttpGet]
+        [HttpPost]
         [Route("DoesNextFilteredVacanciesPageExist")]
-        public async Task<IActionResult> DoesNextFilteredVacanciesPageExistAsync([FromQuery] GetFilteredVacanciesDto model, int currentPageNumber)
+        public async Task<IActionResult> DoesNextFilteredVacanciesPageExistAsync([FromBody] GetFilteredVacanciesDto model, [FromQuery] int currentPageNumber)
             => Ok(await paginationService.DoesNextFilteredVacanciesPageExist(model, currentPageNumber));
 
-        [HttpGet]
+        [HttpPost]
         [Route("DoesNextSearchFilteredVacanciesPageExist")]
-        public async Task<IActionResult> DoesNextSearchFilteredVacanciesPageExistAsync([FromQuery] GetFilteredVacanciesDto model, string searchingQuery,
-            int currentPageNumber)
+        public async Task<IActionResult> DoesNextSearchFilteredVacanciesPageExistAsync([FromBody] GetFilteredVacanciesDto model, [FromQuery] string searchingQuery,
+            [FromQuery] int currentPageNumber)
             => Ok(await paginationService.DoesNextSearchFilteredVacanciesPageExist(model, searchingQuery, currentPageNumber));
 
         [HttpGet]
