@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json;
 using System.Web;
@@ -9,6 +10,7 @@ using Web.MVC.DTOs.Company;
 using Web.MVC.Filters.Authorization_filters.Company_filters;
 using Web.MVC.Models.ApiResponses.Company;
 using Web.MVC.Models.ApiResponses.Employer;
+using Web.MVC.Models.ApiResponses.Vacancy;
 
 namespace Web.MVC.Controllers
 {
@@ -408,6 +410,35 @@ namespace Web.MVC.Controllers
             var deleteCompanyResponse = await httpClient.DeleteAsync($"{url}/api/Company/DeleteCompany/{employer.CompanyId}");
             deleteCompanyResponse.EnsureSuccessStatusCode();
             return RedirectToAction("GetMyCompany", "Company");
-        } 
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("employer/company/my-company/vacancies")]
+        public async Task<IActionResult> GetMyCompanyVacancies(int index = 1)
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+
+            var employerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
+            employerResponse.EnsureSuccessStatusCode();
+
+            var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
+
+            var vacanciesResponse = await httpClient.GetAsync($"{url}/api/Vacancy/GetVacanciesByCompanyId/{employer.CompanyId}?pageNumber={index}");
+            vacanciesResponse.EnsureSuccessStatusCode();
+
+            var vacancies = await vacanciesResponse.Content.ReadFromJsonAsync<List<VacancyResponse>>();
+
+            var doesNextPageExistResponse = await httpClient.GetAsync(
+                $"{url}/api/Vacancy/DoesNextVacanciesByCompanyIdPageExist/{employer.CompanyId}?currentPageNumber={index}");
+            doesNextPageExistResponse.EnsureSuccessStatusCode();
+
+            bool doesNextPageExist = await doesNextPageExistResponse.Content.ReadFromJsonAsync<bool>();
+
+            ViewBag.CurrentPageNumber = index;
+            ViewBag.DoesNextPageExist = doesNextPageExist;
+
+            return View(vacancies);
+        }
     }
 }
