@@ -46,6 +46,7 @@ namespace VacancyMicroservice.Api.Services.Pagination
             int currentPageNumber)
         {
             var vacancies = context.Vacancies.AsQueryable();
+            searchingQuery = searchingQuery.ToLower();
             if (model.Position is not null)
                 vacancies = vacancies.Where(x => x.Position.ToLower().Contains(model.Position.ToLower()));
             if (model.SalaryFrom is not null)
