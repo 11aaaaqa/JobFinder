@@ -107,16 +107,41 @@
         {
             if (ViewBag.SearchingQuery is null)
             {
-                <a class="" asp-controller="Vacancy" asp-action="GetAllVacancies" asp-route-index="@(ViewBag.CurrentPageNumber - 1)">
-                    Назад
-                </a>
+                if (ViewBag.FilterModel is not null)
+                {
+                    <a id="pagination-link-prev" class="" asp-controller="Vacancy" asp-action="GetAllVacancies" asp-route-index="@(ViewBag.CurrentPageNumber - 1)"
+                       asp-route-Position="@ViewBag.FilterModel.Position" asp-route-SalaryFrom="@ViewBag.FilterModel.SalaryFrom"
+                       asp-route-WorkExperience="@ViewBag.FilterModel.WorkExperience" asp-route-EmploymentType="@ViewBag.FilterModel.EmploymentType"
+                       asp-route-RemoteWork="@ViewBag.FilterModel.RemoteWork">
+                        Назад
+                    </a>
+                }
+                else
+                {
+                    <a class="" asp-controller="Vacancy" asp-action="GetAllVacancies" asp-route-index="@(ViewBag.CurrentPageNumber - 1)">
+                        Назад
+                    </a>
+                }
             }
             else
             {
-                <a class="" asp-controller="Vacancy" asp-action="GetAllVacancies" asp-route-index="@(ViewBag.CurrentPageNumber - 1)"
-                   asp-route-query="@ViewBag.SearchingQuery">
-                    Назад
-                </a>
+                if (ViewBag.FilterModel is not null)
+                {
+                    <a id="pagination-link-prev" class="" asp-controller="Vacancy" asp-action="GetAllVacancies" asp-route-index="@(ViewBag.CurrentPageNumber - 1)"
+                       asp-route-query="@ViewBag.SearchingQuery"
+                       asp-route-Position="@ViewBag.FilterModel.Position" asp-route-SalaryFrom="@ViewBag.FilterModel.SalaryFrom"
+                       asp-route-WorkExperience="@ViewBag.FilterModel.WorkExperience" asp-route-EmploymentType="@ViewBag.FilterModel.EmploymentType"
+                       asp-route-RemoteWork="@ViewBag.FilterModel.RemoteWork">
+                        Назад
+                    </a>
+                }
+                else
+                {
+                    <a class="" asp-controller="Vacancy" asp-action="GetAllVacancies" asp-route-index="@(ViewBag.CurrentPageNumber - 1)"
+                       asp-route-query="@ViewBag.SearchingQuery">
+                        Назад
+                    </a>
+                }
             }
         }
         else
@@ -128,16 +153,41 @@
         {
             if (ViewBag.SearchingQuery is null)
             {
-                <a class="" asp-controller="Vacancy" asp-action="GetAllVacancies" asp-route-index="@(ViewBag.CurrentPageNumber + 1)">
-                    Вперед
-                </a>
+                if (ViewBag.FilterModel is not null)
+                {
+                    <a id="pagination-link-next" class="" asp-controller="Vacancy" asp-action="GetAllVacancies" asp-route-index="@(ViewBag.CurrentPageNumber + 1)"
+                       asp-route-Position="@ViewBag.FilterModel.Position" asp-route-SalaryFrom="@ViewBag.FilterModel.SalaryFrom"
+                       asp-route-WorkExperience="@ViewBag.FilterModel.WorkExperience" asp-route-EmploymentType="@ViewBag.FilterModel.EmploymentType"
+                       asp-route-RemoteWork="@ViewBag.FilterModel.RemoteWork">
+                        Вперед
+                    </a>
+                }
+                else
+                {
+                    <a class="" asp-controller="Vacancy" asp-action="GetAllVacancies" asp-route-index="@(ViewBag.CurrentPageNumber + 1)">
+                        Вперед
+                    </a>
+                }
             }
             else
             {
-                <a class="" asp-controller="Vacancy" asp-action="GetAllVacancies" asp-route-index="@(ViewBag.CurrentPageNumber + 1)"
-                   asp-route-query="@ViewBag.SearchingQuery">
-                    Вперед
-                </a>
+                if (ViewBag.FilterModel is not null)
+                {
+                    <a id="pagination-link-next" class="" asp-controller="Vacancy" asp-action="GetAllVacancies" asp-route-index="@(ViewBag.CurrentPageNumber + 1)"
+                       asp-route-query="@ViewBag.SearchingQuery"
+                       asp-route-Position="@ViewBag.FilterModel.Position" asp-route-SalaryFrom="@ViewBag.FilterModel.SalaryFrom"
+                       asp-route-WorkExperience="@ViewBag.FilterModel.WorkExperience" asp-route-EmploymentType="@ViewBag.FilterModel.EmploymentType"
+                       asp-route-RemoteWork="@ViewBag.FilterModel.RemoteWork">
+                        Вперед
+                    </a>
+                }
+                else
+                {
+                    <a class="" asp-controller="Vacancy" asp-action="GetAllVacancies" asp-route-index="@(ViewBag.CurrentPageNumber + 1)"
+                       asp-route-query="@ViewBag.SearchingQuery">
+                        Вперед
+                    </a>
+                }
             }
         }
         else
@@ -147,3 +197,38 @@
     }
 </div>
 <script src="~/js/vacancy/format-number-displaying-in-p.js"></script>
+@if (ViewBag.FilterModel is not null && ViewBag.FilterModel.VacancyCities is not null)
+{
+    @section Scripts{
+        <script>
+            function updateLink(linkId)
+            {
+                var link = document.getElementById(linkId);
+                if (link) {
+                    var url = new URL(link.href);
+                    var params = new URLSearchParams(url.search);
+
+                    var citiesList = @Html.Raw(Json.Serialize(ViewBag.FilterModel.VacancyCities));
+
+                    if (citiesList) {
+                        if (Array.isArray(citiesList) && citiesList.length > 0) {
+                            citiesList.forEach(function(city) {
+                                params.append("VacancyCities", city);
+                            });
+                        }
+                    }
+
+                    url.search = params.toString();
+                    link.href = url.toString();
+                }
+            }
+
+            var prevLink = document.getElementById('pagination-link-prev');
+            var nextLink = document.getElementById('pagination-link-next');
+            if (nextLink || prevLink) {
+                document.addEventListener('DOMContentLoaded', updateLink('pagination-link-prev'));
+                document.addEventListener('DOMContentLoaded', updateLink('pagination-link-next'));
+            }
+        </script>   
+    }
+}
