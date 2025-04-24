@@ -1,0 +1,51 @@
+﻿.get-vacancy-link {
+    text-decoration: none;
+    color: black;
+}
+
+.get-vacancy-link:hover {
+    color: black;
+}
+
+.vacancy-block {
+    border: 1px solid #ccc;
+    border-radius: 13px;
+    padding: 13px;
+    margin: 5px 0;
+}
+
+.vacancy-block p {
+    margin: 0;
+}
+
+.vacancy-info {
+    display: flex;
+    align-content: center;
+    flex-wrap: wrap;
+}
+
+.vacancy-info p {
+    margin-right: 10px;
+}
+
+.salary-p {
+    font-size: 18px;
+}
+
+.vacancy-info-internal {
+    display: flex;
+}
+
+.experience-p {
+    background-color: rgba(224, 247, 250, 0.45);
+    color: rgba(0,0,0, 0.7);
+    border-radius: 8px;
+    padding: 2px 5px;
+}
+
+.remote-work-p {
+    background-color: rgba(224, 247, 250, 0.45);
+    color: rgba(0,0,0, 0.7);
+    border-radius: 8px;
+    padding: 2px 5px;
+}
