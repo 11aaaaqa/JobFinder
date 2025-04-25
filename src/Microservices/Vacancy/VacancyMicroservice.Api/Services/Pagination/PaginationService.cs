@@ -76,5 +76,16 @@ namespace VacancyMicroservice.Api.Services.Pagination
             var remainedCount = await vacancies.Skip(currentPageNumber * PaginationConstants.VacancyPageSize).CountAsync();
             return remainedCount > 0;
         }
+
+        public async Task<bool> DoesNextArchivedVacanciesByCompanyIdPageExist(Guid companyId, int currentPageNumber, string? searchingQuery)
+        {
+            var vacancies = context.Vacancies.Where(x => x.CompanyId == companyId)
+                .Where(x => x.IsArchived == true).AsQueryable();
+            if (searchingQuery is not null)
+                vacancies = vacancies.Where(x => x.Position.ToLower().Contains(searchingQuery.ToLower()));
+
+            int remainedCount = await vacancies.Skip(currentPageNumber * PaginationConstants.VacancyPageSize).CountAsync();
+            return remainedCount > 0;
+        }
     }
 }
