@@ -188,6 +188,20 @@ else
                 @VacancyPermissionsConstants.DeleteVacancyPermission
             </p>
         }
+        @if (Model.Permissions.Contains(VacancyPermissionsConstants.ArchiveUnarchiveVacancyPermission))
+        {
+            <p>
+                <input type="checkbox" name="Permissions" value="@VacancyPermissionsConstants.ArchiveUnarchiveVacancyPermission" checked />
+                @VacancyPermissionsConstants.ArchiveUnarchiveVacancyPermission
+            </p>
+        }
+        else
+        {
+            <p>
+                <input type="checkbox" name="Permissions" value="@VacancyPermissionsConstants.ArchiveUnarchiveVacancyPermission" />
+                @VacancyPermissionsConstants.ArchiveUnarchiveVacancyPermission
+            </p>
+        }
     </div>
 
     <input type="submit" value="Сохранить"/>
