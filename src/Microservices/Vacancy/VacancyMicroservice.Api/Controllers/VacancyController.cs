@@ -43,8 +43,8 @@ namespace VacancyMicroservice.Api.Controllers
 
         [HttpGet]
         [Route("GetVacanciesByCompanyId/{companyId}")]
-        public async Task<IActionResult> GetVacanciesByCompanyIdAsync(Guid companyId, int pageNumber)
-            => Ok(await vacancyRepository.GetVacanciesByCompanyIdAsync(companyId, pageNumber));
+        public async Task<IActionResult> GetVacanciesByCompanyIdAsync(Guid companyId, int pageNumber, string? searchingQuery)
+            => Ok(await vacancyRepository.GetVacanciesByCompanyIdAsync(companyId, pageNumber, searchingQuery));
 
         [HttpPost]
         [Route("AddVacancy")]
@@ -78,11 +78,6 @@ namespace VacancyMicroservice.Api.Controllers
         }
 
         [HttpGet]
-        [Route("FindVacanciesByCompanyId/{companyId}")]
-        public async Task<IActionResult> FindVacanciesByCompanyIdAsync(Guid companyId, string searchingQuery, int pageNumber)
-            => Ok(await vacancyRepository.SearchVacanciesByCompanyIdAsync(companyId, searchingQuery, pageNumber));
-
-        [HttpGet]
         [Route("DoesNextAllVacanciesPageExist")]
         public async Task<IActionResult> DoesNextAllVacanciesPageExistAsync(int currentPageNumber)
             => Ok(await paginationService.DoesNextAllVacanciesPageExist(currentPageNumber));
@@ -105,12 +100,7 @@ namespace VacancyMicroservice.Api.Controllers
 
         [HttpGet]
         [Route("DoesNextVacanciesByCompanyIdPageExist/{companyId}")]
-        public async Task<IActionResult> DoesNextVacanciesByCompanyIdPageExistAsync(Guid companyId, int currentPageNumber)
-            => Ok(await paginationService.DoesNextVacanciesByCompanyIdPageExist(companyId, currentPageNumber));
-
-        [HttpGet]
-        [Route("DoesNextFindVacanciesByCompanyIdPageExist/{companyId}")]
-        public async Task<IActionResult> DoesNextFindVacanciesByCompanyIdPageExistAsync(Guid companyId, string searchingQuery, int currentPageNumber)
-            => Ok(await paginationService.DoesNextSearchVacanciesByCompanyIdPageExist(companyId, searchingQuery, currentPageNumber));
+        public async Task<IActionResult> DoesNextVacanciesByCompanyIdPageExistAsync(Guid companyId, int currentPageNumber, string? searchingQuery)
+            => Ok(await paginationService.DoesNextVacanciesByCompanyIdPageExist(companyId, currentPageNumber, searchingQuery));
     }
 }
