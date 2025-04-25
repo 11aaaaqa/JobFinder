@@ -73,16 +73,16 @@ namespace VacancyMicroservice.Api.Services
                 .Take(PaginationConstants.VacancyPageSize).ToListAsync();
         }
 
-        public async Task<List<Vacancy>> GetVacanciesByCompanyIdAsync(Guid companyId, int pageNumber)
-            => await context.Vacancies.Where(x => x.CompanyId == companyId)
-                .Skip((pageNumber - 1) * PaginationConstants.VacancyPageSize).Take(PaginationConstants.VacancyPageSize)
-                .ToListAsync();
+        public async Task<List<Vacancy>> GetVacanciesByCompanyIdAsync(Guid companyId, int pageNumber, string? searchingQuery)
+        {
+            var vacancies = context.Vacancies.Where(x => x.CompanyId == companyId).AsQueryable();
 
-        public async Task<List<Vacancy>> SearchVacanciesByCompanyIdAsync(Guid companyId, string searchingQuery, int pageNumber)
-            => await context.Vacancies.Where(x => x.CompanyId == companyId)
-                .Where(x => x.Position.ToLower().Contains(searchingQuery.ToLower()))
-                .Skip(PaginationConstants.VacancyPageSize * (pageNumber - 1))
+            if (searchingQuery is not null)
+                vacancies = vacancies.Where(x => x.Position.ToLower().Contains(searchingQuery.ToLower()));
+
+            return await vacancies.Skip((pageNumber - 1) * PaginationConstants.VacancyPageSize)
                 .Take(PaginationConstants.VacancyPageSize).ToListAsync();
+        }
 
         public async Task AddVacancyAsync(Vacancy vacancy)
         {
