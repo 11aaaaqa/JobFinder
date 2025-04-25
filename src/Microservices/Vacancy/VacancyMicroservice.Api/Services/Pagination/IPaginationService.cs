@@ -9,5 +9,6 @@ namespace VacancyMicroservice.Api.Services.Pagination
         Task<bool> DoesNextFilteredVacanciesPageExist(GetFilteredVacanciesDto model, int currentPageNumber);
         Task<bool> DoesNextSearchFilteredVacanciesPageExist(GetFilteredVacanciesDto model, string searchingQuery, int currentPageNumber);
         Task<bool> DoesNextVacanciesByCompanyIdPageExist(Guid companyId, int currentPageNumber, string? searchingQuery);
+        Task<bool> DoesNextArchivedVacanciesByCompanyIdPageExist(Guid companyId, int currentPageNumber, string? searchingQuery);
     }
 }
