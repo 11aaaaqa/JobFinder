@@ -4,6 +4,11 @@
 
 <link rel="stylesheet" href="~/css/company/get-my-company-vacancies.css"/>
 
+<form method="get">
+    <input name="query" placeholder="Поиск по вакансиям"/>
+    <input type="submit" value="Найти"/>
+</form>
+
 @foreach (var vacancy in Model)
 {
     <a class="get-vacancy-link" asp-controller="Vacancy" asp-action="GetVacancy" asp-route-vacancyId="@vacancy.Id">
