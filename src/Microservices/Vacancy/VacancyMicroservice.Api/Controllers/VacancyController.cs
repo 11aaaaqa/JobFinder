@@ -56,7 +56,7 @@ namespace VacancyMicroservice.Api.Controllers
                 CompanyName = model.CompanyName, Description = model.Description, EmployerContactEmail = model.EmployerContactEmail,
                 EmployerContactPhoneNumber = model.EmployerContactPhoneNumber, EmploymentType = model.EmploymentType, Id = model.Id,
                 SalaryTo = model.SalaryTo, SalaryFrom = model.SalaryFrom, WorkExperience = model.WorkExperience, Position = model.Position,
-                VacancyCity = model.VacancyCity, RemoteWork = model.RemoteWork
+                VacancyCity = model.VacancyCity, RemoteWork = model.RemoteWork, IsArchived = false
             });
             return Ok();
         }

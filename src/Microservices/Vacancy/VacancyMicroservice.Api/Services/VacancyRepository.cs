@@ -13,7 +13,7 @@ namespace VacancyMicroservice.Api.Services
             => await context.Vacancies.SingleOrDefaultAsync(x => x.Id == vacancyId);
 
         public async Task<List<Vacancy>> GetAllVacanciesAsync(int pageNumber)
-            => await context.Vacancies
+            => await context.Vacancies.Where(x => x.IsArchived == false)
                 .Skip((pageNumber - 1) * PaginationConstants.VacancyPageSize)
                 .Take(PaginationConstants.VacancyPageSize)
                 .ToListAsync();
@@ -21,8 +21,8 @@ namespace VacancyMicroservice.Api.Services
         public async Task<List<Vacancy>> SearchVacanciesAsync(string searchingQuery, int pageNumber)
         {
             searchingQuery = searchingQuery.ToLower();
-            var vacancies = await context.Vacancies.Where(x => x.CompanyName.ToLower().Contains(searchingQuery)
-                                                               | x.Position.ToLower().Contains(searchingQuery))
+            var vacancies = await context.Vacancies.Where(x => x.IsArchived == false)
+                .Where(x => x.CompanyName.ToLower().Contains(searchingQuery) | x.Position.ToLower().Contains(searchingQuery))
                 .Skip((pageNumber - 1) * PaginationConstants.VacancyPageSize)
                 .Take(PaginationConstants.VacancyPageSize)
                 .ToListAsync();
@@ -31,7 +31,7 @@ namespace VacancyMicroservice.Api.Services
 
         public async Task<List<Vacancy>> GetFilteredVacanciesAsync(GetFilteredVacanciesDto model, int pageNumber)
         {
-            var vacancies = context.Vacancies.AsQueryable();
+            var vacancies = context.Vacancies.Where(x => x.IsArchived == false).AsQueryable();
             if (model.Position is not null)
                 vacancies = vacancies.Where(x => x.Position.ToLower().Contains(model.Position.ToLower()));
             if (model.SalaryFrom is not null)
@@ -51,7 +51,7 @@ namespace VacancyMicroservice.Api.Services
 
         public async Task<List<Vacancy>> SearchFilteredVacanciesAsync(GetFilteredVacanciesDto model, string searchingQuery, int pageNumber)
         {
-            var vacancies = context.Vacancies.AsQueryable();
+            var vacancies = context.Vacancies.Where(x=> x.IsArchived == false).AsQueryable();
             searchingQuery = searchingQuery.ToLower();
             if (model.Position is not null)
                 vacancies = vacancies.Where(x => x.Position.ToLower().Contains(model.Position.ToLower()));
