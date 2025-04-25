@@ -78,6 +78,11 @@ namespace VacancyMicroservice.Api.Controllers
         }
 
         [HttpGet]
+        [Route("FindVacanciesByCompanyId/{companyId}")]
+        public async Task<IActionResult> FindVacanciesByCompanyIdAsync(Guid companyId, string searchingQuery, int pageNumber)
+            => Ok(await vacancyRepository.SearchVacanciesByCompanyIdAsync(companyId, searchingQuery, pageNumber));
+
+        [HttpGet]
         [Route("DoesNextAllVacanciesPageExist")]
         public async Task<IActionResult> DoesNextAllVacanciesPageExistAsync(int currentPageNumber)
             => Ok(await paginationService.DoesNextAllVacanciesPageExist(currentPageNumber));
@@ -102,5 +107,10 @@ namespace VacancyMicroservice.Api.Controllers
         [Route("DoesNextVacanciesByCompanyIdPageExist/{companyId}")]
         public async Task<IActionResult> DoesNextVacanciesByCompanyIdPageExistAsync(Guid companyId, int currentPageNumber)
             => Ok(await paginationService.DoesNextVacanciesByCompanyIdPageExist(companyId, currentPageNumber));
+
+        [HttpGet]
+        [Route("DoesNextFindVacanciesByCompanyIdPageExist/{companyId}")]
+        public async Task<IActionResult> DoesNextFindVacanciesByCompanyIdPageExistAsync(Guid companyId, string searchingQuery, int currentPageNumber)
+            => Ok(await paginationService.DoesNextSearchVacanciesByCompanyIdPageExist(companyId, searchingQuery, currentPageNumber));
     }
 }

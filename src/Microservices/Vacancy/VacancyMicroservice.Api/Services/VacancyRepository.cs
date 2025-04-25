@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using VacancyMicroservice.Api.Constants;
 using VacancyMicroservice.Api.Database;
 using VacancyMicroservice.Api.DTOs;
@@ -76,6 +77,12 @@ namespace VacancyMicroservice.Api.Services
             => await context.Vacancies.Where(x => x.CompanyId == companyId)
                 .Skip((pageNumber - 1) * PaginationConstants.VacancyPageSize).Take(PaginationConstants.VacancyPageSize)
                 .ToListAsync();
+
+        public async Task<List<Vacancy>> SearchVacanciesByCompanyIdAsync(Guid companyId, string searchingQuery, int pageNumber)
+            => await context.Vacancies.Where(x => x.CompanyId == companyId)
+                .Where(x => x.Position.ToLower().Contains(searchingQuery.ToLower()))
+                .Skip(PaginationConstants.VacancyPageSize * (pageNumber - 1))
+                .Take(PaginationConstants.VacancyPageSize).ToListAsync();
 
         public async Task AddVacancyAsync(Vacancy vacancy)
         {
