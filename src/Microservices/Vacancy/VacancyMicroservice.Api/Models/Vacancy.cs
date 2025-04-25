@@ -6,6 +6,7 @@
         public Guid CompanyId { get; set; }
         public string CompanyName { get; set; }
         public DateOnly CreatedAt { get; set; }
+        public bool IsArchived { get; set; }
         public string Position { get; set; }
         public int? SalaryFrom { get; set; }
         public int? SalaryTo { get; set; }
