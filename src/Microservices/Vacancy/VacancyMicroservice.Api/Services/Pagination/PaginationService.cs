@@ -68,7 +68,8 @@ namespace VacancyMicroservice.Api.Services.Pagination
 
         public async Task<bool> DoesNextVacanciesByCompanyIdPageExist(Guid companyId, int currentPageNumber, string? searchingQuery)
         {
-            var vacancies = context.Vacancies.Where(x => x.CompanyId == companyId).AsQueryable();
+            var vacancies = context.Vacancies.Where(x => x.IsArchived == false)
+                .Where(x => x.CompanyId == companyId).AsQueryable();
 
             if (searchingQuery is not null)
                 vacancies = vacancies.Where(x => x.Position.ToLower().Contains(searchingQuery.ToLower()));

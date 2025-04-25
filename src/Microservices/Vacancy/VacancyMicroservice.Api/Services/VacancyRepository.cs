@@ -75,7 +75,8 @@ namespace VacancyMicroservice.Api.Services
 
         public async Task<List<Vacancy>> GetVacanciesByCompanyIdAsync(Guid companyId, int pageNumber, string? searchingQuery)
         {
-            var vacancies = context.Vacancies.Where(x => x.CompanyId == companyId).AsQueryable();
+            var vacancies = context.Vacancies.Where(x => x.IsArchived == false)
+                .Where(x => x.CompanyId == companyId).AsQueryable();
 
             if (searchingQuery is not null)
                 vacancies = vacancies.Where(x => x.Position.ToLower().Contains(searchingQuery.ToLower()));
