@@ -78,6 +78,27 @@ namespace VacancyMicroservice.Api.Controllers
         }
 
         [HttpGet]
+        [Route("ArchiveVacancy/{vacancyId}")]
+        public async Task<IActionResult> ArchiveVacancyAsync(Guid vacancyId)
+        {
+            await vacancyRepository.ArchiveVacancyAsync(vacancyId);
+            return Ok();
+        }
+
+        [HttpGet]
+        [Route("UnarchiveVacancy/{vacancyId}")]
+        public async Task<IActionResult> UnarchiveVacancyAsync(Guid vacancyId)
+        {
+            await vacancyRepository.UnarchiveVacancyAsync(vacancyId);
+            return Ok();
+        }
+
+        [HttpGet]
+        [Route("GetArchivedVacanciesByCompanyId/{companyId}")]
+        public async Task<IActionResult> GetArchivedVacanciesByCompanyIdAsync(Guid companyId, int pageNumber, string? searchingQuery)
+            => Ok(await vacancyRepository.GetArchivedVacanciesByCompanyIdAsync(companyId, pageNumber, searchingQuery));
+
+        [HttpGet]
         [Route("DoesNextAllVacanciesPageExist")]
         public async Task<IActionResult> DoesNextAllVacanciesPageExistAsync(int currentPageNumber)
             => Ok(await paginationService.DoesNextAllVacanciesPageExist(currentPageNumber));
@@ -102,5 +123,10 @@ namespace VacancyMicroservice.Api.Controllers
         [Route("DoesNextVacanciesByCompanyIdPageExist/{companyId}")]
         public async Task<IActionResult> DoesNextVacanciesByCompanyIdPageExistAsync(Guid companyId, int currentPageNumber, string? searchingQuery)
             => Ok(await paginationService.DoesNextVacanciesByCompanyIdPageExist(companyId, currentPageNumber, searchingQuery));
+
+        [HttpGet]
+        [Route("DoesNextArchivedVacanciesByCompanyIdPageExist/{companyId}")]
+        public async Task<IActionResult> DoesNextArchivedVacanciesByCompanyIdPageExistAsync(Guid companyId, int currentPageNumber, string? searchingQuery)
+            => Ok(await paginationService.DoesNextArchivedVacanciesByCompanyIdPageExist(companyId, currentPageNumber, searchingQuery));
     }
 }
