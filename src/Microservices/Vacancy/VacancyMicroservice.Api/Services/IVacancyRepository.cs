@@ -14,5 +14,8 @@ namespace VacancyMicroservice.Api.Services
         Task AddVacancyAsync(Vacancy vacancy);
         Task DeleteVacancyAsync(Guid vacancyId);
         Task UpdateVacancyAsync(UpdateVacancyDto model);
+        Task ArchiveVacancyAsync(Guid vacancyId);
+        Task UnarchiveVacancyAsync(Guid vacancyId);
+        Task<List<Vacancy>> GetArchivedVacanciesByCompanyIdAsync(Guid companyId, int pageNumber, string? searchingQuery);
     }
 }
