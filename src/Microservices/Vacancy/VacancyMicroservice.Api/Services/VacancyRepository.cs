@@ -114,5 +114,36 @@ namespace VacancyMicroservice.Api.Services
             context.Vacancies.Update(updatedVacancy);
             await context.SaveChangesAsync();
         }
+
+        public async Task ArchiveVacancyAsync(Guid vacancyId)
+        {
+            var vacancy = await context.Vacancies.SingleOrDefaultAsync(x => x.Id == vacancyId);
+            if (vacancy is null)
+                return;
+
+            vacancy.IsArchived = true;
+            await context.SaveChangesAsync();
+        }
+
+        public async Task UnarchiveVacancyAsync(Guid vacancyId)
+        {
+            var vacancy = await context.Vacancies.SingleOrDefaultAsync(x => x.Id == vacancyId);
+            if (vacancy is null)
+                return;
+
+            vacancy.IsArchived = false;
+            await context.SaveChangesAsync();
+        }
+
+        public async Task<List<Vacancy>> GetArchivedVacanciesByCompanyIdAsync(Guid companyId, int pageNumber, string? searchingQuery)
+        {
+            var vacancies = context.Vacancies.Where(x => x.CompanyId == companyId)
+                .Where(x => x.IsArchived == true).AsQueryable();
+            if (searchingQuery is not null)
+                vacancies = vacancies.Where(x => x.Position.ToLower().Contains(searchingQuery.ToLower()));
+
+            return await vacancies.Skip((pageNumber - 1) * PaginationConstants.VacancyPageSize)
+                .Take(PaginationConstants.VacancyPageSize).ToListAsync();
+        }
     }
 }
