@@ -5,7 +5,15 @@
 <div class="get-vacancy-page-block">
     <div class="vacancy-additional-info-block">
         <div class="short-vacancy-info mb-2">
-            <h3>@Model.Position</h3>
+            @if (Model.IsArchived)
+            {
+                <h3 class="mb-0" style="color: lightgray;">@Model.Position</h3>
+                <p style="color: lightgray;" class="mb-1 mt-0">Вакансия в архиве</p>
+            }
+            else
+            {
+                <h3>@Model.Position</h3>
+            }
 
             @if (Model.SalaryFrom is not null && Model.SalaryTo is not null)
             {
@@ -53,6 +61,43 @@
             {
                 <p>Формат работы: офис</p>
             }
+
+            @if (true)
+            {
+                string returnUrl = Context.Request.Path;
+                if (Context.Request.QueryString.HasValue)
+                    returnUrl += Context.Request.QueryString;
+                @if (ViewBag.DoesEmployerHavePermissionToEditVacancies is true)
+                {
+                    <a asp-controller="Company" asp-action="EditVacancy" asp-route-vacancyId="@Model.Id">Изменить</a>
+                }
+
+                @if (Model.IsArchived)
+                {
+                    if (ViewBag.DoesEmployerHavePermissionToArchiveAndUnarchiveVacancies is true)
+                    {
+                        <form method="post" asp-controller="Company" asp-action="UnarchiveVacancy" asp-route-returnUrl="@returnUrl" asp-route-vacancyId="@Model.Id">
+                            <input type="submit" value="Разархивировать"/>
+                        </form>
+                    }
+                }
+                else
+                {
+                    @if (ViewBag.DoesEmployerHavePermissionToArchiveAndUnarchiveVacancies is true)
+                    {
+                        <form method="post" asp-controller="Company" asp-action="ArchiveVacancy" asp-route-returnUrl="@returnUrl" asp-route-vacancyId="@Model.Id">
+                            <input type="submit" value="Архивировать"/>
+                        </form>
+                    }
+                }
+
+                @if (ViewBag.DoesEmployerHavePermissionToDeleteVacancies is true)
+                {
+                    <form method="post" asp-controller="Company" asp-action="DeleteVacancy" asp-route-vacancyId="@Model.Id">
+                        <input type="submit" value="Удалить вакансию" onclick="return confirm('Вы действительно хотите удалить эту вакансию?');" />
+                    </form>
+                }
+            }
             @* кнопки откликнуться и добавить в избранное *@
         </div>
 
@@ -61,34 +106,46 @@
             @* рейтинг и переход к отзывам *@
         </div>
     </div>
+    
+    @if (Model.IsArchived)
+    {
+        <div class="mb-3">
+            <h3>Вакансия в архиве</h3>
+            <p>Работодатель, вероятно, уже нашел нужного кандидата и больше не принимает отклики на эту вакансию</p>
+        </div>
+    }
+    
+    <a class="show-vacancy-description-btn" id="show-vacancy-description-btn" onclick="showVacancyDescription()">Показать описание вакансии</a>
 
-    <div>
-        <p>@Html.Raw(Model.Description)</p>
+    <div id="vacancy-description-block">
+        <div>
+            <p>@Html.Raw(Model.Description)</p>
+        </div>
+    
+        @if (Model.EmployerContactEmail is not null || Model.EmployerContactPhoneNumber is not null)
+        {
+            <h4>Контактная информация</h4>
+            if (Model.EmployerContactEmail is not null && Model.EmployerContactPhoneNumber is not null)
+            {
+                <p class="mb-0">Почта: @Model.EmployerContactEmail</p>
+            }
+            if (Model.EmployerContactEmail is not null && Model.EmployerContactPhoneNumber is null)
+            {
+                <p>Почта: @Model.EmployerContactEmail</p>
+            }
+
+            if (Model.EmployerContactPhoneNumber is not null)
+            {
+                <p>Телефон: @Model.EmployerContactPhoneNumber</p>
+            }
+        }
+    
+        @if (Model.Address is not null)
+        {
+            <h4>Адрес места работы</h4>
+            <p>@Model.VacancyCity, @Model.Address</p>
+        }
     </div>
-    
-    @if (Model.EmployerContactEmail is not null || Model.EmployerContactPhoneNumber is not null)
-    {
-        <h4>Контактная информация</h4>
-        if (Model.EmployerContactEmail is not null && Model.EmployerContactPhoneNumber is not null)
-        {
-            <p class="mb-0">Почта: @Model.EmployerContactEmail</p>
-        }
-        if (Model.EmployerContactEmail is not null && Model.EmployerContactPhoneNumber is null)
-        {
-            <p>Почта: @Model.EmployerContactEmail</p>
-        }
-
-        if (Model.EmployerContactPhoneNumber is not null)
-        {
-            <p>Телефон: @Model.EmployerContactPhoneNumber</p>
-        }
-    }
-    
-    @if (Model.Address is not null)
-    {
-        <h4>Адрес места работы</h4>
-        <p>@Model.VacancyCity, @Model.Address</p>
-    }
 
     @switch (Model.CreatedAt.Month)
     {
@@ -132,3 +189,18 @@
 </div>
 
 <script src="~/js/vacancy/format-number-displaying-in-p.js"></script>
+<script>
+    var isArchived = @Html.Raw(Json.Serialize(Model.IsArchived));
+    var showVacancyDescriptionBtn = document.getElementById('show-vacancy-description-btn');
+    var vacancyDescription = document.getElementById('vacancy-description-block');
+
+    if (isArchived === true || isArchived.toLowerCase() === 'true') {
+        showVacancyDescriptionBtn.style.display = 'block';
+        vacancyDescription.style.display = 'none';
+    }
+
+    function showVacancyDescription() {
+        showVacancyDescriptionBtn.style.display = 'none';
+        vacancyDescription.style.display = 'block';
+    }
+</script>
