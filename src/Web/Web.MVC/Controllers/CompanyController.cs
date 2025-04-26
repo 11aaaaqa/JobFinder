@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web.MVC.Constants.Permissions_constants;
 using Web.MVC.DTOs.Company;
+using Web.MVC.DTOs.Vacancy;
 using Web.MVC.Filters.Authorization_filters.Company_filters;
 using Web.MVC.Models.ApiResponses.Company;
 using Web.MVC.Models.ApiResponses.Employer;
@@ -448,14 +449,14 @@ namespace Web.MVC.Controllers
         [CompanyPermissionChecker(VacancyPermissionsConstants.DeleteVacancyPermission)]
         [HttpPost]
         [Route("employer/company/my-company/vacancies/{vacancyId}/remove")]
-        public async Task<IActionResult> DeleteVacancy(Guid vacancyId, string returnUrl)
+        public async Task<IActionResult> DeleteVacancy(Guid vacancyId)
         {
             using HttpClient httpClient = httpClientFactory.CreateClient();
 
             var response = await httpClient.DeleteAsync($"{url}/api/Vacancy/DeleteVacancy/{vacancyId}");
             response.EnsureSuccessStatusCode();
 
-            return LocalRedirect(returnUrl);
+            return RedirectToAction("GetMyCompanyVacancies");
         }
 
         [Authorize]
@@ -484,6 +485,47 @@ namespace Web.MVC.Controllers
             response.EnsureSuccessStatusCode();
 
             return LocalRedirect(returnUrl);
+        }
+
+        [Authorize]
+        [CompanyPermissionChecker(VacancyPermissionsConstants.EditVacancyPermission)]
+        [HttpGet]
+        [Route("employer/company/my-company/vacancies/edit/{vacancyId}")]
+        public async Task<IActionResult> EditVacancy(Guid vacancyId)
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+
+            var response = await httpClient.GetAsync($"{url}/api/Vacancy/GetVacancyById/{vacancyId}");
+            response.EnsureSuccessStatusCode();
+
+            var vacancy = await response.Content.ReadFromJsonAsync<VacancyResponse>();
+
+            return View(new EditVacancyDto
+            {
+                Id = vacancy.Id, SalaryTo = vacancy.SalaryTo, Address = vacancy.Address, Description = vacancy.Description,
+                EmployerContactEmail = vacancy.EmployerContactEmail, EmployerContactPhoneNumber = vacancy.EmployerContactPhoneNumber,
+                EmploymentType = vacancy.EmploymentType, Position = vacancy.Position, RemoteWork = vacancy.RemoteWork,
+                SalaryFrom = vacancy.SalaryFrom, VacancyCity = vacancy.VacancyCity, WorkExperience = vacancy.WorkExperience
+            });
+        }
+
+        [Authorize]
+        [CompanyPermissionChecker(VacancyPermissionsConstants.EditVacancyPermission)]
+        [HttpPost]
+        [Route("employer/company/my-company/vacancies/edit/{vacancyId}")]
+        public async Task<IActionResult> EditVacancy(EditVacancyDto model)
+        {
+            if (ModelState.IsValid)
+            {
+                using HttpClient httpClient = httpClientFactory.CreateClient();
+                using StringContent jsonContent = new(JsonSerializer.Serialize(model), Encoding.UTF8, "application/json");
+
+                var response = await httpClient.PutAsync($"{url}/api/Vacancy/UpdateVacancy", jsonContent);
+                response.EnsureSuccessStatusCode();
+
+                return RedirectToAction("GetVacancy", "Vacancy", new { vacancyId = model.Id});
+            }
+            return View(model);
         }
     }
 }
