@@ -133,6 +133,7 @@ namespace VacancyMicroservice.Api.Services
                 return;
 
             vacancy.IsArchived = false;
+            vacancy.CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow);
             await context.SaveChangesAsync();
         }
 
