@@ -443,5 +443,19 @@ namespace Web.MVC.Controllers
 
             return View(vacancies);
         }
+
+        [Authorize]
+        [CompanyPermissionChecker(VacancyPermissionsConstants.DeleteVacancyPermission)]
+        [HttpPost]
+        [Route("employer/company/my-company/vacancies/{vacancyId}/remove")]
+        public async Task<IActionResult> DeleteVacancy(Guid vacancyId, string returnUrl)
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+
+            var response = await httpClient.DeleteAsync($"{url}/api/Vacancy/DeleteVacancy/{vacancyId}");
+            response.EnsureSuccessStatusCode();
+
+            return LocalRedirect(returnUrl);
+        }
     }
 }
