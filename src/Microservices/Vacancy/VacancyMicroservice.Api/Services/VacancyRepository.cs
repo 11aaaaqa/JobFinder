@@ -103,16 +103,12 @@ namespace VacancyMicroservice.Api.Services
         public async Task UpdateVacancyAsync(UpdateVacancyDto model)
         {
             var vacancy = await context.Vacancies.SingleAsync(x => x.Id == model.Id);
-            var updatedVacancy = new Vacancy
-            {
-                Id = model.Id, Address = model.Address, CompanyId = vacancy.CompanyId,
-                CompanyName = vacancy.CompanyName, Position = model.Position, Description = model.Description, 
-                EmployerContactEmail = model.EmployerContactEmail,
-                EmployerContactPhoneNumber = model.EmployerContactPhoneNumber, EmploymentType = model.EmploymentType,
-                RemoteWork = model.RemoteWork, SalaryFrom = model.SalaryFrom, SalaryTo = model.SalaryTo,
-                VacancyCity = model.VacancyCity, WorkExperience = model.WorkExperience
-            };
-            context.Vacancies.Update(updatedVacancy);
+            
+            vacancy.Address = model.Address; vacancy.Position = model.Position; vacancy.Description = model.Description;
+            vacancy.EmployerContactEmail = model.EmployerContactEmail; vacancy.EmployerContactPhoneNumber = model.EmployerContactPhoneNumber;
+            vacancy.EmploymentType = model.EmploymentType; vacancy.RemoteWork = model.RemoteWork; vacancy.SalaryTo = model.SalaryTo;
+            vacancy.SalaryFrom = model.SalaryFrom; vacancy.VacancyCity = model.VacancyCity; vacancy.WorkExperience = model.WorkExperience;
+            
             await context.SaveChangesAsync();
         }
 
