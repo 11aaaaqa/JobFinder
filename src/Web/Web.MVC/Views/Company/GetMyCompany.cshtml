@@ -13,7 +13,7 @@
             <input type="submit" value="Выйти из компании" />
         </form>
         <form method="post" asp-controller="Company" asp-action="DeleteMyCompany">
-            <input type="submit" value="Удалить компанию"/>
+            <input type="submit" value="Удалить компанию" onclick="return confirm('Вы действительно хотите удалить компанию?');" />
         </form>
     </div>
 
