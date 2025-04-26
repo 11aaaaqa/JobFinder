@@ -34,3 +34,16 @@
 .get-vacancy-page-block {
     margin: 0 10%;
 }
+
+.show-vacancy-description-btn {
+    display: none;
+    color: #0000EE;
+    text-decoration: underline;
+    text-decoration-style: dashed;
+    text-decoration-color: #0000EE;
+    text-underline-offset: 4px;
+}
+
+.show-vacancy-description-btn:hover {
+    cursor: pointer;
+}
