@@ -159,6 +159,40 @@ namespace Web.MVC.Controllers
             response.EnsureSuccessStatusCode();
 
             var vacancy = await response.Content.ReadFromJsonAsync<VacancyResponse>();
+
+            if (User.Identity.IsAuthenticated)
+            {
+                var employerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
+                if (!employerResponse.IsSuccessStatusCode)
+                    return View(vacancy);
+
+                var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
+                if(vacancy.CompanyId != employer.CompanyId)
+                    return View(vacancy);
+
+                var companyResponse = await httpClient.GetAsync($"{url}/api/Company/GetCompanyByCompanyId/{employer.CompanyId}");
+                companyResponse.EnsureSuccessStatusCode();
+
+                var company = await companyResponse.Content.ReadFromJsonAsync<CompanyResponse>();
+
+                if (company.FounderEmployerId == employer.Id)
+                {
+                    ViewBag.DoesEmployerHavePermissionToDeleteVacancies = true;
+                    ViewBag.DoesEmployerHavePermissionToArchiveAndUnarchiveVacancies = true;
+                    ViewBag.DoesEmployerHavePermissionToEditVacancies = true;
+                }
+                else
+                {
+                    var employerPermissionsResponse = await httpClient.GetAsync($"{url}/api/EmployerPermissions/GetEmployerPermissions/{employer.Id}");
+                    employerPermissionsResponse.EnsureSuccessStatusCode();
+
+                    var employerPermissions = await employerPermissionsResponse.Content.ReadFromJsonAsync<List<string>>();
+                    ViewBag.DoesEmployerHavePermissionToDeleteVacancies = employerPermissions.Contains(VacancyPermissionsConstants.DeleteVacancyPermission);
+                    ViewBag.DoesEmployerHavePermissionToArchiveAndUnarchiveVacancies = employerPermissions.Contains(VacancyPermissionsConstants.ArchiveUnarchiveVacancyPermission);
+                    ViewBag.DoesEmployerHavePermissionToEditVacancies = employerPermissions.Contains(VacancyPermissionsConstants.EditVacancyPermission);
+                }
+            }
+            
             return View(vacancy);
         }
 
