@@ -1,0 +1,109 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Web.MVC.Constants.Vacancy
+@model Web.MVC.DTOs.Vacancy.EditVacancyDto
+<link rel="stylesheet" href="~/css/vacancy/edit-vacancy.css" />
+<link rel="stylesheet" href="~/css/site-themed-textarea.css" />
+
+<form method="post">
+    <div asp-validation-summary="ModelOnly"></div>
+
+    <span asp-validation-for="Position"></span>
+    <span asp-validation-for="SalaryFrom"></span>
+    <span asp-validation-for="SalaryTo"></span>
+    <span asp-validation-for="WorkExperience"></span>
+    <span asp-validation-for="EmploymentType"></span>
+    <span asp-validation-for="RemoteWork"></span>
+    <span asp-validation-for="VacancyCity"></span>
+    <span asp-validation-for="Address"></span>
+    <span asp-validation-for="Description"></span>
+    <span asp-validation-for="EmployerContactPhoneNumber"></span>
+    <span asp-validation-for="EmployerContactEmail"></span>
+    
+    <input asp-for="Id" type="hidden" />
+    
+    <h2>Размещение вакансии</h2>
+
+    <div class="mb-2">
+        <h3>Должность</h3>
+        <input class="edit-vacancy-text-base edit-vacancy-text" asp-for="Position" placeholder="Например: Менеджер по продажам" />
+    </div>
+    
+    <div class="mb-2">
+        <h3>Зарплата (в месяц)</h3>
+        <input class="edit-vacancy-text-base edit-vacancy-salary" asp-for="SalaryFrom" placeholder="от" />
+        <input class="edit-vacancy-text-base edit-vacancy-salary" asp-for="SalaryTo" placeholder="до" />
+    </div>
+    
+    <div class="mb-2">
+        <h3>Опыт работы</h3>
+        <p>
+            <input type="radio" asp-for="WorkExperience" value="@WorkExperienceConstants.NoExperience" />
+            @WorkExperienceConstants.NoExperience
+        </p>
+        <p>
+            <input type="radio" asp-for="WorkExperience" value="@WorkExperienceConstants.LessThanOneYear" />
+            @WorkExperienceConstants.LessThanOneYear
+        </p>
+        <p>
+            <input type="radio" asp-for="WorkExperience" value="@WorkExperienceConstants.FromOneToThreeYears" />
+            @WorkExperienceConstants.FromOneToThreeYears
+        </p>
+        <p>
+            <input type="radio" asp-for="WorkExperience" value="@WorkExperienceConstants.FromThreeToSixYears" />
+            @WorkExperienceConstants.FromThreeToSixYears
+        </p>
+        <p>
+            <input type="radio" asp-for="WorkExperience" value="@WorkExperienceConstants.MoreThanSixYears" />
+            @WorkExperienceConstants.MoreThanSixYears
+        </p>
+    </div>
+    
+    <div class="mb-2">
+        <h3>Занятость</h3>
+        <p>
+            <input type="radio" asp-for="EmploymentType" value="@EmploymentTypeConstants.FullTimeEmploymentTypeConstant" />
+            @EmploymentTypeConstants.FullTimeEmploymentTypeConstant
+        </p>
+        <p>
+            <input type="radio" asp-for="EmploymentType" value="@EmploymentTypeConstants.PartTimeEmploymentTypeConstant" />
+            @EmploymentTypeConstants.PartTimeEmploymentTypeConstant
+        </p>
+        <p>
+            <input type="checkbox" asp-for="RemoteWork" /> Удаленная работа
+        </p>
+    </div>
+    
+    <div class="mb-2">
+        <h3>Описание вакансии</h3>
+        <div class="toolbar">
+            <button id="boldBtn" class="tool-button" type="button" onclick="execCmd('bold')">Жирный</button>
+            <button id="italicBtn" class="tool-button" type="button" onclick="execCmd('italic')">Курсив</button>
+            <button class="tool-button" type="button" onclick="document.execCommand('insertUnorderedList', false, null)">Маркированный список</button>
+            <button class="tool-button" type="button" onclick="document.execCommand('insertOrderedList', false, null)">Нумерованный список</button>
+            <button class="tool-button" type="button" onclick="document.execCommand('formatBlock', false, 'h4')">Заголовок</button>
+        </div>
+        <div id="worker-responsibilities-input" contenteditable="true" oninput="updateWorkerResponsibilitiesTextarea()">@Html.Raw(Model.Description)</div>
+        <textarea id="worker-responsibilities-hidden-textarea" style="display: none;" asp-for="Description"></textarea>
+    </div>
+    
+    <div class="mb-2">
+        <h3>Где искать сотрудника</h3>
+        <input class="edit-vacancy-text-base edit-vacancy-text" asp-for="VacancyCity" placeholder="Введите название города" />
+    </div>
+
+    <div class="mb-2">
+        <h3>Адрес места работы</h3>
+        <input class="edit-vacancy-text-base edit-vacancy-text" asp-for="Address" placeholder="Введите адрес" />
+    </div>
+
+    <div>
+        <h3>Укажите вашу контактную информацию</h3>
+        <input class="mb-2 edit-vacancy-text-base edit-vacancy-text" asp-for="EmployerContactEmail" placeholder="Введите вашу эл. почту" /><br />
+        <input class="edit-vacancy-text-base edit-vacancy-text" asp-for="EmployerContactPhoneNumber" placeholder="Введите ваш номер телефона" />
+    </div>
+
+    <input type="submit" value="Создать" />
+</form>
+
+<script src="~/js/textarea-resizing.js"></script>
+<script src="~/js/vacancy/edit-vacancy.js"></script>
