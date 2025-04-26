@@ -457,5 +457,33 @@ namespace Web.MVC.Controllers
 
             return LocalRedirect(returnUrl);
         }
+
+        [Authorize]
+        [CompanyPermissionChecker(VacancyPermissionsConstants.ArchiveUnarchiveVacancyPermission)]
+        [HttpPost]
+        [Route("employer/company/my-company/vacancies/{vacancyId}/archive")]
+        public async Task<IActionResult> ArchiveVacancy(Guid vacancyId, string returnUrl)
+        {
+            using HttpClient httpsClient = httpClientFactory.CreateClient();
+
+            var response = await httpsClient.GetAsync($"{url}/api/Vacancy/ArchiveVacancy/{vacancyId}");
+            response.EnsureSuccessStatusCode();
+
+            return LocalRedirect(returnUrl);
+        }
+
+        [Authorize]
+        [CompanyPermissionChecker(VacancyPermissionsConstants.ArchiveUnarchiveVacancyPermission)]
+        [HttpPost]
+        [Route("employer/company/my-company/archived-vacancies/{vacancyId}/unarchive")]
+        public async Task<IActionResult> UnarchiveVacancy(Guid vacancyId, string returnUrl)
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+
+            var response = await httpClient.GetAsync($"{url}/api/Vacancy/UnarchiveVacancy/{vacancyId}");
+            response.EnsureSuccessStatusCode();
+
+            return LocalRedirect(returnUrl);
+        }
     }
 }
