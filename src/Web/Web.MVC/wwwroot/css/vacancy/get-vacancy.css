@@ -25,6 +25,8 @@
 
 .salary {
     margin-bottom: 15px;
+    font-size: 18px;
+    font-weight: 500;
 }
 
 .margin-0 {
@@ -45,5 +47,29 @@
 }
 
 .show-vacancy-description-btn:hover {
+    cursor: pointer;
+}
+
+.vacancy-actions-block {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.vacancy-action-btn {
+    text-decoration: none;
+    color: white;
+    background-color: deepskyblue;
+    border: none;
+    border-radius: 7px;
+    padding: 5px 12px;
+    margin-right: 4px;
+    margin-bottom: 4px;
+    transition: background-color 0.3s;
+}
+
+.vacancy-action-btn:hover {
+    background-color: dodgerblue;
     cursor: pointer;
 }

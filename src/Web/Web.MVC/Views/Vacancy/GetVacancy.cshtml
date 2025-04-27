@@ -67,36 +67,40 @@
                 string returnUrl = Context.Request.Path;
                 if (Context.Request.QueryString.HasValue)
                     returnUrl += Context.Request.QueryString;
-                @if (ViewBag.DoesEmployerHavePermissionToEditVacancies is true)
-                {
-                    <a asp-controller="Company" asp-action="EditVacancy" asp-route-vacancyId="@Model.Id">Изменить</a>
-                }
-
-                @if (Model.IsArchived)
-                {
-                    if (ViewBag.DoesEmployerHavePermissionToArchiveAndUnarchiveVacancies is true)
+                <div class="vacancy-actions-block">
+                    @if (ViewBag.DoesEmployerHavePermissionToEditVacancies is true)
                     {
-                        <form method="post" asp-controller="Company" asp-action="UnarchiveVacancy" asp-route-returnUrl="@returnUrl" asp-route-vacancyId="@Model.Id">
-                            <input type="submit" value="Разархивировать"/>
+                        <a class="vacancy-action-btn" asp-controller="Company" asp-action="EditVacancy" asp-route-vacancyId="@Model.Id">Изменить</a>
+                    }
+
+                    @if (Model.IsArchived)
+                    {
+                        if (ViewBag.DoesEmployerHavePermissionToArchiveAndUnarchiveVacancies is true)
+                        {
+                            <form method="post" asp-controller="Company" asp-action="UnarchiveVacancy"
+                                  asp-route-returnUrl="@returnUrl" asp-route-vacancyId="@Model.Id">
+                                <input class="vacancy-action-btn" type="submit" value="Разархивировать" />
+                            </form>
+                        }
+                    }
+                    else
+                    {
+                        @if (ViewBag.DoesEmployerHavePermissionToArchiveAndUnarchiveVacancies is true)
+                        {
+                            <form method="post" asp-controller="Company" asp-action="ArchiveVacancy"
+                                  asp-route-returnUrl="@returnUrl" asp-route-vacancyId="@Model.Id">
+                                <input class="vacancy-action-btn" type="submit" value="Архивировать" />
+                            </form>
+                        }
+                    }
+
+                    @if (ViewBag.DoesEmployerHavePermissionToDeleteVacancies is true)
+                    {
+                        <form method="post" asp-controller="Company" asp-action="DeleteVacancy" asp-route-vacancyId="@Model.Id">
+                            <input class="vacancy-action-btn" type="submit" value="Удалить вакансию" onclick="return confirm('Вы действительно хотите удалить эту вакансию?');" />
                         </form>
                     }
-                }
-                else
-                {
-                    @if (ViewBag.DoesEmployerHavePermissionToArchiveAndUnarchiveVacancies is true)
-                    {
-                        <form method="post" asp-controller="Company" asp-action="ArchiveVacancy" asp-route-returnUrl="@returnUrl" asp-route-vacancyId="@Model.Id">
-                            <input type="submit" value="Архивировать"/>
-                        </form>
-                    }
-                }
-
-                @if (ViewBag.DoesEmployerHavePermissionToDeleteVacancies is true)
-                {
-                    <form method="post" asp-controller="Company" asp-action="DeleteVacancy" asp-route-vacancyId="@Model.Id">
-                        <input type="submit" value="Удалить вакансию" onclick="return confirm('Вы действительно хотите удалить эту вакансию?');" />
-                    </form>
-                }
+                </div>
             }
             @* кнопки откликнуться и добавить в избранное *@
         </div>
