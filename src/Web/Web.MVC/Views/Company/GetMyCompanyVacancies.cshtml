@@ -9,6 +9,11 @@
     <input type="submit" value="Найти"/>
 </form>
 
+<div class="vacancy-type-switching-block">
+    <a class="active-vacancy-switching-link mr-1" asp-controller="Company" asp-action="GetMyCompanyVacancies">Активные</a>
+    <a class="vacancy-switching-link" asp-controller="Company" asp-action="GetMyCompanyArchivedVacancies">В архиве</a>
+</div>
+
 @foreach (var vacancy in Model)
 {
     <a class="get-vacancy-link" asp-controller="Vacancy" asp-action="GetVacancy" asp-route-vacancyId="@vacancy.Id">
