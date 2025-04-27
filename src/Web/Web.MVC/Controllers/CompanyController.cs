@@ -527,5 +527,37 @@ namespace Web.MVC.Controllers
             }
             return View(model);
         }
+
+        [Authorize]
+        [HttpGet]
+        [Route("employer/company/my-company/vacancies/archived")]
+        public async Task<IActionResult> GetMyCompanyArchivedVacancies(string? query, int index = 1)
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+            var encodedQuery = HttpUtility.UrlEncode(query);
+
+            var employerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
+            employerResponse.EnsureSuccessStatusCode();
+
+            var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
+
+            var vacanciesResponse = await httpClient.GetAsync(
+                $"{url}/api/Vacancy/GetArchivedVacanciesByCompanyId/{employer.CompanyId}?pageNumber={index}&searchingQuery={encodedQuery}");
+            vacanciesResponse.EnsureSuccessStatusCode();
+
+            var vacancies = await vacanciesResponse.Content.ReadFromJsonAsync<List<VacancyResponse>>();
+
+            var doesNextPageExistResponse = await httpClient.GetAsync(
+                $"{url}/api/Vacancy/DoesNextArchivedVacanciesByCompanyIdPageExist/{employer.CompanyId}?searchingQuery={encodedQuery}&currentPageNumber={index}");
+            doesNextPageExistResponse.EnsureSuccessStatusCode();
+
+            bool doesNextPageExist = await doesNextPageExistResponse.Content.ReadFromJsonAsync<bool>();
+
+            ViewBag.SearchingQuery = query;
+            ViewBag.CurrentPageNumber = index;
+            ViewBag.DoesNextPageExist = doesNextPageExist;
+
+            return View(vacancies);
+        }
     }
 }
