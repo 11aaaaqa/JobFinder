@@ -49,3 +49,37 @@
     border-radius: 8px;
     padding: 2px 5px;
 }
+
+.vacancy-switching-link {
+    text-decoration: none;
+    align-content: center;
+    color: white;
+    background-color: deepskyblue;
+    border: none;
+    border-radius: 12px;
+    padding: 7px 40px;
+    transition: background-color 0.4s
+}
+
+.vacancy-switching-link:hover {
+    background-color: dodgerblue;
+    cursor: pointer;
+}
+
+.active-vacancy-switching-link {
+    text-decoration: none;
+    align-content: center;
+    color: white;
+    background-color: dodgerblue;
+    border: none;
+    border-radius: 12px;
+    padding: 7px 40px;
+}
+
+.mr-1 {
+    margin-right: 1px;
+}
+
+.vacancy-type-switching-block {
+    margin: 13px 0 8px;
+}
