@@ -49,3 +49,24 @@
     border-radius: 8px;
     padding: 2px 5px;
 }
+
+.filter-searching-block {
+    display: flex;
+    align-items: center;
+}
+
+.filter-link {
+    margin-left: 6px;
+    text-decoration: none;
+    color: white;
+    background-color: deepskyblue;
+    border: none;
+    border-radius: 13px;
+    padding: 4px 20px;
+    transition: background-color 0.4s;
+}
+
+.filter-link:hover {
+    background-color: dodgerblue;
+    cursor: pointer;
+}
