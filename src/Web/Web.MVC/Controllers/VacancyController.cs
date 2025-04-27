@@ -198,9 +198,14 @@ namespace Web.MVC.Controllers
 
         [HttpGet]
         [Route("vacancy/search/advanced")]
-        public IActionResult SetVacancyAdvancedFilter()
+        public IActionResult SetVacancyAdvancedFilter(string? position, int? salaryFrom, string? workExperience, string? employmentType, bool officeWorkType,
+            bool remoteWorkType)
         {
-            return View();
+            return View(new SetVacancyAdvancedFilterDto
+            {
+                Position = position, EmploymentType = employmentType, OfficeWorkType = officeWorkType,
+                RemoteWorkType = remoteWorkType, SalaryFrom = salaryFrom, WorkExperience = workExperience
+            });
         }
 
         [HttpPost]
