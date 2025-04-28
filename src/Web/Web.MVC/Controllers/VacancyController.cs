@@ -1,13 +1,9 @@
-﻿using System.Linq;
-using System.Numerics;
-using System.Text;
+﻿using System.Text;
 using System.Text.Json;
 using System.Web;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Abstractions;
 using Web.MVC.Constants.Permissions_constants;
-using Web.MVC.Constants.Vacancy;
 using Web.MVC.DTOs.Vacancy;
 using Web.MVC.Filters.Authorization_filters.Company_filters;
 using Web.MVC.Models.ApiResponses.Company;
