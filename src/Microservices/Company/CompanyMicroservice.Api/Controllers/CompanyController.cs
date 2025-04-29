@@ -10,7 +10,8 @@ namespace CompanyMicroservice.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CompanyController(ICompanyRepository companyRepository, IKafkaProducer kafkaProducer) : ControllerBase
+    public class CompanyController(ICompanyRepository companyRepository, IKafkaProducer kafkaProducer,
+        ICompanyEmployerRepository companyEmployerRepository) : ControllerBase
     {
         [HttpGet]
         [Route("GetCompanyByCompanyId/{id}")]
@@ -36,8 +37,24 @@ namespace CompanyMicroservice.Api.Controllers
         [Route("UpdateCompany")]
         public async Task<IActionResult> UpdateCompanyAsync([FromBody] UpdateCompanyDto model)
         {
+            var company = await companyRepository.GetCompanyByIdAsync(model.Id);
+            if(company is null) return BadRequest();
+            string oldCompanyName = company.CompanyName;
+
             var succeeded = await companyRepository.UpdateCompanyAsync(model);
             if (!succeeded) return BadRequest();
+
+            if (oldCompanyName != model.CompanyName)
+            {
+                await kafkaProducer.ProduceAsync("company-updated-topic", new Message<Null, string>
+                {
+                    Value = JsonSerializer.Serialize(new
+                    {
+                        CompanyId = company.Id,
+                        NewCompanyName = model.CompanyName
+                    })
+                });
+            }
 
             return Ok();
         }
@@ -47,6 +64,7 @@ namespace CompanyMicroservice.Api.Controllers
         public async Task<IActionResult> DeleteCompanyAsync(Guid companyId)
         {
             await companyRepository.DeleteCompanyAsync(companyId);
+            await companyEmployerRepository.RemoveAllEmployerRequestsByCompanyIdAsync(companyId);
 
             await kafkaProducer.ProduceAsync("company-deleted-topic", new Message<Null, string>
             {
