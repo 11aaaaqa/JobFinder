@@ -49,5 +49,14 @@ namespace CompanyMicroservice.Api.Services
 
         public async Task<JoiningRequestedEmployer?> GetJoiningRequestByRequestId(Guid id)
             => await context.JoiningRequestedEmployers.SingleOrDefaultAsync(x => x.Id == id);
+
+        public async Task RemoveAllEmployerRequestsByCompanyIdAsync(Guid companyId)
+        {
+            var joiningRequests = await context.JoiningRequestedEmployers
+                .Where(x => x.CompanyId == companyId).ToListAsync();
+
+            context.RemoveRange(joiningRequests);
+            await context.SaveChangesAsync();
+        }
     }
 }

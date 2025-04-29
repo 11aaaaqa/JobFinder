@@ -10,5 +10,6 @@ namespace CompanyMicroservice.Api.Services
         Task<bool> DidEmployerAlreadyRequestJoiningAsync(Guid employerId, Guid companyId);
         Task DeleteEmployerJoiningAsync(Guid joiningRequestId);
         Task<JoiningRequestedEmployer?> GetJoiningRequestByRequestId(Guid id);
+        Task RemoveAllEmployerRequestsByCompanyIdAsync(Guid companyId);
     }
 }
