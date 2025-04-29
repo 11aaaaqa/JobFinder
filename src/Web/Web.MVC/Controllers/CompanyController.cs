@@ -99,6 +99,10 @@ namespace Web.MVC.Controllers
                 }
                 response.EnsureSuccessStatusCode();
 
+                var removeEmployerJoiningRequestsResponse = await httpClient.GetAsync(
+                    $"{url}/api/CompanyEmployer/RemoveAllEmployerRequestsByEmployerId/{model.FounderEmployerId}");
+                removeEmployerJoiningRequestsResponse.EnsureSuccessStatusCode();
+
                 return RedirectToAction("GetMyCompany");
             }
 
