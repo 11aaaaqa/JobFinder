@@ -9,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ApplicationDbContext>(x => 
     x.UseNpgsql(builder.Configuration["Database:ConnectionString"]));
 
+builder.Services.AddHostedService<CompanyUpdatedKafkaConsumer>();
 builder.Services.AddHostedService<CompanyDeletedKafkaConsumer>();
 
 builder.Services.AddTransient<IPaginationService, PaginationService>();
