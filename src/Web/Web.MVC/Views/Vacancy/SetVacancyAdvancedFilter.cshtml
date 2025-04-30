@@ -1,4 +1,5 @@
-﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+﻿@using System.Text.Json
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @using Web.MVC.Constants.Vacancy
 @model Web.MVC.DTOs.Vacancy.SetVacancyAdvancedFilterDto
 
@@ -73,7 +74,23 @@
     
     <div>
         <h3>Город</h3>
-        <div id="cityList"></div>
+        @if (Model.VacancyCities is null || Model.VacancyCities.Count == 0)
+        {
+            <div id="cityList"></div>
+        }
+        else
+        {
+            <div id="cityList">
+                @foreach (var city in Model.VacancyCities)
+                {
+                    <div>
+                        @city
+                        <input type="hidden" name="VacancyCities" value="@city" />
+                        <button type="button" onclick="removeCity(@JsonSerializer.Serialize(city))">Удалить</button>
+                    </div>
+                }
+            </div>
+        }
         
         <input id="cityInput" placeholder="Введите название города"/>
         <button type="button" id="addCityButton">Добавить</button>
@@ -85,7 +102,7 @@
 <script>
     const cityList = document.getElementById("cityList");
     const cityInput = document.getElementById("cityInput");
-    const cities = [];
+    const cities = @Html.Raw(Model.VacancyCities != null ? JsonSerializer.Serialize(Model.VacancyCities) : "[]");
 
     document.getElementById("addCityButton").addEventListener("click", function() {
         const cityName = cityInput.value.trim();
@@ -120,5 +137,11 @@
             cityDiv.appendChild(removeButton);
             cityList.appendChild(cityDiv);
         });
+    }
+
+    function removeCity(cityName) {
+        var index = cities.indexOf(cityName);
+        cities.splice(index, 1);
+        updateCityList();
     }
 </script>
