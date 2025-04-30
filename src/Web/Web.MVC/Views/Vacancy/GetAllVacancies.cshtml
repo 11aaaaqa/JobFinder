@@ -45,7 +45,7 @@
     }
     else
     {
-        <a class="filter-link" asp-controller="Vacancy" asp-action="SetVacancyAdvancedFilter" asp-route-position="@ViewBag.FilterModel.Position"
+        <a id="filter-link" class="filter-link" asp-controller="Vacancy" asp-action="SetVacancyAdvancedFilter" asp-route-position="@ViewBag.FilterModel.Position"
            asp-route-salaryFrom="@ViewBag.FilterModel.SalaryFrom" asp-route-workExperience="@ViewBag.FilterModel.WorkExperience" 
            asp-route-employmentType="@ViewBag.FilterModel.EmploymentType" asp-route-remoteWorkType="@ViewBag.FilterModel.RemoteWork">Фильтр</a>
     }
@@ -234,6 +234,27 @@
                     link.href = url.toString();
                 }
             }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                var link = document.getElementById('filter-link');
+                if (link) {
+                    var url = new URL(link.href);
+                    var params = new URLSearchParams(url.search);
+
+                    var citiesList = @Html.Raw(Json.Serialize(ViewBag.FilterModel.VacancyCities));
+
+                    if (citiesList) {
+                        if (Array.isArray(citiesList) && citiesList.length > 0) {
+                            citiesList.forEach(function(city) {
+                                params.append("vacancyCities", city);
+                            });
+                        }
+                    }
+
+                    url.search = params.toString();
+                    link.href = url.toString();
+                }
+            });
 
             var prevLink = document.getElementById('pagination-link-prev');
             var nextLink = document.getElementById('pagination-link-next');
