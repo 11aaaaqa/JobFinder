@@ -195,12 +195,12 @@ namespace Web.MVC.Controllers
         [HttpGet]
         [Route("vacancy/search/advanced")]
         public IActionResult SetVacancyAdvancedFilter(string? position, int? salaryFrom, string? workExperience, string? employmentType, bool officeWorkType,
-            bool remoteWorkType)
+            bool remoteWorkType, List<string>? vacancyCities)
         {
             return View(new SetVacancyAdvancedFilterDto
             {
                 Position = position, EmploymentType = employmentType, OfficeWorkType = officeWorkType,
-                RemoteWorkType = remoteWorkType, SalaryFrom = salaryFrom, WorkExperience = workExperience
+                RemoteWorkType = remoteWorkType, SalaryFrom = salaryFrom, WorkExperience = workExperience, VacancyCities = vacancyCities
             });
         }
 
