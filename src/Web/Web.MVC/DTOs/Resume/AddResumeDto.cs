@@ -21,7 +21,9 @@ namespace Web.MVC.DTOs.Resume
         public string? City { get; set; }
         public string Status { get; set; }
         public bool ReadyToMove { get; set; }
+        [DataType(DataType.PhoneNumber)]
         public string? PhoneNumber { get; set; }
+        [DataType(DataType.EmailAddress)]
         public string? Email { get; set; }
         public string? AboutMe { get; set; }
         public uint? DesiredSalary { get; set; }
