@@ -27,8 +27,8 @@ namespace Web.MVC.DTOs.Resume
         public string? Email { get; set; }
         public string? AboutMe { get; set; }
         public uint? DesiredSalary { get; set; }
-        public List<EducationResponse>? Educations { get; set; }
-        public List<EmployeeExperienceResponse>? EmployeeExperience { get; set; }
-        public List<ForeignLanguageResponse>? ForeignLanguages { get; set; }
+        public List<EducationDto>? Educations { get; set; } = new();
+        public List<EmployeeExperienceDto>? EmployeeExperience { get; set; } = new();
+        public List<ForeignLanguageDto>? ForeignLanguages { get; set; } = new();
     }
 }
