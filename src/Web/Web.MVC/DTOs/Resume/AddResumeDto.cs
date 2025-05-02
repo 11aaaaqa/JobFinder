@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Web.MVC.Models.ApiResponses.Resume;
 
 namespace Web.MVC.DTOs.Resume
 {
