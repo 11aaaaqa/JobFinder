@@ -1,0 +1,383 @@
+﻿@using Web.MVC.Constants.Resume
+@model Web.MVC.DTOs.Resume.AddResumeDto
+
+<form method="post">
+    <div asp-validation-summary="ModelOnly"></div>
+    
+    <span asp-validation-for="ResumeTitle"></span>
+    <span asp-validation-for="OccupationTypes"></span>
+    <span asp-validation-for="WorkTypes"></span>
+    <span asp-validation-for="Name"></span>
+    <span asp-validation-for="Surname"></span>
+    <span asp-validation-for="Patronymic"></span>
+    <span asp-validation-for="Gender"></span>
+    <span asp-validation-for="DateOfBirth"></span>
+    <span asp-validation-for="City"></span>
+    <span asp-validation-for="ReadyToMove"></span>
+    <span asp-validation-for="PhoneNumber"></span>
+    <span asp-validation-for="Email"></span>
+    <span asp-validation-for="AboutMe"></span>
+    <span asp-validation-for="DesiredSalary"></span>
+    <span asp-validation-for="Educations"></span>
+    <span asp-validation-for="EmployeeExperience"></span>
+    <span asp-validation-for="ForeignLanguages"></span>
+    
+    <input type="hidden" asp-for="Id"/>
+    <input type="hidden" asp-for="Status" />
+    <input type="hidden" asp-for="EmployeeId" />
+
+    <div>
+        <h3>Профессия или должность</h3>
+        <input asp-for="ResumeTitle" placeholder="Введите профессию или должность"/>
+    </div>
+    
+    <div>
+        <h3>Желаемая зарплата</h3>
+        <input asp-for="DesiredSalary" placeholder="Введите зарплату"/>
+    </div>
+
+    <div>
+        <h3>Информация о Вас</h3>
+        <input asp-for="Name" placeholder="Имя" />
+        <input asp-for="Surname" placeholder="Фамилия" />
+        <input asp-for="Patronymic" placeholder="Отчество" />
+        <input asp-for="DateOfBirth" placeholder="Дата рождения"/>
+    </div>
+    
+    <div>
+        <h3>Ваш пол</h3>
+        <p>
+            <input type="radio" name="Gender" value="@GenderConstants.Male" />
+            @GenderConstants.Male
+        </p>
+        <p>
+            <input type="radio" name="Gender" value="@GenderConstants.Female" />
+            @GenderConstants.Female
+        </p>
+    </div>
+    
+    <div>
+        <h3>Тип работы</h3>
+        <p>
+            <input type="checkbox" name="WorkTypes" value="@WorkTypesConstants.OfficeWork"/>
+            @WorkTypesConstants.OfficeWork
+        </p>
+        <p>
+            <input type="checkbox" name="WorkTypes" value="@WorkTypesConstants.RemoteWork" />
+            @WorkTypesConstants.RemoteWork
+        </p>
+        <p>
+            <input type="checkbox" name="WorkTypes" value="@WorkTypesConstants.HybridWork" />
+            @WorkTypesConstants.HybridWork
+        </p>
+        
+        <div class="mb-2">
+            <p>
+                <input type="checkbox" asp-for="ReadyToMove" />
+                Готов к переезду
+            </p>
+        </div>
+    </div>
+    
+    <div>
+        <h3>Тип занятости</h3>
+        <p>
+            <input type="checkbox" name="OccupationTypes" value="@OccupationTypesConstants.FullTimeJob" />
+            @OccupationTypesConstants.FullTimeJob
+        </p>
+        <p>
+            <input type="checkbox" name="OccupationTypes" value="@OccupationTypesConstants.PartTimeJob" />
+            @OccupationTypesConstants.PartTimeJob
+        </p>
+    </div>
+
+    <div>
+        <h3>Где ищите работу</h3>
+        <input asp-for="City" placeholder="Введите город работы"/>
+    </div>
+    
+    <div>
+        <h3>О себе</h3>
+        <input asp-for="AboutMe" placeholder="Любая дополнительная информация"/>
+    </div>
+    
+    <div>
+        <h3>Контактная информация</h3>
+        <input asp-for="PhoneNumber" placeholder="Номер телефона"/>
+        <input asp-for="Email" placeholder="Почта"/>
+    </div>
+    
+    <div>
+        <h3>Образование</h3>
+        <div id="education-container"></div>
+        <button id="add-education"></button>
+    </div>
+    
+    <div>
+        <h3>Опыт работы</h3>
+        <div id="experience-container"></div>
+        <button id="add-experience"></button>
+    </div>
+
+    <div>
+        <h3>Иностранные языки</h3>
+        <div id="language-container"></div>
+        <button id="add-language"></button>
+    </div>
+
+    <input type="submit" value="Создать"/>
+</form>
+
+<script>
+    let educationIndex = 0;
+    let employeeExperienceIndex = 0;
+    let languageIndex = 0;
+
+    document.getElementById('add-language').addEventListener('click', function() {
+        const container = document.getElementById('language-container');
+        const div = document.createElement('div');
+        div.className = 'language-element-block';
+
+        const languageNameTitle = document.createElement('h4');
+        languageNameTitle.textContent = 'Язык';
+        const languageNameInput = document.createElement('input');
+        languageNameInput.type = 'text';
+        languageNameInput.name = `ForeignLanguages[${languageIndex}].LanguageName`;
+        languageNameInput.placeholder = 'Введите язык';
+
+        const proficiencyLevelTitle = document.createElement('h4');
+        proficiencyLevelTitle.textContent = 'Уровень владения';
+
+        const proficiencyLevelParagraph1 = document.createElement('p');
+        const proficiencyLevelRadio1 = document.createElement('input');
+        proficiencyLevelRadio1.type = 'radio';
+        proficiencyLevelRadio1.value = @LanguageProficiencyLevelConstants.A1;
+        proficiencyLevelRadio1.name = `ForeignLanguages[${languageIndex}].LanguageProficiencyLevel`;
+        const text1 = document.createTextNode(@LanguageProficiencyLevelConstants.A1);
+        proficiencyLevelParagraph1.appendChild(proficiencyLevelRadio1);
+        proficiencyLevelParagraph1.appendChild(text1);
+
+        const proficiencyLevelParagraph2 = document.createElement('p');
+        const proficiencyLevelRadio2 = document.createElement('input');
+        proficiencyLevelRadio2.type = 'radio';
+        proficiencyLevelRadio2.value = @LanguageProficiencyLevelConstants.A2;
+        proficiencyLevelRadio2.name = `ForeignLanguages[${languageIndex}].LanguageProficiencyLevel`;
+        const text2 = document.createTextNode(@LanguageProficiencyLevelConstants.A2);
+        proficiencyLevelParagraph2.appendChild(proficiencyLevelRadio2);
+        proficiencyLevelParagraph2.appendChild(text2);
+
+        const proficiencyLevelParagraph3 = document.createElement('p');
+        const proficiencyLevelRadio3 = document.createElement('input');
+        proficiencyLevelRadio3.type = 'radio';
+        proficiencyLevelRadio3.value = @LanguageProficiencyLevelConstants.B1;
+        proficiencyLevelRadio3.name = `ForeignLanguages[${languageIndex}].LanguageProficiencyLevel`;
+        const text3 = document.createTextNode(@LanguageProficiencyLevelConstants.B1);
+        proficiencyLevelParagraph3.appendChild(proficiencyLevelRadio3);
+        proficiencyLevelParagraph3.appendChild(text3);
+
+        const proficiencyLevelParagraph4 = document.createElement('p');
+        const proficiencyLevelRadio4 = document.createElement('input');
+        proficiencyLevelRadio4.type = 'radio';
+        proficiencyLevelRadio4.value = @LanguageProficiencyLevelConstants.B2;
+        proficiencyLevelRadio4.name = `ForeignLanguages[${languageIndex}].LanguageProficiencyLevel`;
+        const text4 = document.createTextNode(@LanguageProficiencyLevelConstants.B2);
+        proficiencyLevelParagraph4.appendChild(proficiencyLevelRadio4);
+        proficiencyLevelParagraph4.appendChild(text4);
+
+        const proficiencyLevelParagraph5 = document.createElement('p');
+        const proficiencyLevelRadio5 = document.createElement('input');
+        proficiencyLevelRadio5.type = 'radio';
+        proficiencyLevelRadio5.value = @LanguageProficiencyLevelConstants.C1;
+        proficiencyLevelRadio5.name = `ForeignLanguages[${languageIndex}].LanguageProficiencyLevel`;
+        const text5 = document.createTextNode(@LanguageProficiencyLevelConstants.C1);
+        proficiencyLevelParagraph5.appendChild(proficiencyLevelRadio5);
+        proficiencyLevelParagraph5.appendChild(text5);
+
+        const proficiencyLevelParagraph6 = document.createElement('p');
+        const proficiencyLevelRadio6 = document.createElement('input');
+        proficiencyLevelRadio6.type = 'radio';
+        proficiencyLevelRadio6.value = @LanguageProficiencyLevelConstants.C2;
+        proficiencyLevelRadio6.name = `ForeignLanguages[${languageIndex}].LanguageProficiencyLevel`;
+        const text6 = document.createTextNode(@LanguageProficiencyLevelConstants.C2);
+        proficiencyLevelParagraph6.appendChild(proficiencyLevelRadio6);
+        proficiencyLevelParagraph6.appendChild(text6);
+
+        div.appendChild(languageNameTitle);
+        div.appendChild(languageNameInput);
+        div.appendChild(proficiencyLevelTitle);
+        div.appendChild(proficiencyLevelParagraph1);
+        div.appendChild(proficiencyLevelParagraph2);
+        div.appendChild(proficiencyLevelParagraph3);
+        div.appendChild(proficiencyLevelParagraph4);
+        div.appendChild(proficiencyLevelParagraph5);
+        div.appendChild(proficiencyLevelParagraph6);
+
+        container.appendChild(div);
+
+        languageIndex++;
+    });
+
+    document.getElementById('add-experience').addEventListener('click', function() {
+        const container = document.getElementById('experience-container');
+
+        const div = document.createElement('div');
+        div.className = 'experience-element-block';
+
+        const companyPostTitle = document.createElement('h4');
+        companyPostTitle.textContent = 'Должность';
+        const companyPostInput = document.createElement('input');
+        companyPostInput.type = 'text';
+        companyPostInput.name = `EmployeeExperience[${employeeExperienceIndex}].CompanyPost`;
+        companyPostInput.placeholder = 'Введите должность';
+
+        const companyNameTitle = document.createElement('h4');
+        companyNameTitle.textContent = 'Компания';
+        const companyNameInput = document.createElement('input');
+        companyNameInput.type = 'text';
+        companyNameInput.name = `EmployeeExperience[${employeeExperienceIndex}].CompanyName`;
+        companyNameInput.placeholder = 'Введите название компании';
+
+        var date = new Date();
+        const year = date.getUTCFullYear();
+        const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+        const currentDate = `${year}-${month}`;
+
+        const workingFromTitle = document.createElement('h4');
+        workingFromTitle.textContent = 'Начало работы';
+        const workingFromInput = document.createElement('input');
+        workingFromInput.type = 'month';
+        workingFromInput.max = currentDate;
+        workingFromInput.name = `EmployeeExperience[${employeeExperienceIndex}].WorkingFrom`;
+
+        const workingUntilTitle = document.createElement('h4');
+        workingUntilTitle.textContent = 'Окончание работы';
+        const workingUntilInput = document.createElement('input');
+        workingUntilInput.type = 'month';
+        workingUntilInput.max = currentDate;
+        workingUntilInput.name = `EmployeeExperience[${employeeExperienceIndex}].WorkingUntil`;
+
+        const p = document.createElement('p');
+        const currentlyWorkHereCheckbox = document.createElement('input');
+        currentlyWorkHereCheckbox.type = 'checkbox';
+        currentlyWorkHereCheckbox.checked = true;
+        const text = document.createTextNode('Работаю сейчас');
+        p.appendChild(currentlyWorkHereCheckbox);
+        p.appendChild(text);
+        currentlyWorkHereCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                workingUntilInput.value = currentDate;
+                workingUntilInput.type = 'hidden';
+            } else {
+                workingUntilInput.value = '';
+                workingUntilInput.type = 'month';
+            }
+        });
+
+        const responsibilitiesTitle = document.createElement('h4');
+        responsibilitiesTitle.textContent = 'Расскажите о ваших обязанностях';
+        const responsibilitiesInput = document.createElement('input');
+        responsibilitiesInput.type = 'text';
+        responsibilitiesInput.name = `EmployeeExperience[${employeeExperienceIndex}].Responsibilities`;
+        responsibilitiesInput.placeholder = 'Ваши обязанности';
+
+        div.appendChild(companyPostTitle);
+        div.appendChild(companyPostInput);
+        div.appendChild(companyNameTitle);
+        div.appendChild(companyNameInput);
+        div.appendChild(workingFromTitle);
+        div.appendChild(workingFromInput);
+        div.appendChild(workingUntilTitle);
+        div.appendChild(workingUntilInput);
+        div.appendChild(p);
+
+        container.appendChild(div);
+
+        employeeExperienceIndex++;
+    });
+
+    document.getElementById('add-education').addEventListener('click', function() {
+        const container = document.getElementById('education-container');
+
+        const div = document.createElement('div');
+        div.className = 'education-element-block';
+
+
+        const educationTypeTitle = document.createElement('h4');
+        educationTypeTitle.textContent = 'Уровень образования';
+
+        const educationTypeParagraph1 = document.createElement('p');
+        const educationTypeRadio1 = document.createElement('input');
+        educationTypeRadio1.type = 'radio';
+        educationTypeRadio1.value = @EducationTypeConstants.SecondaryEducation;
+        educationTypeRadio1.name = `Educations[${educationIndex}].EducationType`;
+        const text1 = document.createTextNode(@EducationTypeConstants.SecondaryEducation);
+        educationTypeParagraph1.appendChild(educationTypeRadio1);
+        educationTypeParagraph1.appendChild(text1);
+
+
+        const educationTypeParagraph2 = document.createElement('p');
+        const educationTypeRadio2 = document.createElement('input');
+        educationTypeRadio2.type = 'radio';
+        educationTypeRadio2.value = @EducationTypeConstants.SecondarySpecializedEducation;
+        educationTypeRadio2.name = `Educations[${educationIndex}].EducationType`;
+        const text2 = document.createTextNode(@EducationTypeConstants.SecondarySpecializedEducation);
+        educationTypeParagraph2.appendChild(educationTypeRadio2);
+        educationTypeParagraph2.appendChild(text2);
+
+
+        const educationTypeParagraph3 = document.createElement('p');
+        const educationTypeRadio3 = document.createElement('input');
+        educationTypeRadio3.type = 'radio';
+        educationTypeRadio3.value = @EducationTypeConstants.HigherEducation;
+        educationTypeRadio3.name = `Educations[${educationIndex}].EducationType`;
+        const text3 = document.createTextNode(@EducationTypeConstants.HigherEducation);
+        educationTypeParagraph3.appendChild(educationTypeRadio3);
+        educationTypeParagraph3.appendChild(text3);
+
+        const educationTypeParagraph4 = document.createElement('p');
+        const educationTypeRadio4 = document.createElement('input');
+        educationTypeRadio4.type = 'radio';
+        educationTypeRadio4.value = @EducationTypeConstants.IncompleteHigherEducation;
+        educationTypeRadio4.name = `Educations[${educationIndex}].EducationType`;
+        const text4 = document.createTextNode(@EducationTypeConstants.IncompleteHigherEducation);
+        educationTypeParagraph4.appendChild(educationTypeRadio4);
+        educationTypeParagraph4.appendChild(text4);
+
+
+        const educationalInstitutionTitle = document.createElement('h4');
+        educationalInstitutionTitle.textContent = 'Образовательное учреждение';
+        const educationalInstitutionInput = document.createElement('input');
+        educationalInstitutionInput.type = 'text';
+        educationalInstitutionInput.placeholder = 'Введите образовательное учреждение';
+        educationalInstitutionInput.name = `Educations[${educationIndex}].EducationalInstitution`;
+
+
+        const specializationTitle = document.createElement('h4');
+        specializationTitle.textContent = 'Специализация';
+        const specializationInput = document.createElement('input');
+        specializationInput.type = 'text';
+        specializationInput.placeholder = 'Введите специализацию';
+        specializationInput.name = `Educations[${educationIndex}].Specialization`;
+
+        const removeBtn = document.createElement('button');
+        removeBtn.innerText = 'Удалить';
+        removeBtn.onclick = function() {
+            container.removeChild(div);
+        };
+
+        div.appendChild(educationTypeTitle);
+        div.appendChild(educationTypeParagraph1);
+        div.appendChild(educationTypeParagraph2);
+        div.appendChild(educationTypeParagraph3);
+        div.appendChild(educationTypeParagraph4);
+        div.appendChild(educationalInstitutionTitle);
+        div.appendChild(educationalInstitutionInput);
+        div.appendChild(specializationTitle);
+        div.appendChild(specializationInput);
+        div.appendChild(removeBtn);
+
+        container.appendChild(div);
+
+        educationIndex++;
+    });
+</script>
