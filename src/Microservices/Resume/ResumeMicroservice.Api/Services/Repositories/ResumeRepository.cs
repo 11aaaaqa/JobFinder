@@ -9,6 +9,9 @@ namespace ResumeMicroservice.Api.Services.Repositories
 {
     public class ResumeRepository(ApplicationDbContext context) : IResumeRepository
     {
+        public async Task<Resume?> GetResumeByIdAsync(Guid resumeId)
+            => await context.Resumes.SingleOrDefaultAsync(x => x.Id == resumeId);
+
         public async Task<List<Resume>> GetAllResumesAsync(string? searchingQuery, int pageNumber)
         {
             var resumes = context.Resumes.AsQueryable();
