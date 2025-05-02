@@ -67,9 +67,23 @@ namespace Web.MVC.Controllers
                 var response = await httpClient.PostAsync($"{url}/api/Resume/AddResume", jsonContent);
                 response.EnsureSuccessStatusCode();
 
-                return RedirectToAction("GetMyResumes"); // change to redirection to created resume
+                return RedirectToAction("GetResume", new { resumeId = model.Id});
             }
             return View();
+        }
+
+        [HttpGet]
+        [Route("resume/{resumeId}")]
+        public async Task<IActionResult> GetResume(Guid resumeId)
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+
+            var response = await httpClient.GetAsync($"{url}/api/Resume/GetResumeById/{resumeId}");
+            response.EnsureSuccessStatusCode();
+
+            var resume = await response.Content.ReadFromJsonAsync<ResumeResponse>();
+
+            return View(resume);
         }
     }
 }
