@@ -12,6 +12,17 @@ namespace ResumeMicroservice.Api.Controllers
         ICheckForNextPageExistingService checkForNextPageService) : ControllerBase
     {
         [HttpGet]
+        [Route("GetResumeById/{resumeId}")]
+        public async Task<IActionResult> GetResumeByIdAsync(Guid resumeId)
+        {
+            var resume = await resumeRepository.GetResumeByIdAsync(resumeId);
+            if (resume == null)
+                return BadRequest();
+
+            return Ok(resume);
+        }
+        
+        [HttpGet]
         [Route("GetAllResumes")]
         public async Task<IActionResult> GetAllResumesAsync(string? searchingQuery, int pageNumber)
             => Ok(await resumeRepository.GetAllResumesAsync(searchingQuery, pageNumber));
