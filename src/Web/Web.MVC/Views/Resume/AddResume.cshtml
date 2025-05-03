@@ -301,6 +301,8 @@
         const currentlyWorkHereCheckbox = document.createElement('input');
         currentlyWorkHereCheckbox.type = 'checkbox';
         currentlyWorkHereCheckbox.checked = true;
+        currentlyWorkHereCheckbox.value = true;
+        currentlyWorkHereCheckbox.name = `EmployeeExperience[${employeeExperienceIndex}].CurrentlyWorkHere`;
         const text = document.createTextNode('Работаю сейчас');
         p.appendChild(currentlyWorkHereCheckbox);
         p.appendChild(text);
@@ -308,9 +310,11 @@
             if (this.checked) {
                 workingUntilInput.value = currentDate;
                 workingUntilInput.type = 'hidden';
+                currentlyWorkHereCheckbox.value = true;
             } else {
                 workingUntilInput.value = '';
                 workingUntilInput.type = 'month';
+                currentlyWorkHereCheckbox.value = false;
             }
         });
 
