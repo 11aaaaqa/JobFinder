@@ -1,5 +1,7 @@
-﻿@using Web.MVC.Constants.Resume
+﻿@using System.Text.Json
+@using Web.MVC.Constants.Resume
 @model Web.MVC.DTOs.Resume.AddResumeDto
+<link rel="stylesheet" href="~/css/resume/add-resume.css"/>
 
 <form method="post">
     <div asp-validation-summary="ModelOnly"></div>
@@ -120,21 +122,27 @@
     </div>
     
     <div>
-        <h3>Образование</h3>
-        <div id="education-container"></div>
-        <button type="button" id="add-education">+ Добавить</button>
+        <div class="eel-title-btn-block">
+            <h3>Образование</h3>
+            <button type="button" id="add-education" onclick="addEducation()">+ Добавить</button>
+        </div>
+        <div id="education-container" class="education-container"></div>
     </div>
     
     <div>
-        <h3>Опыт работы</h3>
-        <div id="experience-container"></div>
-        <button type="button" id="add-experience">+ Добавить</button>
+        <div class="eel-title-btn-block">
+            <h3>Опыт работы</h3>
+            <button type="button" id="add-experience" onclick="addExperience()">+ Добавить</button>
+        </div>
+        <div id="experience-container" class="experience-container"></div>
     </div>
 
     <div>
-        <h3>Иностранные языки</h3>
-        <div id="language-container"></div>
-        <button type="button" id="add-language">+ Добавить</button>
+        <div class="eel-title-btn-block">
+            <h3>Иностранные языки</h3>
+            <button type="button" id="add-language" onclick="addLanguage()">+ Добавить</button>
+        </div>
+        <div id="language-container" class="language-container"></div>
     </div>
 
     <input type="submit" value="Создать"/>
@@ -145,7 +153,7 @@
     let employeeExperienceIndex = 0;
     let languageIndex = 0;
 
-    document.getElementById('add-language').addEventListener('click', function() {
+    function addLanguage() {
         const container = document.getElementById('language-container');
         const div = document.createElement('div');
         div.className = 'language-element-block';
@@ -153,6 +161,7 @@
         const languageNameTitle = document.createElement('h4');
         languageNameTitle.textContent = 'Язык';
         const languageNameInput = document.createElement('input');
+        languageNameInput.required = true;
         languageNameInput.type = 'text';
         languageNameInput.name = `ForeignLanguages[${languageIndex}].LanguageName`;
         languageNameInput.placeholder = 'Введите язык';
@@ -162,57 +171,69 @@
 
         const proficiencyLevelParagraph1 = document.createElement('p');
         const proficiencyLevelRadio1 = document.createElement('input');
+        proficiencyLevelRadio1.required = true;
         proficiencyLevelRadio1.type = 'radio';
-        proficiencyLevelRadio1.value = @LanguageProficiencyLevelConstants.A1;
+        proficiencyLevelRadio1.value = @Html.Raw(JsonSerializer.Serialize(LanguageProficiencyLevelConstants.A1));
         proficiencyLevelRadio1.name = `ForeignLanguages[${languageIndex}].LanguageProficiencyLevel`;
-        const text1 = document.createTextNode(@LanguageProficiencyLevelConstants.A1);
+        const text1 = document.createTextNode(' ' + @Html.Raw(JsonSerializer.Serialize(LanguageProficiencyLevelConstants.A1)));
         proficiencyLevelParagraph1.appendChild(proficiencyLevelRadio1);
         proficiencyLevelParagraph1.appendChild(text1);
 
         const proficiencyLevelParagraph2 = document.createElement('p');
         const proficiencyLevelRadio2 = document.createElement('input');
+        proficiencyLevelRadio2.required = true;
         proficiencyLevelRadio2.type = 'radio';
-        proficiencyLevelRadio2.value = @LanguageProficiencyLevelConstants.A2;
+        proficiencyLevelRadio2.value = @Html.Raw(JsonSerializer.Serialize(LanguageProficiencyLevelConstants.A2));
         proficiencyLevelRadio2.name = `ForeignLanguages[${languageIndex}].LanguageProficiencyLevel`;
-        const text2 = document.createTextNode(@LanguageProficiencyLevelConstants.A2);
+        const text2 = document.createTextNode(' ' + @Html.Raw(JsonSerializer.Serialize(LanguageProficiencyLevelConstants.A2)));
         proficiencyLevelParagraph2.appendChild(proficiencyLevelRadio2);
         proficiencyLevelParagraph2.appendChild(text2);
 
         const proficiencyLevelParagraph3 = document.createElement('p');
         const proficiencyLevelRadio3 = document.createElement('input');
+        proficiencyLevelRadio3.required = true;
         proficiencyLevelRadio3.type = 'radio';
-        proficiencyLevelRadio3.value = @LanguageProficiencyLevelConstants.B1;
+        proficiencyLevelRadio3.value = @Html.Raw(JsonSerializer.Serialize(LanguageProficiencyLevelConstants.B1));
         proficiencyLevelRadio3.name = `ForeignLanguages[${languageIndex}].LanguageProficiencyLevel`;
-        const text3 = document.createTextNode(@LanguageProficiencyLevelConstants.B1);
+        const text3 = document.createTextNode(' ' + @Html.Raw(JsonSerializer.Serialize(LanguageProficiencyLevelConstants.B1)));
         proficiencyLevelParagraph3.appendChild(proficiencyLevelRadio3);
         proficiencyLevelParagraph3.appendChild(text3);
 
         const proficiencyLevelParagraph4 = document.createElement('p');
         const proficiencyLevelRadio4 = document.createElement('input');
+        proficiencyLevelRadio4.required = true;
         proficiencyLevelRadio4.type = 'radio';
-        proficiencyLevelRadio4.value = @LanguageProficiencyLevelConstants.B2;
+        proficiencyLevelRadio4.value = @Html.Raw(JsonSerializer.Serialize(LanguageProficiencyLevelConstants.B2));
         proficiencyLevelRadio4.name = `ForeignLanguages[${languageIndex}].LanguageProficiencyLevel`;
-        const text4 = document.createTextNode(@LanguageProficiencyLevelConstants.B2);
+        const text4 = document.createTextNode(' ' + @Html.Raw(JsonSerializer.Serialize(LanguageProficiencyLevelConstants.B2)));
         proficiencyLevelParagraph4.appendChild(proficiencyLevelRadio4);
         proficiencyLevelParagraph4.appendChild(text4);
 
         const proficiencyLevelParagraph5 = document.createElement('p');
         const proficiencyLevelRadio5 = document.createElement('input');
+        proficiencyLevelRadio5.required = true;
         proficiencyLevelRadio5.type = 'radio';
-        proficiencyLevelRadio5.value = @LanguageProficiencyLevelConstants.C1;
+        proficiencyLevelRadio5.value = @Html.Raw(JsonSerializer.Serialize(LanguageProficiencyLevelConstants.C1));
         proficiencyLevelRadio5.name = `ForeignLanguages[${languageIndex}].LanguageProficiencyLevel`;
-        const text5 = document.createTextNode(@LanguageProficiencyLevelConstants.C1);
+        const text5 = document.createTextNode(' ' + @Html.Raw(JsonSerializer.Serialize(LanguageProficiencyLevelConstants.C1)));
         proficiencyLevelParagraph5.appendChild(proficiencyLevelRadio5);
         proficiencyLevelParagraph5.appendChild(text5);
 
         const proficiencyLevelParagraph6 = document.createElement('p');
         const proficiencyLevelRadio6 = document.createElement('input');
+        proficiencyLevelRadio6.required = true;
         proficiencyLevelRadio6.type = 'radio';
-        proficiencyLevelRadio6.value = @LanguageProficiencyLevelConstants.C2;
+        proficiencyLevelRadio6.value = @Html.Raw(JsonSerializer.Serialize(LanguageProficiencyLevelConstants.C2));
         proficiencyLevelRadio6.name = `ForeignLanguages[${languageIndex}].LanguageProficiencyLevel`;
-        const text6 = document.createTextNode(@LanguageProficiencyLevelConstants.C2);
+        const text6 = document.createTextNode(' ' + @Html.Raw(JsonSerializer.Serialize(LanguageProficiencyLevelConstants.C2)));
         proficiencyLevelParagraph6.appendChild(proficiencyLevelRadio6);
         proficiencyLevelParagraph6.appendChild(text6);
+
+        const removeBtn = document.createElement('button');
+        removeBtn.innerText = 'Удалить';
+        removeBtn.onclick = function() {
+            container.removeChild(div);
+        };
 
         div.appendChild(languageNameTitle);
         div.appendChild(languageNameInput);
@@ -223,13 +244,14 @@
         div.appendChild(proficiencyLevelParagraph4);
         div.appendChild(proficiencyLevelParagraph5);
         div.appendChild(proficiencyLevelParagraph6);
+        div.appendChild(removeBtn);
 
         container.appendChild(div);
 
         languageIndex++;
-    });
+    }
 
-    document.getElementById('add-experience').addEventListener('click', function() {
+    function addExperience() {
         const container = document.getElementById('experience-container');
 
         const div = document.createElement('div');
@@ -238,6 +260,7 @@
         const companyPostTitle = document.createElement('h4');
         companyPostTitle.textContent = 'Должность';
         const companyPostInput = document.createElement('input');
+        companyPostInput.required = true;
         companyPostInput.type = 'text';
         companyPostInput.name = `EmployeeExperience[${employeeExperienceIndex}].CompanyPost`;
         companyPostInput.placeholder = 'Введите должность';
@@ -245,6 +268,7 @@
         const companyNameTitle = document.createElement('h4');
         companyNameTitle.textContent = 'Компания';
         const companyNameInput = document.createElement('input');
+        companyNameInput.required = true;
         companyNameInput.type = 'text';
         companyNameInput.name = `EmployeeExperience[${employeeExperienceIndex}].CompanyName`;
         companyNameInput.placeholder = 'Введите название компании';
@@ -257,6 +281,7 @@
         const workingFromTitle = document.createElement('h4');
         workingFromTitle.textContent = 'Начало работы';
         const workingFromInput = document.createElement('input');
+        workingFromInput.required = true;
         workingFromInput.type = 'month';
         workingFromInput.max = currentDate;
         workingFromInput.name = `EmployeeExperience[${employeeExperienceIndex}].WorkingFrom`;
@@ -264,7 +289,8 @@
         const workingUntilTitle = document.createElement('h4');
         workingUntilTitle.textContent = 'Окончание работы';
         const workingUntilInput = document.createElement('input');
-        workingUntilInput.type = 'month';
+        workingUntilInput.required = true;
+        workingUntilInput.type = 'hidden';
         workingUntilInput.max = currentDate;
         workingUntilInput.name = `EmployeeExperience[${employeeExperienceIndex}].WorkingUntil`;
 
@@ -292,6 +318,12 @@
         responsibilitiesInput.name = `EmployeeExperience[${employeeExperienceIndex}].Responsibilities`;
         responsibilitiesInput.placeholder = 'Ваши обязанности';
 
+        const removeBtn = document.createElement('button');
+        removeBtn.innerText = 'Удалить';
+        removeBtn.onclick = function() {
+            container.removeChild(div);
+        };
+
         div.appendChild(companyPostTitle);
         div.appendChild(companyPostInput);
         div.appendChild(companyNameTitle);
@@ -301,75 +333,91 @@
         div.appendChild(workingUntilTitle);
         div.appendChild(workingUntilInput);
         div.appendChild(p);
+        div.appendChild(removeBtn);
 
         container.appendChild(div);
 
         employeeExperienceIndex++;
-    });
+    }
 
-    document.getElementById('add-education').addEventListener('click', function() {
+    function addEducation() {
         const container = document.getElementById('education-container');
 
         const div = document.createElement('div');
         div.className = 'education-element-block';
 
 
+        const educationTypeDiv = document.createElement('div');
         const educationTypeTitle = document.createElement('h4');
         educationTypeTitle.textContent = 'Уровень образования';
 
         const educationTypeParagraph1 = document.createElement('p');
         const educationTypeRadio1 = document.createElement('input');
+        educationTypeRadio1.required = true;
         educationTypeRadio1.type = 'radio';
-        educationTypeRadio1.value = @EducationTypeConstants.SecondaryEducation;
+        educationTypeRadio1.value = @Html.Raw(JsonSerializer.Serialize(EducationTypeConstants.SecondaryEducation));
         educationTypeRadio1.name = `Educations[${educationIndex}].EducationType`;
-        const text1 = document.createTextNode(@EducationTypeConstants.SecondaryEducation);
+        const text1 = document.createTextNode(' ' + @Html.Raw(JsonSerializer.Serialize(EducationTypeConstants.SecondaryEducation)));
         educationTypeParagraph1.appendChild(educationTypeRadio1);
         educationTypeParagraph1.appendChild(text1);
 
 
         const educationTypeParagraph2 = document.createElement('p');
         const educationTypeRadio2 = document.createElement('input');
+        educationTypeRadio2.required = true;
         educationTypeRadio2.type = 'radio';
-        educationTypeRadio2.value = @EducationTypeConstants.SecondarySpecializedEducation;
+        educationTypeRadio2.value = @Html.Raw(JsonSerializer.Serialize(EducationTypeConstants.SecondarySpecializedEducation));
         educationTypeRadio2.name = `Educations[${educationIndex}].EducationType`;
-        const text2 = document.createTextNode(@EducationTypeConstants.SecondarySpecializedEducation);
+        const text2 = document.createTextNode(' ' + @Html.Raw(JsonSerializer.Serialize(EducationTypeConstants.SecondarySpecializedEducation)));
         educationTypeParagraph2.appendChild(educationTypeRadio2);
         educationTypeParagraph2.appendChild(text2);
 
 
         const educationTypeParagraph3 = document.createElement('p');
         const educationTypeRadio3 = document.createElement('input');
+        educationTypeRadio3.required = true;
         educationTypeRadio3.type = 'radio';
-        educationTypeRadio3.value = @EducationTypeConstants.HigherEducation;
+        educationTypeRadio3.value = @Html.Raw(JsonSerializer.Serialize(EducationTypeConstants.HigherEducation));
         educationTypeRadio3.name = `Educations[${educationIndex}].EducationType`;
-        const text3 = document.createTextNode(@EducationTypeConstants.HigherEducation);
+        const text3 = document.createTextNode(' ' + @Html.Raw(JsonSerializer.Serialize(EducationTypeConstants.HigherEducation)));
         educationTypeParagraph3.appendChild(educationTypeRadio3);
         educationTypeParagraph3.appendChild(text3);
 
         const educationTypeParagraph4 = document.createElement('p');
         const educationTypeRadio4 = document.createElement('input');
+        educationTypeRadio4.required = true;
         educationTypeRadio4.type = 'radio';
-        educationTypeRadio4.value = @EducationTypeConstants.IncompleteHigherEducation;
+        educationTypeRadio4.value = @Html.Raw(JsonSerializer.Serialize(EducationTypeConstants.IncompleteHigherEducation));
         educationTypeRadio4.name = `Educations[${educationIndex}].EducationType`;
-        const text4 = document.createTextNode(@EducationTypeConstants.IncompleteHigherEducation);
+        const text4 = document.createTextNode(' ' + @Html.Raw(JsonSerializer.Serialize(EducationTypeConstants.IncompleteHigherEducation)));
         educationTypeParagraph4.appendChild(educationTypeRadio4);
         educationTypeParagraph4.appendChild(text4);
+        educationTypeDiv.appendChild(educationTypeTitle);
+        educationTypeDiv.appendChild(educationTypeParagraph1);
+        educationTypeDiv.appendChild(educationTypeParagraph2);
+        educationTypeDiv.appendChild(educationTypeParagraph3);
+        educationTypeDiv.appendChild(educationTypeParagraph4);
 
-
+        const educationalInstitutionDiv = document.createElement('div');
         const educationalInstitutionTitle = document.createElement('h4');
         educationalInstitutionTitle.textContent = 'Образовательное учреждение';
         const educationalInstitutionInput = document.createElement('input');
         educationalInstitutionInput.type = 'text';
         educationalInstitutionInput.placeholder = 'Введите образовательное учреждение';
         educationalInstitutionInput.name = `Educations[${educationIndex}].EducationalInstitution`;
+        educationalInstitutionDiv.appendChild(educationalInstitutionTitle);
+        educationalInstitutionDiv.appendChild(educationalInstitutionInput);
 
 
+        const specializationDiv = document.createElement('div');
         const specializationTitle = document.createElement('h4');
         specializationTitle.textContent = 'Специализация';
         const specializationInput = document.createElement('input');
         specializationInput.type = 'text';
         specializationInput.placeholder = 'Введите специализацию';
         specializationInput.name = `Educations[${educationIndex}].Specialization`;
+        specializationDiv.appendChild(specializationTitle);
+        specializationDiv.appendChild(specializationInput);
 
         const removeBtn = document.createElement('button');
         removeBtn.innerText = 'Удалить';
@@ -377,19 +425,13 @@
             container.removeChild(div);
         };
 
-        div.appendChild(educationTypeTitle);
-        div.appendChild(educationTypeParagraph1);
-        div.appendChild(educationTypeParagraph2);
-        div.appendChild(educationTypeParagraph3);
-        div.appendChild(educationTypeParagraph4);
-        div.appendChild(educationalInstitutionTitle);
-        div.appendChild(educationalInstitutionInput);
-        div.appendChild(specializationTitle);
-        div.appendChild(specializationInput);
+        div.appendChild(educationTypeDiv);
+        div.appendChild(educationalInstitutionDiv);
+        div.appendChild(specializationDiv);
         div.appendChild(removeBtn);
 
         container.appendChild(div);
 
         educationIndex++;
-    });
+    }
 </script>
