@@ -1,0 +1,36 @@
+﻿.education-container {
+    margin-left: 2%;
+}
+
+.language-container {
+    margin-left: 2%;
+}
+
+.experience-container {
+    margin-left: 2%;
+}
+
+.education-element-block {
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 15px;
+    margin-bottom: 20px;
+}
+
+.language-element-block {
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 15px;
+    margin-bottom: 20px;
+}
+
+.experience-element-block {
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 15px;
+    margin-bottom: 20px;
+}
+
+.eel-title-btn-block {
+    display: flex;
+}
