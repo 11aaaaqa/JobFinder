@@ -5,10 +5,10 @@ namespace Web.MVC.DTOs.Resume
     public class ForeignLanguageDto
     {
         public Guid Id { get; set; } = Guid.NewGuid();
-        [Required]
+        [Required(ErrorMessage = "Поле \"Язык\" обязательно")]
         [Display(Name = "Язык")]
         public string LanguageName { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Поле \"Уровень владения\" обязательно")]
         [Display(Name = "Уровень владения")]
         public string LanguageProficiencyLevel { get; set; }
     }
