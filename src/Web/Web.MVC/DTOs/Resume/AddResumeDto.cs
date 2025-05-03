@@ -16,6 +16,7 @@ namespace Web.MVC.DTOs.Resume
         public string Surname { get; set; }
         public string? Patronymic { get; set; }
         public string? Gender { get; set; }
+        [DataType(DataType.Date)]
         public DateOnly? DateOfBirth { get; set; }
         public string? City { get; set; }
         public string Status { get; set; }
