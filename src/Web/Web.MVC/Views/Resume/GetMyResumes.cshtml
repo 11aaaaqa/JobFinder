@@ -1,5 +1,5 @@
 ﻿@using GeneralLibrary.Constants
-@model Web.MVC.Models.ApiResponses.EmployeeResponse
+@model List<Web.MVC.Models.ApiResponses.Resume.ResumeResponse>
 
 <link rel="stylesheet" href="~/css/resume/get-my-resumes.css"/>
 
@@ -14,7 +14,7 @@
             <div class="profile">
                 <div>
                     <p class="label">Профиль</p>
-                    <p class="profile-NS">@Model.Name @Model.Surname</p>
+                    <p class="profile-NS">@ViewBag.Employee.Name @ViewBag.Employee.Surname</p>
                 </div>
                 <div class="arrow">
                     &#62;
@@ -24,7 +24,7 @@
         <div id="status" class="status">
             <div>
                 <p id="label" class="label">Ваш статус</p>
-                <p id="dynamic-status" class="dynamic-status">@Model.Status</p>
+                <p id="dynamic-status" class="dynamic-status">@ViewBag.Employee.Status</p>
             </div>
             <div class="edit-png">
                 <img src="~/img/edit-icon.png" id="img" />
@@ -32,7 +32,7 @@
         </div>
         <div class="update-status-modal" id="update-status-modal">
             <form method="post" asp-controller="Employee" asp-action="UpdateEmployeeStatus" asp-route-returnUrl="@returnUrl">
-                @if (Model.Status == WorkStatusConstants.LookingForJob)
+                @if (ViewBag.Employee.Status == WorkStatusConstants.LookingForJob)
                 {
                     <button class="active-status" type="submit" name="status" value="@WorkStatusConstants.LookingForJob">@WorkStatusConstants.LookingForJob</button>
                 }
@@ -40,7 +40,7 @@
                 {
                     <button type="submit" name="status" value="@WorkStatusConstants.LookingForJob">@WorkStatusConstants.LookingForJob</button>
                 }
-                @if (Model.Status == WorkStatusConstants.ConsideringOffers)
+                @if (ViewBag.Employee.Status == WorkStatusConstants.ConsideringOffers)
                 {
                     <button class="active-status" type="submit" name="status" value="@WorkStatusConstants.ConsideringOffers">@WorkStatusConstants.ConsideringOffers</button>
                 }
@@ -48,7 +48,7 @@
                 {
                     <button type="submit" name="status" value="@WorkStatusConstants.ConsideringOffers">@WorkStatusConstants.ConsideringOffers</button>
                 }
-                @if (Model.Status == WorkStatusConstants.NotLookingForJob)
+                @if (ViewBag.Employee.Status == WorkStatusConstants.NotLookingForJob)
                 {
                     <button class="active-status" type="submit" name="status" value="@WorkStatusConstants.NotLookingForJob">@WorkStatusConstants.NotLookingForJob</button>
                 }
@@ -58,6 +58,13 @@
                 }
             </form>
         </div>
+    </div>
+}
+<a asp-controller="Resume" asp-action="AddResume">Добавить резюме</a>
+@foreach (var resume in Model)
+{
+    <div>
+        <h4>@resume.ResumeTitle</h4>
     </div>
 }
 
