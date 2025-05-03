@@ -1,8 +1,8 @@
 ﻿using ResumeMicroservice.Api.Models.Skills;
 
-namespace ResumeMicroservice.Api.Models
+namespace ResumeMicroservice.Api.DTOs
 {
-    public class Resume
+    public class AddResumeDto
     {
         public Guid Id { get; set; }
         public Guid EmployeeId { get; set; }
@@ -21,7 +21,6 @@ namespace ResumeMicroservice.Api.Models
         public string? Email { get; set; }
         public string? AboutMe { get; set; }
         public uint? DesiredSalary { get; set; }
-        public TimeSpan WorkingExperience { get; set; }
         public List<Education>? Educations { get; set; }
         public List<EmployeeExperience>? EmployeeExperience { get; set; }
         public List<ForeignLanguage>? ForeignLanguages { get; set; }

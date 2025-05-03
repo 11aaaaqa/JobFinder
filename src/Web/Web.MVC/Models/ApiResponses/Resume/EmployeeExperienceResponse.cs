@@ -1,6 +1,6 @@
-﻿namespace ResumeMicroservice.Api.Models.Skills
+﻿namespace Web.MVC.Models.ApiResponses.Resume
 {
-    public class EmployeeExperience
+    public class EmployeeExperienceResponse
     {
         public Guid Id { get; set; }
         public string CompanyPost { get; set; }

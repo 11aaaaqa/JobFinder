@@ -1,8 +1,6 @@
-﻿using ResumeMicroservice.Api.Models.Skills;
-
-namespace ResumeMicroservice.Api.Models
+﻿namespace Web.MVC.Models.ApiResponses.Resume
 {
-    public class Resume
+    public class ResumeResponse
     {
         public Guid Id { get; set; }
         public Guid EmployeeId { get; set; }
@@ -22,8 +20,8 @@ namespace ResumeMicroservice.Api.Models
         public string? AboutMe { get; set; }
         public uint? DesiredSalary { get; set; }
         public TimeSpan WorkingExperience { get; set; }
-        public List<Education>? Educations { get; set; }
-        public List<EmployeeExperience>? EmployeeExperience { get; set; }
-        public List<ForeignLanguage>? ForeignLanguages { get; set; }
+        public List<EducationResponse>? Educations { get; set; }
+        public List<EmployeeExperienceResponse>? EmployeeExperience { get; set; }
+        public List<ForeignLanguageResponse>? ForeignLanguages { get; set; }
     }
 }

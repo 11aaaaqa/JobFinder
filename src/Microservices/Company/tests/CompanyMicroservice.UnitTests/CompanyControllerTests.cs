@@ -16,7 +16,7 @@ namespace CompanyMicroservice.UnitTests
             var companyId = Guid.NewGuid();
             var mock = new Mock<ICompanyRepository>();
             mock.Setup(x => x.GetCompanyByIdAsync(companyId)).ReturnsAsync((Company?)null);
-            var controller = new CompanyController(mock.Object, new Mock<IKafkaProducer>().Object);
+            var controller = new CompanyController(mock.Object, new Mock<IKafkaProducer>().Object, new Mock<ICompanyEmployerRepository>().Object);
 
             var result = await controller.GetCompanyByCompanyIdAsync(companyId);
 
@@ -38,7 +38,7 @@ namespace CompanyMicroservice.UnitTests
             };
             var mock = new Mock<ICompanyRepository>();
             mock.Setup(x => x.GetCompanyByIdAsync(companyId)).ReturnsAsync(company);
-            var controller = new CompanyController(mock.Object, new Mock<IKafkaProducer>().Object);
+            var controller = new CompanyController(mock.Object, new Mock<IKafkaProducer>().Object, new Mock<ICompanyEmployerRepository>().Object);
 
             var result = await controller.GetCompanyByCompanyIdAsync(companyId);
 
@@ -55,7 +55,7 @@ namespace CompanyMicroservice.UnitTests
             var companyName = "TestCompanyName";
             var mock = new Mock<ICompanyRepository>();
             mock.Setup(x => x.GetCompanyByCompanyNameAsync(companyName)).ReturnsAsync((Company?)null);
-            var controller = new CompanyController(mock.Object, new Mock<IKafkaProducer>().Object);
+            var controller = new CompanyController(mock.Object, new Mock<IKafkaProducer>().Object, new Mock<ICompanyEmployerRepository>().Object);
 
             var result = await controller.GetCompanyByCompanyNameAsync(companyName);
 
@@ -77,7 +77,7 @@ namespace CompanyMicroservice.UnitTests
             };
             var mock = new Mock<ICompanyRepository>();
             mock.Setup(x => x.GetCompanyByCompanyNameAsync(companyName)).ReturnsAsync(company);
-            var controller = new CompanyController(mock.Object, new Mock<IKafkaProducer>().Object);
+            var controller = new CompanyController(mock.Object, new Mock<IKafkaProducer>().Object, new Mock<ICompanyEmployerRepository>().Object);
 
             var result = await controller.GetCompanyByCompanyNameAsync(companyName);
 
@@ -100,8 +100,8 @@ namespace CompanyMicroservice.UnitTests
                 CompanyName = It.IsAny<string>()
             };
             var mock = new Mock<ICompanyRepository>();
-            mock.Setup(x => x.UpdateCompanyAsync(model)).ReturnsAsync(false);
-            var controller = new CompanyController(mock.Object, new Mock<IKafkaProducer>().Object);
+            mock.Setup(x => x.GetCompanyByIdAsync(model.Id)).ReturnsAsync((Company?)null);
+            var controller = new CompanyController(mock.Object, new Mock<IKafkaProducer>().Object, new Mock<ICompanyEmployerRepository>().Object);
 
             var result = await controller.UpdateCompanyAsync(model);
 
@@ -121,8 +121,14 @@ namespace CompanyMicroservice.UnitTests
                 CompanyName = It.IsAny<string>()
             };
             var mock = new Mock<ICompanyRepository>();
+            mock.Setup(x => x.GetCompanyByIdAsync(model.Id)).ReturnsAsync(new Company
+            {
+                Id = model.Id,
+                CompanyName = model.CompanyName, CompanyDescription = model.CompanyDescription,
+                CompanyColleaguesCount = model.CompanyColleaguesCount
+            });
             mock.Setup(x => x.UpdateCompanyAsync(model)).ReturnsAsync(true);
-            var controller = new CompanyController(mock.Object, new Mock<IKafkaProducer>().Object);
+            var controller = new CompanyController(mock.Object, new Mock<IKafkaProducer>().Object, new Mock<ICompanyEmployerRepository>().Object);
 
             var result = await controller.UpdateCompanyAsync(model);
 
@@ -133,12 +139,14 @@ namespace CompanyMicroservice.UnitTests
         [Fact]
         public async Task DeleteCompanyAsync_ReturnsOk()
         {
-            var id = Guid.NewGuid();
+            var companyId = Guid.NewGuid();
+            var companyEmployerMock = new Mock<ICompanyEmployerRepository>();
             var mock = new Mock<ICompanyRepository>();
-            mock.Setup(x => x.DeleteCompanyAsync(id));
-            var controller = new CompanyController(mock.Object, new Mock<IKafkaProducer>().Object);
+            mock.Setup(x => x.DeleteCompanyAsync(companyId));
+            companyEmployerMock.Setup(x => x.RemoveAllEmployerRequestsAsync(companyId));
+            var controller = new CompanyController(mock.Object, new Mock<IKafkaProducer>().Object, new Mock<ICompanyEmployerRepository>().Object);
 
-            var result = await controller.DeleteCompanyAsync(id);
+            var result = await controller.DeleteCompanyAsync(companyId);
 
             Assert.IsType<OkResult>(result);
             mock.VerifyAll();
@@ -155,7 +163,7 @@ namespace CompanyMicroservice.UnitTests
                 FounderEmployerId = Guid.NewGuid()
             };
             var mock = new Mock<ICompanyRepository>();
-            var controller = new CompanyController(mock.Object, new Mock<IKafkaProducer>().Object);
+            var controller = new CompanyController(mock.Object, new Mock<IKafkaProducer>().Object, new Mock<ICompanyEmployerRepository>().Object);
 
             var result = await controller.AddCompanyAsync(model);
 

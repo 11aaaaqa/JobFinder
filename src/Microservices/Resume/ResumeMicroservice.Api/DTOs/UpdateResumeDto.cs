@@ -1,11 +1,10 @@
 ﻿using ResumeMicroservice.Api.Models.Skills;
 
-namespace ResumeMicroservice.Api.Models
+namespace ResumeMicroservice.Api.DTOs
 {
-    public class Resume
+    public class UpdateResumeDto
     {
         public Guid Id { get; set; }
-        public Guid EmployeeId { get; set; }
         public string ResumeTitle { get; set; }
         public List<string>? OccupationTypes { get; set; }
         public List<string>? WorkTypes { get; set; }
@@ -15,7 +14,6 @@ namespace ResumeMicroservice.Api.Models
         public string? Gender { get; set; }
         public DateOnly? DateOfBirth { get; set; }
         public string? City { get; set; }
-        public string Status { get; set; }
         public bool ReadyToMove { get; set; }
         public string? PhoneNumber { get; set; }
         public string? Email { get; set; }

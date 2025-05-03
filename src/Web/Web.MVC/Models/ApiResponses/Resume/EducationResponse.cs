@@ -1,6 +1,6 @@
-﻿namespace ResumeMicroservice.Api.Models.Skills
+﻿namespace Web.MVC.Models.ApiResponses.Resume
 {
-    public class Education
+    public class EducationResponse
     {
         public Guid Id { get; set; }
         public string EducationType { get; set; }
