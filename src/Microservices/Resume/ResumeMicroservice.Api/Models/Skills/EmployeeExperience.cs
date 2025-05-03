@@ -7,6 +7,7 @@
         public string CompanyName { get; set; }
         public string WorkingFrom { get; set; }
         public string WorkingUntil { get; set; }
+        public bool CurrentlyWorkHere { get; set; }
         public TimeSpan WorkingDuration { get; set; }
         public string? Responsibilities { get; set; }
     }

@@ -15,6 +15,7 @@ namespace Web.MVC.DTOs.Resume
         public string WorkingFrom { get; set; }
         [Required(ErrorMessage = "Поле \"Окончание работы\" обязательно")]
         public string WorkingUntil { get; set; }
+        public bool CurrentlyWorkHere { get; set; }
         public TimeSpan WorkingDuration { get; set; } = TimeSpan.Zero;
         public string? Responsibilities { get; set; }
     }
