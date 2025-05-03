@@ -46,12 +46,16 @@ namespace Web.MVC.Controllers
         {
             using HttpClient httpClient = httpClientFactory.CreateClient();
 
-            var response = await httpClient.GetAsync($"{url}/api/Employee/GetEmployeeByEmail?{User.Identity.Name}");
+            var response = await httpClient.GetAsync($"{url}/api/Employee/GetEmployeeByEmail?email={User.Identity.Name}");
             response.EnsureSuccessStatusCode();
 
             var employee = await response.Content.ReadFromJsonAsync<EmployeeResponse>();
-
-            return View(new AddResumeDto{Status = employee.Status});
+            return View(new AddResumeDto
+            {
+                Id = Guid.NewGuid(), Status = employee.Status, EmployeeId = employee.Id, Name = employee.Name,
+                Surname = employee.Surname, Email = employee.Email, DateOfBirth = employee.DateOfBirth, City = employee.City,
+                PhoneNumber = employee.PhoneNumber, Patronymic = employee.Patronymic, Gender = employee.Gender
+            });
         }
 
         [Authorize]
@@ -59,8 +63,23 @@ namespace Web.MVC.Controllers
         [Route("employee/profile/resumes/create")]
         public async Task<IActionResult> AddResume(AddResumeDto model)
         {
+            if (model.Educations is not null && model.Educations.Count == 0)
+                model.Educations = null;
+            if (model.EmployeeExperience is not null && model.EmployeeExperience.Count == 0)
+                model.EmployeeExperience = null;
+            if (model.ForeignLanguages is not null && model.ForeignLanguages.Count == 0)
+                model.ForeignLanguages = null;
             if (ModelState.IsValid)
             {
+                if (model.EmployeeExperience is not null)
+                {
+                    foreach (var experience in model.EmployeeExperience)
+                    {
+                        DateTime workingFrom = DateTime.ParseExact(experience.WorkingFrom + "-01", "yyyy-MM-dd", null);
+                        DateTime workingUntil = DateTime.ParseExact(experience.WorkingUntil + "-01", "yyyy-MM-dd", null);
+                        experience.WorkingDuration = workingUntil - workingFrom;
+                    }
+                }
                 using HttpClient httpClient = httpClientFactory.CreateClient();
                 using StringContent jsonContent = new(JsonSerializer.Serialize(model), Encoding.UTF8, "application/json");
 
