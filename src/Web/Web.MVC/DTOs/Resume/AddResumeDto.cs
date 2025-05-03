@@ -6,13 +6,13 @@ namespace Web.MVC.DTOs.Resume
     {
         public Guid Id { get; set; }
         public Guid EmployeeId { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Поле \"Профессия или должность\" обязательно")]
         public string ResumeTitle { get; set; }
         public List<string>? OccupationTypes { get; set; }
         public List<string>? WorkTypes { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Поле \"Имя\" обязательно")]
         public string Name { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Поле \"Фамилия\" обязательно")]
         public string Surname { get; set; }
         public string? Patronymic { get; set; }
         public string? Gender { get; set; }
