@@ -1,12 +1,19 @@
+using Microsoft.EntityFrameworkCore;
+using ResumeMicroservice.Api.Database;
+using ResumeMicroservice.Api.Services.Pagination;
+using ResumeMicroservice.Api.Services.Repositories;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Services.AddDbContext<ApplicationDbContext>(x => 
+    x.UseNpgsql(builder.Configuration["Database:ConnectionString"]));
+
+builder.Services.AddTransient<IResumeRepository, ResumeRepository>();
+builder.Services.AddTransient<ICheckForNextPageExistingService, CheckForNextPageExistingService>();
 
 builder.Services.AddControllers();
 
 var app = builder.Build();
-
-// Configure the HTTP request pipeline.
 
 app.UseAuthorization();
 

@@ -10,7 +10,8 @@
         "employeemicroservice.api": "StartDebugging",
         "web.mvc": "StartDebugging",
         "companymicroservice.api": "StartDebugging",
-        "vacancymicroservice.api": "StartDebugging"
+        "vacancymicroservice.api": "StartDebugging",
+        "resumemicroservice.api": "StartDebugging"
       }
     }
   }
