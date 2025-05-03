@@ -38,10 +38,18 @@
 
     <div>
         <h3>Информация о Вас</h3>
-        <input asp-for="Name" placeholder="Имя" />
-        <input asp-for="Surname" placeholder="Фамилия" />
-        <input asp-for="Patronymic" placeholder="Отчество" />
-        <input asp-for="DateOfBirth" placeholder="Дата рождения"/>
+        <div>
+            <input asp-for="Name" placeholder="Имя" />
+        </div>
+        <div>
+            <input asp-for="Surname" placeholder="Фамилия" />
+        </div>
+        <div>
+            <input asp-for="Patronymic" placeholder="Отчество" />
+        </div>
+        <div>
+            <input asp-for="DateOfBirth" placeholder="Дата рождения" />
+        </div>
     </div>
     
     <div>
@@ -103,26 +111,30 @@
     
     <div>
         <h3>Контактная информация</h3>
-        <input asp-for="PhoneNumber" placeholder="Номер телефона"/>
-        <input asp-for="Email" placeholder="Почта"/>
+        <div>
+            <input asp-for="PhoneNumber" placeholder="Номер телефона"/>
+        </div>
+        <div>
+            <input asp-for="Email" placeholder="Почта" />
+        </div>
     </div>
     
     <div>
         <h3>Образование</h3>
         <div id="education-container"></div>
-        <button id="add-education"></button>
+        <button type="button" id="add-education">+ Добавить</button>
     </div>
     
     <div>
         <h3>Опыт работы</h3>
         <div id="experience-container"></div>
-        <button id="add-experience"></button>
+        <button type="button" id="add-experience">+ Добавить</button>
     </div>
 
     <div>
         <h3>Иностранные языки</h3>
         <div id="language-container"></div>
-        <button id="add-language"></button>
+        <button type="button" id="add-language">+ Добавить</button>
     </div>
 
     <input type="submit" value="Создать"/>
