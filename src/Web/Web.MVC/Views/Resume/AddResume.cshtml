@@ -2,6 +2,7 @@
 @using Web.MVC.Constants.Resume
 @model Web.MVC.DTOs.Resume.AddResumeDto
 <link rel="stylesheet" href="~/css/resume/add-resume.css"/>
+<link rel="stylesheet" href="~/css/site-themed-textarea.css"/>
 
 <form method="post">
     <div asp-validation-summary="ModelOnly"></div>
@@ -28,29 +29,29 @@
     <input type="hidden" asp-for="Status" />
     <input type="hidden" asp-for="EmployeeId" />
 
-    <div>
+    <div class="mb-2">
         <h3>Профессия или должность</h3>
-        <input asp-for="ResumeTitle" placeholder="Введите профессию или должность"/>
+        <input class="input-text" asp-for="ResumeTitle" placeholder="Введите профессию или должность"/>
     </div>
     
-    <div>
+    <div class="mb-2">
         <h3>Желаемая зарплата</h3>
-        <input asp-for="DesiredSalary" placeholder="Введите зарплату"/>
+        <input class="input-text" asp-for="DesiredSalary" placeholder="Введите зарплату" />
     </div>
 
-    <div>
+    <div class="mb-2">
         <h3>Информация о Вас</h3>
-        <div>
-            <input asp-for="Name" placeholder="Имя" />
+        <div class="mb-1">
+            <input class="input-text" asp-for="Name" placeholder="Имя" />
+        </div>
+        <div class="mb-1">
+            <input class="input-text" asp-for="Surname" placeholder="Фамилия" />
+        </div>
+        <div class="mb-1">
+            <input class="input-text" asp-for="Patronymic" placeholder="Отчество" />
         </div>
         <div>
-            <input asp-for="Surname" placeholder="Фамилия" />
-        </div>
-        <div>
-            <input asp-for="Patronymic" placeholder="Отчество" />
-        </div>
-        <div>
-            <input asp-for="DateOfBirth" placeholder="Дата рождения" />
+            <input class="input-text" asp-for="DateOfBirth" placeholder="Дата рождения" />
         </div>
     </div>
     
@@ -101,23 +102,23 @@
         </p>
     </div>
 
-    <div>
+    <div class="mb-2">
         <h3>Где ищите работу</h3>
-        <input asp-for="City" placeholder="Введите город работы"/>
+        <input class="input-text" asp-for="City" placeholder="Введите город работы" />
     </div>
     
-    <div>
+    <div class="mb-2">
         <h3>О себе</h3>
-        <input asp-for="AboutMe" placeholder="Любая дополнительная информация"/>
+        <textarea class="textarea" asp-for="AboutMe" placeholder="Любая дополнительная информация" rows="4"></textarea>
     </div>
     
-    <div>
+    <div class="mb-2">
         <h3>Контактная информация</h3>
-        <div>
-            <input asp-for="PhoneNumber" placeholder="Номер телефона"/>
+        <div class="mb-1">
+            <input class="input-text" asp-for="PhoneNumber" placeholder="Номер телефона" />
         </div>
         <div>
-            <input asp-for="Email" placeholder="Почта" />
+            <input class="input-text" asp-for="Email" placeholder="Почта" />
         </div>
     </div>
     
