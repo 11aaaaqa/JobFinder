@@ -35,7 +35,5 @@ namespace Web.MVC.DTOs.Employee
         [StringLength(20)]
         [DataType(DataType.PhoneNumber)]
         public string? PhoneNumber { get; set; }
-
-        public string Status { get; set; }
     }
 }
