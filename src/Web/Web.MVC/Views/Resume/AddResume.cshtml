@@ -122,26 +122,26 @@
         </div>
     </div>
     
-    <div>
-        <div class="eel-title-btn-block">
+    <div class="mb-1">
+        <div class="eel-title-btn-block mb-1">
             <h3>Образование</h3>
-            <button type="button" id="add-education" onclick="addEducation()">+ Добавить</button>
+            <button type="button" class="add-btn" id="add-education" onclick="addEducation()">+ Добавить</button>
         </div>
         <div id="education-container" class="education-container"></div>
     </div>
     
-    <div>
-        <div class="eel-title-btn-block">
+    <div class="mb-1">
+        <div class="eel-title-btn-block mb-1">
             <h3>Опыт работы</h3>
-            <button type="button" id="add-experience" onclick="addExperience()">+ Добавить</button>
+            <button type="button" class="add-btn" id="add-experience" onclick="addExperience()">+ Добавить</button>
         </div>
         <div id="experience-container" class="experience-container"></div>
     </div>
 
-    <div>
-        <div class="eel-title-btn-block">
+    <div class="mb-1">
+        <div class="eel-title-btn-block mb-1">
             <h3>Иностранные языки</h3>
-            <button type="button" id="add-language" onclick="addLanguage()">+ Добавить</button>
+            <button type="button" class="add-btn" id="add-language" onclick="addLanguage()">+ Добавить</button>
         </div>
         <div id="language-container" class="language-container"></div>
     </div>
@@ -245,6 +245,7 @@
         proficiencyLevelDiv.appendChild(proficiencyLevelParagraph6);
 
         const removeBtn = document.createElement('button');
+        removeBtn.classList.add('delete-btn');
         removeBtn.innerText = 'Удалить';
         removeBtn.onclick = function() {
             container.removeChild(div);
@@ -377,6 +378,7 @@
         responsibilitiesDiv.appendChild(responsibilitiesTextarea);
 
         const removeBtn = document.createElement('button');
+        removeBtn.classList.add('delete-btn');
         removeBtn.innerText = 'Удалить';
         removeBtn.onclick = function() {
             container.removeChild(div);
@@ -478,6 +480,7 @@
         specializationDiv.appendChild(specializationInput);
 
         const removeBtn = document.createElement('button');
+        removeBtn.classList.add('delete-btn');
         removeBtn.innerText = 'Удалить';
         removeBtn.onclick = function() {
             container.removeChild(div);
