@@ -1,4 +1,6 @@
-﻿using EmployeeMicroservice.Api.DTOs;
+﻿using System.Text.Json;
+using Confluent.Kafka;
+using EmployeeMicroservice.Api.DTOs;
 using EmployeeMicroservice.Api.Kafka.Kafka_producer;
 using EmployeeMicroservice.Api.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -48,6 +50,11 @@ namespace EmployeeMicroservice.Api.Controllers
             if (employee is null) return BadRequest();
 
             await employeeRepository.UpdateEmployeeStatusAsync(model.EmployeeId, model.Status);
+
+            await kafkaProducer.ProduceAsync("employee-status-updated-topic", new Message<Null, string>
+            {
+                Value = JsonSerializer.Serialize(new {model.EmployeeId, model.Status})
+            });
 
             return Ok();
         }

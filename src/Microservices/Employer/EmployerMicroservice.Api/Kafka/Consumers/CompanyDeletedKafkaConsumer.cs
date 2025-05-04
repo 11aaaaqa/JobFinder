@@ -17,6 +17,7 @@ namespace EmployerMicroservice.Api.Kafka.Consumers
             {
                 GroupId = KafkaConstants.GroupId,
                 AllowAutoCreateTopics = true,
+                AutoOffsetReset = AutoOffsetReset.Earliest,
                 BootstrapServers = configuration["Kafka:BootstrapServers"]
             };
             using var consumer = new ConsumerBuilder<Null, string>(config).Build();
