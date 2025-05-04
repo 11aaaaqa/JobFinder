@@ -33,7 +33,7 @@ namespace Web.MVC.Controllers
             {
                 Name = employee.Name, City = employee.City, DateOfBirth = employee.DateOfBirth,
                 Gender = employee.Gender, Id = employee.Id, Patronymic = employee.Patronymic,
-                PhoneNumber = employee.PhoneNumber, Surname = employee.Surname, Status = employee.Status
+                PhoneNumber = employee.PhoneNumber, Surname = employee.Surname,
             });
         }
 
