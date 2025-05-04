@@ -109,7 +109,7 @@
     
     <div class="mb-2">
         <h3>О себе</h3>
-        <textarea class="textarea" asp-for="AboutMe" placeholder="Любая дополнительная информация" rows="4"></textarea>
+        <textarea class="textarea" asp-for="AboutMe" placeholder="Любая дополнительная информация" oninput="autoResize(this)" rows="4"></textarea>
     </div>
     
     <div class="mb-2">
@@ -159,14 +159,20 @@
         const div = document.createElement('div');
         div.className = 'language-element-block';
 
+        const languageNameDiv = document.createElement('div');
+        languageNameDiv.classList.add('mb-2');
         const languageNameTitle = document.createElement('h4');
         languageNameTitle.textContent = 'Язык';
         const languageNameInput = document.createElement('input');
+        languageNameInput.classList.add('input-text');
         languageNameInput.required = true;
         languageNameInput.type = 'text';
         languageNameInput.name = `ForeignLanguages[${languageIndex}].LanguageName`;
         languageNameInput.placeholder = 'Введите язык';
+        languageNameDiv.appendChild(languageNameTitle);
+        languageNameDiv.appendChild(languageNameInput);
 
+        const proficiencyLevelDiv = document.createElement('div');
         const proficiencyLevelTitle = document.createElement('h4');
         proficiencyLevelTitle.textContent = 'Уровень владения';
 
@@ -230,21 +236,22 @@
         proficiencyLevelParagraph6.appendChild(proficiencyLevelRadio6);
         proficiencyLevelParagraph6.appendChild(text6);
 
+        proficiencyLevelDiv.appendChild(proficiencyLevelTitle);
+        proficiencyLevelDiv.appendChild(proficiencyLevelParagraph1);
+        proficiencyLevelDiv.appendChild(proficiencyLevelParagraph2);
+        proficiencyLevelDiv.appendChild(proficiencyLevelParagraph3);
+        proficiencyLevelDiv.appendChild(proficiencyLevelParagraph4);
+        proficiencyLevelDiv.appendChild(proficiencyLevelParagraph5);
+        proficiencyLevelDiv.appendChild(proficiencyLevelParagraph6);
+
         const removeBtn = document.createElement('button');
         removeBtn.innerText = 'Удалить';
         removeBtn.onclick = function() {
             container.removeChild(div);
         };
 
-        div.appendChild(languageNameTitle);
-        div.appendChild(languageNameInput);
-        div.appendChild(proficiencyLevelTitle);
-        div.appendChild(proficiencyLevelParagraph1);
-        div.appendChild(proficiencyLevelParagraph2);
-        div.appendChild(proficiencyLevelParagraph3);
-        div.appendChild(proficiencyLevelParagraph4);
-        div.appendChild(proficiencyLevelParagraph5);
-        div.appendChild(proficiencyLevelParagraph6);
+        div.appendChild(languageNameDiv);
+        div.appendChild(proficiencyLevelDiv);
         div.appendChild(removeBtn);
 
         container.appendChild(div);
@@ -258,39 +265,57 @@
         const div = document.createElement('div');
         div.className = 'experience-element-block';
 
+        const companyPostDiv = document.createElement('div');
+        companyPostDiv.classList.add('mb-2');
         const companyPostTitle = document.createElement('h4');
         companyPostTitle.textContent = 'Должность';
         const companyPostInput = document.createElement('input');
+        companyPostInput.classList.add('input-text');
         companyPostInput.required = true;
         companyPostInput.type = 'text';
         companyPostInput.name = `EmployeeExperience[${employeeExperienceIndex}].CompanyPost`;
         companyPostInput.placeholder = 'Введите должность';
+        companyPostDiv.appendChild(companyPostTitle);
+        companyPostDiv.appendChild(companyPostInput);
 
+        const companyNameDiv = document.createElement('div');
+        companyNameDiv.classList.add('mb-2');
         const companyNameTitle = document.createElement('h4');
         companyNameTitle.textContent = 'Компания';
         const companyNameInput = document.createElement('input');
+        companyNameInput.classList.add('input-text');
         companyNameInput.required = true;
         companyNameInput.type = 'text';
         companyNameInput.name = `EmployeeExperience[${employeeExperienceIndex}].CompanyName`;
         companyNameInput.placeholder = 'Введите название компании';
+        companyNameDiv.appendChild(companyNameTitle);
+        companyNameDiv.appendChild(companyNameInput);
 
         var date = new Date();
         const year = date.getUTCFullYear();
         const month = String(date.getUTCMonth() + 1).padStart(2, '0');
         const currentDate = `${year}-${month}`;
 
+        const workingFromDiv = document.createElement('div');
+        workingFromDiv.classList.add('mb-2');
         const workingFromTitle = document.createElement('h4');
         workingFromTitle.textContent = 'Начало работы';
         const workingFromInput = document.createElement('input');
+        workingFromInput.classList.add('input-text');
         workingFromInput.required = true;
         workingFromInput.type = 'month';
         workingFromInput.min = '1950-01';
         workingFromInput.max = currentDate;
         workingFromInput.name = `EmployeeExperience[${employeeExperienceIndex}].WorkingFrom`;
+        workingFromDiv.appendChild(workingFromTitle);
+        workingFromDiv.appendChild(workingFromInput);
 
+        const workingUntilDiv = document.createElement('div');
         const workingUntilTitle = document.createElement('h4');
         workingUntilTitle.textContent = 'Окончание работы';
         const workingUntilInput = document.createElement('input');
+        workingUntilInput.classList.add('input-text');
+        workingUntilInput.classList.add('mb-1');
         workingUntilInput.required = true;
         workingUntilInput.type = 'hidden';
         workingUntilInput.min = '1950-01';
@@ -319,6 +344,10 @@
             }
         });
 
+        workingUntilDiv.appendChild(workingUntilTitle);
+        workingUntilDiv.appendChild(workingUntilInput);
+        workingUntilDiv.appendChild(p);
+
         workingFromInput.addEventListener('change', function() {
             const [y, m] = this.value.split('-').map(Number);
             const d = new Date(y, m - 1, 1);
@@ -332,12 +361,20 @@
             }
         });
 
+        const responsibilitiesDiv = document.createElement('div');
+        responsibilitiesDiv.classList.add('mb-2');
         const responsibilitiesTitle = document.createElement('h4');
         responsibilitiesTitle.textContent = 'Расскажите о ваших обязанностях';
-        const responsibilitiesInput = document.createElement('input');
-        responsibilitiesInput.type = 'text';
-        responsibilitiesInput.name = `EmployeeExperience[${employeeExperienceIndex}].Responsibilities`;
-        responsibilitiesInput.placeholder = 'Ваши обязанности';
+        const responsibilitiesTextarea = document.createElement('textarea');
+        responsibilitiesTextarea.classList.add('textarea');
+        responsibilitiesTextarea.rows = 3;
+        responsibilitiesTextarea.name = `EmployeeExperience[${employeeExperienceIndex}].Responsibilities`;
+        responsibilitiesTextarea.placeholder = 'Расскажите про ваши обязанности';
+        responsibilitiesTextarea.addEventListener('input', function() {
+            autoResize(this);
+        });
+        responsibilitiesDiv.appendChild(responsibilitiesTitle);
+        responsibilitiesDiv.appendChild(responsibilitiesTextarea);
 
         const removeBtn = document.createElement('button');
         removeBtn.innerText = 'Удалить';
@@ -345,15 +382,11 @@
             container.removeChild(div);
         };
 
-        div.appendChild(companyPostTitle);
-        div.appendChild(companyPostInput);
-        div.appendChild(companyNameTitle);
-        div.appendChild(companyNameInput);
-        div.appendChild(workingFromTitle);
-        div.appendChild(workingFromInput);
-        div.appendChild(workingUntilTitle);
-        div.appendChild(workingUntilInput);
-        div.appendChild(p);
+        div.appendChild(companyPostDiv);
+        div.appendChild(companyNameDiv);
+        div.appendChild(workingFromDiv);
+        div.appendChild(workingUntilDiv);
+        div.appendChild(responsibilitiesDiv);
         div.appendChild(removeBtn);
 
         container.appendChild(div);
@@ -420,9 +453,11 @@
         educationTypeDiv.appendChild(educationTypeParagraph4);
 
         const educationalInstitutionDiv = document.createElement('div');
+        educationalInstitutionDiv.classList.add('mb-2');
         const educationalInstitutionTitle = document.createElement('h4');
         educationalInstitutionTitle.textContent = 'Образовательное учреждение';
         const educationalInstitutionInput = document.createElement('input');
+        educationalInstitutionInput.classList.add('input-text');
         educationalInstitutionInput.type = 'text';
         educationalInstitutionInput.placeholder = 'Введите образовательное учреждение';
         educationalInstitutionInput.name = `Educations[${educationIndex}].EducationalInstitution`;
@@ -431,9 +466,11 @@
 
 
         const specializationDiv = document.createElement('div');
+        specializationDiv.classList.add('mb-2');
         const specializationTitle = document.createElement('h4');
         specializationTitle.textContent = 'Специализация';
         const specializationInput = document.createElement('input');
+        specializationInput.classList.add('input-text');
         specializationInput.type = 'text';
         specializationInput.placeholder = 'Введите специализацию';
         specializationInput.name = `Educations[${educationIndex}].Specialization`;
@@ -456,3 +493,4 @@
         educationIndex++;
     }
 </script>
+<script src="~/js/textarea-resizing.js"></script>
