@@ -19,7 +19,6 @@ namespace EmployeeMicroservice.Api.Services
 
             employee.Name = model.Name; employee.Surname = model.Surname; employee.Patronymic = model.Patronymic; employee.Gender = model.Gender;
             employee.DateOfBirth = model.DateOfBirth; employee.City = model.City; employee.PhoneNumber = model.PhoneNumber;
-            employee.Status = model.Status;
 
             await context.SaveChangesAsync();
         }

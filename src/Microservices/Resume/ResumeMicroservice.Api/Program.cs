@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using ResumeMicroservice.Api.Database;
+using ResumeMicroservice.Api.Kafka.Consumers;
 using ResumeMicroservice.Api.Services.Pagination;
 using ResumeMicroservice.Api.Services.Repositories;
 
@@ -10,6 +11,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(x =>
 
 builder.Services.AddTransient<IResumeRepository, ResumeRepository>();
 builder.Services.AddTransient<ICheckForNextPageExistingService, CheckForNextPageExistingService>();
+
+builder.Services.AddHostedService<EmployeeStatusUpdatedKafkaConsumer>();
 
 builder.Services.AddControllers();
 

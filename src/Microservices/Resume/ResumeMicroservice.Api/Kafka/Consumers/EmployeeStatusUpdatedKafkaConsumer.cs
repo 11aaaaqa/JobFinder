@@ -2,17 +2,18 @@
 using Confluent.Kafka;
 using Confluent.Kafka.Admin;
 using Microsoft.EntityFrameworkCore;
-using VacancyMicroservice.Api.Constants;
-using VacancyMicroservice.Api.Database;
-using VacancyMicroservice.Api.Kafka.Consumer_models;
+using ResumeMicroservice.Api.Constants;
+using ResumeMicroservice.Api.Database;
+using ResumeMicroservice.Api.Kafka.Consumer_models;
 
-namespace VacancyMicroservice.Api.Kafka.Consumers
+namespace ResumeMicroservice.Api.Kafka.Consumers
 {
-    public class CompanyDeletedKafkaConsumer(IConfiguration configuration, IServiceScopeFactory scopeFactory) : BackgroundService
+    public class EmployeeStatusUpdatedKafkaConsumer(IConfiguration configuration,
+        IServiceScopeFactory scopeFactory) : BackgroundService
     {
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            const string topicName = "company-deleted-topic";
+            const string topicName = "employee-status-updated-topic";
             var config = new ConsumerConfig
             {
                 GroupId = KafkaConstants.GroupId,
@@ -21,7 +22,7 @@ namespace VacancyMicroservice.Api.Kafka.Consumers
                 BootstrapServers = configuration["Kafka:BootstrapServers"]
             };
             using var consumer = new ConsumerBuilder<Null, string>(config).Build();
-
+            
             consumer.Subscribe(topicName);
 
             using var scope = scopeFactory.CreateScope();
@@ -55,12 +56,14 @@ namespace VacancyMicroservice.Api.Kafka.Consumers
                     continue;
                 }
 
-                var model = JsonSerializer.Deserialize<CompanyDeletedConsumerModel>(consumeResult.Message.Value);
-
-                var companyVacancies = await context.Vacancies.Where(x => x.CompanyId == model.CompanyId)
+                var model = JsonSerializer.Deserialize<EmployeeStatusUpdatedConsumerModel>(consumeResult.Message.Value);
+                var resumes = await context.Resumes.Where(x => x.EmployeeId == model.EmployeeId)
                     .ToListAsync(CancellationToken.None);
+                foreach (var resume in resumes)
+                {
+                    resume.Status = model.Status;
+                }
 
-                context.Vacancies.RemoveRange(companyVacancies);
                 await context.SaveChangesAsync(CancellationToken.None);
             }
 
