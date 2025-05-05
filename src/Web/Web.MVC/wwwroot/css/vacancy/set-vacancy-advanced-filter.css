@@ -1,0 +1,27 @@
+﻿.input-text {
+    border: 1.8px solid #ccc;
+    padding: 11px;
+    width: 35%;
+    outline: none;
+    border-radius: 5px;
+    transition: border-color 0.1s, box-shadow 0.1s;
+}
+
+.input-text:focus {
+    border-color: deepskyblue;
+    box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
+}
+
+.short-input {
+    border: 1.8px solid #ccc;
+    padding: 11px;
+    width: 20%;
+    outline: none;
+    border-radius: 5px;
+    transition: border-color 0.1s, box-shadow 0.1s;
+}
+
+.short-input:focus {
+    border-color: deepskyblue;
+    box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
+}
