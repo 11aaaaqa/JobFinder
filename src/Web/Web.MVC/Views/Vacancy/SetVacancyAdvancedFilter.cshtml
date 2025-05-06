@@ -73,7 +73,7 @@
         </p>
     </div>
     
-    <div>
+    <div class="mb-1">
         <h3>Город</h3>
         @if (Model.VacancyCities is null || Model.VacancyCities.Count == 0)
         {
@@ -84,17 +84,17 @@
             <div id="cityList">
                 @foreach (var city in Model.VacancyCities)
                 {
-                    <div>
-                        @city
-                        <input type="hidden" name="VacancyCities" value="@city" />
-                        <button type="button" onclick="removeCity(@JsonSerializer.Serialize(city))">Удалить</button>
+                    <div class="mb-1">
+                        <span class="city-name">@city</span>
+                        <input type="hidden" name="VacancyCities" value="@city"/>
+                        <button class="remove-button" type="button" onclick="removeCity(@JsonSerializer.Serialize(city))">Удалить</button>
                     </div>
                 }
             </div>
         }
         
-        <input class="short-input" id="cityInput" placeholder="Введите название города" />
-        <button type="button" id="addCityButton">Добавить</button>
+        <input class="short-input mt-1" id="cityInput" placeholder="Введите название города" />
+        <button class="add-button" type="button" id="addCityButton">Добавить</button>
     </div>
 
     <input type="submit" value="Найти"/>
@@ -118,7 +118,11 @@
         cityList.innerHTML = "";
         cities.forEach((city, index) => {
             const cityDiv = document.createElement("div");
-            cityDiv.textContent = city;
+            cityDiv.classList.add('mb-1');
+            const citySpan = document.createElement('span');
+            citySpan.classList.add('city-name');
+            citySpan.textContent = city;
+            cityDiv.appendChild(citySpan);
 
             const hiddenInput = document.createElement("input");
             hiddenInput.type = "hidden";
@@ -128,6 +132,7 @@
             cityDiv.appendChild(hiddenInput);
 
             const removeButton = document.createElement("button");
+            removeButton.classList.add('remove-button');
             removeButton.textContent = "Удалить";
             removeButton.type = "button";
             removeButton.onclick = () => {
