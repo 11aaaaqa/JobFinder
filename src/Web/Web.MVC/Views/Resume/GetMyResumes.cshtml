@@ -64,7 +64,9 @@
 @foreach (var resume in Model)
 {
     <div>
-        <h4>@resume.ResumeTitle</h4>
+        <a asp-controller="Resume" asp-action="GetResume" asp-route-resumeId="@resume.Id">
+            <h4>@resume.ResumeTitle</h4>
+        </a>
     </div>
 }
 
