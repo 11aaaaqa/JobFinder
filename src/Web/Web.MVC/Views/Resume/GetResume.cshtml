@@ -1,0 +1,386 @@
+﻿@model Web.MVC.Models.ApiResponses.Resume.ResumeResponse
+<link rel="stylesheet" href="~/css/resume/get-resume.css"/>
+
+<div class="get-resume-page-block">
+    <div class="resume-block mb-3">
+        <h2>@Model.ResumeTitle</h2>
+        @if (Model.DesiredSalary is not null)
+        {
+            <h4 class="format-number">@Model.DesiredSalary ₽</h4>
+        }
+        else
+        {
+            <h4 class="salary-undefined">Уровень дохода не указан</h4>
+        }
+    </div>
+
+    <div class="mb-3">
+        <h3>Информация</h3>
+        <div class="resume-block">
+            <p class="description">ФИО</p>
+            <p class="mb-1">@Model.Name @Model.Surname @Model.Patronymic</p>
+            @if (Model.DateOfBirth is not null)
+            {
+                <p class="description">Дата рождения</p>
+                <p class="mb-2">@Model.DateOfBirth</p>
+            }
+            @if (Model.Gender is not null)
+            {
+                <p class="description">Пол</p>
+                <p class="mb-2">@Model.Gender</p>
+            }
+            @if (Model.City is not null)
+            {
+                <p class="description">Город</p>
+                <p>@Model.City</p>
+            }
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <h3>Пожелания по условиям</h3>
+        <div class="resume-block">
+            @if (Model.OccupationTypes is not null)
+            {
+                <p class="description">Тип занятости</p>
+                <div class="mb-2 resume-flex-block">
+                    @for (int index = 0; index < Model.OccupationTypes.Count; index++)
+                    {
+                        if (index == 0)
+                        {
+                            <p>@Model.OccupationTypes[index]</p>
+                        }
+                        else
+                        {
+                            <p>, @Model.OccupationTypes[index]</p>
+                        }
+                    }
+                </div>
+            }
+            @if (Model.WorkTypes is not null)
+            {
+                <p class="description">График работы</p>
+                <div class="mb-2 resume-flex-block">
+                    @for (int index = 0; index < Model.WorkTypes.Count; index++)
+                    {
+                        if (index == 0)
+                        {
+                            <p>@Model.WorkTypes[index]</p>
+                        }
+                        else
+                        {
+                            <p>, @Model.WorkTypes[index]</p>
+                        }
+                    }
+                </div>
+            }
+            <p class="description">Готов к переезду</p>
+            @if (Model.ReadyToMove)
+            {
+                <p>Да</p>
+            }
+            else
+            {
+                <p>Нет</p>
+            }
+        </div>
+    </div>
+
+    @if (Model.PhoneNumber is not null || Model.Email is not null)
+    {
+        <div class="mb-3">
+            <h3>Контакты</h3>
+            <div class="resume-block">
+                @if (Model.PhoneNumber is not null)
+                {
+                    <p class="description">Мобильный телефон</p>
+                    <p class="mb-2">@Model.PhoneNumber</p>
+                }
+                @if (Model.Email is not null)
+                {
+                    <p class="description">Электронная почта</p>
+                    <p>@Model.Email</p>
+                }
+            </div>
+        </div>
+    }
+
+    @if (Model.AboutMe is not null)
+    {
+        <div class="mb-3">
+            <h3>О себе</h3>
+            <div class="resume-block">
+                <p>@Model.AboutMe</p>
+            </div>
+        </div>
+    }
+
+    @if (Model.Educations is not null && Model.Educations.Count > 0)
+    {
+        <div class="mb-3">
+            <h3>Образование</h3>
+            @foreach (var education in Model.Educations)
+            {
+                <div class="resume-block mb-1">
+                    <p class="description">Уровень образования</p>
+                    <p class="mb-2">@education.EducationType</p>
+                    @if (education.Specialization is not null)
+                    {
+                        <p class="description">Специализация</p>
+                        <p class="mb-2">@education.Specialization</p>
+                    }
+                    @if (education.EducationalInstitution is not null)
+                    {
+                        <p class="description">Образовательное учреждение</p>
+                        <p>@education.EducationalInstitution</p>
+                    }
+                </div>
+            }
+        </div>
+    }
+
+    @if (Model.EmployeeExperience is not null && Model.EmployeeExperience.Count > 0)
+    {
+        <div class="mb-3">
+            <h3>Опыт работы</h3>
+            @foreach (var experience in Model.EmployeeExperience)
+            {
+                <div class="resume-block mb-1">
+                    @if (true)
+                    {
+                        string? workingFromMonth = null;
+                        string? workingUntilMonth = null;
+                        DateTime workingFrom = DateTime.ParseExact(experience.WorkingFrom + "-01", "yyyy-MM-dd", null);
+                        DateTime workingUntil = DateTime.ParseExact(experience.WorkingUntil + "-01", "yyyy-MM-dd", null);
+                        switch (workingFrom.Month)
+                        {
+                            case 1:
+                                workingFromMonth = "Январь";
+                                break;
+                            case 2:
+                                workingFromMonth = "Февраль";
+                                break;
+                            case 3:
+                                workingFromMonth = "Март";
+                                break;
+                            case 4:
+                                workingFromMonth = "Апрель";
+                                break;
+                            case 5:
+                                workingFromMonth = "Май";
+                                break;
+                            case 6:
+                                workingFromMonth = "Июнь";
+                                break;
+                            case 7:
+                                workingFromMonth = "Июль";
+                                break;
+                            case 8:
+                                workingFromMonth = "Август";
+                                break;
+                            case 9:
+                                workingFromMonth = "Сентябрь";
+                                break;
+                            case 10:
+                                workingFromMonth = "Октябрь";
+                                break;
+                            case 11:
+                                workingFromMonth = "Ноябрь";
+                                break;
+                            case 12:
+                                workingFromMonth = "Декабрь";
+                                break;
+                        }
+                        if (!experience.CurrentlyWorkHere)
+                        {
+                            switch (workingUntil.Month)
+                            {
+                                case 1:
+                                    workingUntilMonth = "январь";
+                                    break;
+                                case 2:
+                                    workingUntilMonth = "февраль";
+                                    break;
+                                case 3:
+                                    workingUntilMonth = "март";
+                                    break;
+                                case 4:
+                                    workingUntilMonth = "апрель";
+                                    break;
+                                case 5:
+                                    workingUntilMonth = "май";
+                                    break;
+                                case 6:
+                                    workingUntilMonth = "июнь";
+                                    break;
+                                case 7:
+                                    workingUntilMonth = "июль";
+                                    break;
+                                case 8:
+                                    workingUntilMonth = "август";
+                                    break;
+                                case 9:
+                                    workingUntilMonth = "сентябрь";
+                                    break;
+                                case 10:
+                                    workingUntilMonth = "октябрь";
+                                    break;
+                                case 11:
+                                    workingUntilMonth = "ноябрь";
+                                    break;
+                                case 12:
+                                    workingUntilMonth = "декабрь";
+                                    break;
+                            }
+                        }
+                        <div class="resume-experience mb-1">
+                            <div class="resume-experience-working-duration">
+                                @if (true)
+                                {
+                                    double totalExperienceMonths = experience.WorkingDuration.TotalDays / 30;
+
+                                    int experienceYears = (int)totalExperienceMonths / 12;
+                                    int experienceMonths = (int)totalExperienceMonths - experienceYears * 12;
+                                    string experienceYearWord;
+                                    string experienceMonthWord;
+
+                                    int lastTwoDigitsYear = experienceYears % 100;
+                                    int lastDigitYear = experienceYears % 10;
+
+                                    if (lastTwoDigitsYear >= 11 && lastTwoDigitsYear <= 14)
+                                    {
+                                        experienceYearWord = "лет";
+                                    }
+                                    else
+                                    {
+                                        switch (lastDigitYear)
+                                        {
+                                            case 1:
+                                                experienceYearWord = "год";
+                                                break;
+                                            case 2:
+                                            case 3:
+                                            case 4:
+                                                experienceYearWord = "года";
+                                                break;
+                                            default:
+                                                experienceYearWord = "лет";
+                                                break;
+                                        }
+                                    }
+
+                                    int lastTwoDigitsMonth = experienceMonths % 100;
+                                    int lastDigitMonth = experienceMonths % 10;
+                                    if (lastTwoDigitsMonth >= 11 && lastTwoDigitsMonth <= 14)
+                                    {
+                                        experienceMonthWord = "месяцев";
+                                    }
+                                    else
+                                    {
+                                        switch (lastDigitMonth)
+                                        {
+                                            case 1:
+                                                experienceMonthWord = "месяц";
+                                                break;
+                                            case 2:
+                                            case 3:
+                                            case 4:
+                                                experienceMonthWord = "месяца";
+                                                break;
+                                            default:
+                                                experienceMonthWord = "месяцев";
+                                                break;
+                                        }
+                                    }
+
+                                    @if (experience.CurrentlyWorkHere)
+                                    {
+                                        @if (workingFromMonth is not null)
+                                        {
+                                            if (experienceYears == 0)
+                                            {
+                                                <p>
+                                                    @workingFromMonth @workingFrom.Year - по настоящее время,
+                                                    @experienceMonths @experienceMonthWord
+                                                </p>
+                                            }
+                                            else if (experienceMonths == 0)
+                                            {
+                                                <p>
+                                                    @workingFromMonth @workingFrom.Year - по настоящее время,
+                                                    @experienceYears @experienceYearWord
+                                                </p>
+                                            }
+                                            else
+                                            {
+                                                <p>
+                                                    @workingFromMonth @workingFrom.Year - по настоящее время,
+                                                    @experienceYears @experienceYearWord @experienceMonths @experienceMonthWord
+                                                </p>
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (workingFromMonth is not null && workingUntilMonth is not null)
+                                        {
+                                            if (experienceMonths == 0)
+                                            {
+                                                <p>
+                                                    @workingFromMonth @workingFrom.Year - @workingUntilMonth @workingUntil.Year,
+                                                    @experienceYears @experienceYearWord
+                                                </p>
+                                            }
+                                            else if (experienceYears == 0)
+                                            {
+                                                <p>
+                                                    @workingFromMonth @workingFrom.Year - @workingUntilMonth @workingUntil.Year,
+                                                    @experienceMonths @experienceMonthWord
+                                                </p>
+                                            }
+                                            else
+                                            {
+                                                <p>
+                                                    @workingFromMonth @workingFrom.Year - @workingUntilMonth @workingUntil.Year,
+                                                    @experienceYears @experienceYearWord @experienceMonths @experienceMonthWord
+                                                </p>
+                                            }
+                                        }
+                                    }
+                                }
+                            </div>
+                            <div class="resume-experience-working-info">
+                                <p class="description">Должность</p>
+                                <p class="mb-2">@experience.CompanyPost</p>
+                                <p class="description">Компания</p>
+                                <p class="mb-2">@experience.CompanyName</p>
+                                @if (experience.Responsibilities is not null)
+                                {
+                                    <p class="description">Описание работы</p>
+                                    <p>@experience.Responsibilities</p>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    }
+
+    @if (Model.ForeignLanguages is not null && Model.ForeignLanguages.Count > 0)
+    {
+        <div>
+            <h3>Иностранные языки</h3>
+            @foreach (var foreignLanguage in Model.ForeignLanguages)
+            {
+                <div class="resume-block mb-1">
+                    <p class="description">Язык</p>
+                    <p class="mb-2">@foreignLanguage.LanguageName</p>
+                    <p class="description">Уровень владения</p>
+                    <p>@foreignLanguage.LanguageProficiencyLevel</p>
+                </div>
+            }
+        </div>
+    }
+</div>
+<script src="~/js/format-number-displaying.js"></script>
