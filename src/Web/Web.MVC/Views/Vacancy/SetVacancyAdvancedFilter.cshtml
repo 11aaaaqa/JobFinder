@@ -2,6 +2,7 @@
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @using Web.MVC.Constants.Vacancy
 @model Web.MVC.DTOs.Vacancy.SetVacancyAdvancedFilterDto
+<link rel="stylesheet" href="~/css/vacancy/set-vacancy-advanced-filter.css"/>
 
 <h2>Поиск вакансий</h2>
 
@@ -16,14 +17,14 @@
     <span asp-validation-for="RemoteWorkType"></span>
     <span asp-validation-for="VacancyCities"></span>
     
-    <div>
+    <div class="mb-2">
         <h3>Профессия или должность</h3>
-        <input asp-for="Position" placeholder="Введите профессию или должность"/>
+        <input class="input-text" asp-for="Position" placeholder="Введите профессию или должность" />
     </div>
     
-    <div>
+    <div class="mb-2">
         <h3>Желаемая зарплата</h3>
-        <input asp-for="SalaryFrom" placeholder="от"/>
+        <input class="short-input" asp-for="SalaryFrom" placeholder="от" />
     </div>
     
     <div class="mb-2">
@@ -62,7 +63,7 @@
         </p>
     </div>
     
-    <div>
+    <div class="mb-2">
         <h3>Формат работы</h3>
         <p>
             <input type="checkbox" asp-for="OfficeWorkType" /> В офисе
@@ -72,7 +73,7 @@
         </p>
     </div>
     
-    <div>
+    <div class="mb-1">
         <h3>Город</h3>
         @if (Model.VacancyCities is null || Model.VacancyCities.Count == 0)
         {
@@ -83,17 +84,17 @@
             <div id="cityList">
                 @foreach (var city in Model.VacancyCities)
                 {
-                    <div>
-                        @city
-                        <input type="hidden" name="VacancyCities" value="@city" />
-                        <button type="button" onclick="removeCity(@JsonSerializer.Serialize(city))">Удалить</button>
+                    <div class="mb-1">
+                        <span class="city-name">@city</span>
+                        <input type="hidden" name="VacancyCities" value="@city"/>
+                        <button class="remove-button" type="button" onclick="removeCity(@JsonSerializer.Serialize(city))">Удалить</button>
                     </div>
                 }
             </div>
         }
         
-        <input id="cityInput" placeholder="Введите название города"/>
-        <button type="button" id="addCityButton">Добавить</button>
+        <input class="short-input mt-1" id="cityInput" placeholder="Введите название города" />
+        <button class="add-button" type="button" id="addCityButton">Добавить</button>
     </div>
 
     <input type="submit" value="Найти"/>
@@ -117,7 +118,11 @@
         cityList.innerHTML = "";
         cities.forEach((city, index) => {
             const cityDiv = document.createElement("div");
-            cityDiv.textContent = city;
+            cityDiv.classList.add('mb-1');
+            const citySpan = document.createElement('span');
+            citySpan.classList.add('city-name');
+            citySpan.textContent = city;
+            cityDiv.appendChild(citySpan);
 
             const hiddenInput = document.createElement("input");
             hiddenInput.type = "hidden";
@@ -127,6 +132,7 @@
             cityDiv.appendChild(hiddenInput);
 
             const removeButton = document.createElement("button");
+            removeButton.classList.add('remove-button');
             removeButton.textContent = "Удалить";
             removeButton.type = "button";
             removeButton.onclick = () => {
