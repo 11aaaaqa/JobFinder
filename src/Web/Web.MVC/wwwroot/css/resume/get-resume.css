@@ -1,0 +1,40 @@
+﻿.resume-block {
+    padding: 15px;
+    border: 1px solid lightgray;
+    border-radius: 15px;
+}
+
+p {
+    padding: 0;
+    margin: 0;
+}
+
+.salary-undefined {
+    color: hsl(0, 0%, 80%);
+}
+
+.description {
+    color: hsl(0, 0%, 70%);
+}
+
+.resume-flex-block {
+    display: flex;
+}
+
+.resume-experience {
+    display: flex;
+    justify-content: space-between;
+}
+
+.resume-experience-working-duration {
+    width: 15%;
+    margin-right: 3%;
+}
+
+.resume-experience-working-info {
+    width: 82%;
+}
+
+.get-resume-page-block {
+    margin: 0 16%;
+}
