@@ -102,6 +102,48 @@ namespace Web.MVC.Controllers
 
             var resume = await response.Content.ReadFromJsonAsync<ResumeResponse>();
 
+            if (resume.EmployeeExperience is not null)
+            {
+                resume.EmployeeExperience = resume.EmployeeExperience
+                    .OrderByDescending(x =>
+                        DateTime.ParseExact(x.WorkingUntil + "-01", "yyyy-MM-dd", null))
+                    .ToList();
+
+                bool experienceUpdateRequired = false;
+                foreach (var experience in resume.EmployeeExperience)
+                {
+                    if (experience.CurrentlyWorkHere)
+                    {
+                        DateTime workingUntil = DateTime.ParseExact(experience.WorkingUntil + "-01", "yyyy-MM-dd", null);
+                        DateTime workingFrom = DateTime.ParseExact(experience.WorkingFrom + "-01", "yyyy-MM-dd", null);
+                        DateTime currentDate = DateTime.UtcNow;
+                        if (currentDate > workingUntil.AddMonths(1))
+                        {
+                            var workingUntilNew = new DateTime(currentDate.Year, currentDate.Month, 1);
+                            string workingUntilNewString = workingUntilNew.Month < 10
+                                ? $"{workingUntilNew.Year}-0{workingUntilNew.Month}"
+                                : $"{workingUntilNew.Year}-{workingUntilNew.Month}";
+
+                            experience.WorkingUntil = workingUntilNewString;
+                            experience.WorkingDuration = workingUntilNew - workingFrom;
+                            experienceUpdateRequired = true;
+                        }
+                    }
+                }
+
+                if (experienceUpdateRequired)
+                {
+                    using StringContent jsonContent = new(JsonSerializer.Serialize(new
+                    {
+                        resume.Id, resume.ResumeTitle, resume.OccupationTypes, resume.WorkTypes, resume.Name, resume.Surname,
+                        resume.Patronymic, resume.Gender, resume.DateOfBirth, resume.City, resume.ReadyToMove, resume.PhoneNumber,
+                        resume.Email, resume.AboutMe, resume.DesiredSalary, resume.Educations, resume.EmployeeExperience, resume.ForeignLanguages
+                    }), Encoding.UTF8, "application/json");
+                    var updateResumeResponse = await httpClient.PutAsync($"{url}/api/Resume/UpdateResume", jsonContent);
+                    updateResumeResponse.EnsureSuccessStatusCode();
+                }
+            }
+
             return View(resume);
         }
     }
