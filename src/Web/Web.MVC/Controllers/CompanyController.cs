@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Web;
@@ -222,6 +223,13 @@ namespace Web.MVC.Controllers
 
             var request = await requestResponse.Content.ReadFromJsonAsync<JoiningRequestedEmployerResponse>();
 
+            var employerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
+            employerResponse.EnsureSuccessStatusCode();
+            var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
+
+            if (employer.CompanyId != request.CompanyId)
+                return RedirectToAction("AccessForbidden", "Information");
+
             using StringContent jsonContent = new(JsonSerializer.Serialize(new { request.EmployerId , request.CompanyId}),
                 Encoding.UTF8, "application/json");
             var assignCompanyResponse = await httpClient.PatchAsync($"{url}/api/Employer/AssignCompany", jsonContent);
@@ -241,6 +249,17 @@ namespace Web.MVC.Controllers
         public async Task<IActionResult> RejectEmployerToJoinCompany(Guid requestId, string returnUrl)
         {
             using HttpClient httpClient = httpClientFactory.CreateClient();
+
+            var requestResponse = await httpClient.GetAsync($"{url}/api/CompanyEmployer/GetJoiningRequestByRequestId/{requestId}");
+            requestResponse.EnsureSuccessStatusCode();
+            var request = await requestResponse.Content.ReadFromJsonAsync<JoiningRequestedEmployerResponse>();
+
+            var employerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
+            employerResponse.EnsureSuccessStatusCode();
+            var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
+
+            if (employer.CompanyId != request.CompanyId)
+                return RedirectToAction("AccessForbidden", "Information");
 
             var response = await httpClient.GetAsync($"{url}/api/CompanyEmployer/RejectEmployerJoiningRequest/{requestId}");
             response.EnsureSuccessStatusCode();
@@ -324,7 +343,18 @@ namespace Web.MVC.Controllers
         public async Task<IActionResult> RemoveEmployerFromCompany(Guid employerId, string returnUrl)
         {
             using HttpClient httpClient = httpClientFactory.CreateClient();
-            
+
+            var removingEmployerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
+            removingEmployerResponse.EnsureSuccessStatusCode();
+            var removingEmployer = await removingEmployerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
+
+            var beingRemovedEmployerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerById/{employerId}");
+            beingRemovedEmployerResponse.EnsureSuccessStatusCode();
+            var beingRemovedEmployer = await beingRemovedEmployerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
+
+            if (removingEmployer.CompanyId != beingRemovedEmployer.CompanyId)
+                return RedirectToAction("AccessForbidden","Information");
+
             var response = await httpClient.GetAsync($"{url}/api/Employer/RemoveEmployerFromCompany/{employerId}");
             response.EnsureSuccessStatusCode();
 
@@ -390,6 +420,18 @@ namespace Web.MVC.Controllers
         public async Task<IActionResult> UpdateEmployerCompanyPermissions(UpdateEmployerCompanyPermissionsDto model)
         {
             using HttpClient httpClient = httpClientFactory.CreateClient();
+
+            var updatingEmployerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
+            updatingEmployerResponse.EnsureSuccessStatusCode();
+            var updatingEmployer = await updatingEmployerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
+            
+            var beingUpdatedEmployerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerById/{model.EmployerId}");
+            beingUpdatedEmployerResponse.EnsureSuccessStatusCode();
+            var beingUpdatedEmployer = await beingUpdatedEmployerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
+
+            if (updatingEmployer.CompanyId != beingUpdatedEmployer.CompanyId)
+                return RedirectToAction("AccessForbidden","Information");
+
             using StringContent jsonContent = new(JsonSerializer.Serialize(model), Encoding.UTF8, "application/json");
 
             var response = await httpClient.PostAsync($"{url}/api/EmployerPermissions/AddPermissions", jsonContent);
@@ -456,6 +498,17 @@ namespace Web.MVC.Controllers
         {
             using HttpClient httpClient = httpClientFactory.CreateClient();
 
+            var employerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
+            employerResponse.EnsureSuccessStatusCode();
+            var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
+
+            var vacancyResponse = await httpClient.GetAsync($"{url}/api/Vacancy/GetVacancyById/{vacancyId}");
+            vacancyResponse.EnsureSuccessStatusCode();
+            var vacancy = await vacancyResponse.Content.ReadFromJsonAsync<VacancyResponse>();
+
+            if (employer.CompanyId != vacancy.CompanyId)
+                return RedirectToAction("AccessForbidden", "Information");
+
             var response = await httpClient.DeleteAsync($"{url}/api/Vacancy/DeleteVacancy/{vacancyId}");
             response.EnsureSuccessStatusCode();
 
@@ -468,9 +521,20 @@ namespace Web.MVC.Controllers
         [Route("employer/company/my-company/vacancies/{vacancyId}/archive")]
         public async Task<IActionResult> ArchiveVacancy(Guid vacancyId, string returnUrl)
         {
-            using HttpClient httpsClient = httpClientFactory.CreateClient();
+            using HttpClient httpClient = httpClientFactory.CreateClient();
 
-            var response = await httpsClient.GetAsync($"{url}/api/Vacancy/ArchiveVacancy/{vacancyId}");
+            var employerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
+            employerResponse.EnsureSuccessStatusCode();
+            var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
+
+            var vacancyResponse = await httpClient.GetAsync($"{url}/api/Vacancy/GetVacancyById/{vacancyId}");
+            vacancyResponse.EnsureSuccessStatusCode();
+            var vacancy = await vacancyResponse.Content.ReadFromJsonAsync<VacancyResponse>();
+
+            if (employer.CompanyId != vacancy.CompanyId)
+                return RedirectToAction("AccessForbidden", "Information");
+
+            var response = await httpClient.GetAsync($"{url}/api/Vacancy/ArchiveVacancy/{vacancyId}");
             response.EnsureSuccessStatusCode();
 
             return LocalRedirect(returnUrl);
@@ -483,6 +547,17 @@ namespace Web.MVC.Controllers
         public async Task<IActionResult> UnarchiveVacancy(Guid vacancyId, string returnUrl)
         {
             using HttpClient httpClient = httpClientFactory.CreateClient();
+
+            var employerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
+            employerResponse.EnsureSuccessStatusCode();
+            var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
+
+            var vacancyResponse = await httpClient.GetAsync($"{url}/api/Vacancy/GetVacancyById/{vacancyId}");
+            vacancyResponse.EnsureSuccessStatusCode();
+            var vacancy = await vacancyResponse.Content.ReadFromJsonAsync<VacancyResponse>();
+
+            if (employer.CompanyId != vacancy.CompanyId)
+                return RedirectToAction("AccessForbidden", "Information");
 
             var response = await httpClient.GetAsync($"{url}/api/Vacancy/UnarchiveVacancy/{vacancyId}");
             response.EnsureSuccessStatusCode();
@@ -521,6 +596,18 @@ namespace Web.MVC.Controllers
             if (ModelState.IsValid)
             {
                 using HttpClient httpClient = httpClientFactory.CreateClient();
+
+                var employerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
+                employerResponse.EnsureSuccessStatusCode();
+                var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
+
+                var vacancyResponse = await httpClient.GetAsync($"{url}/api/Vacancy/GetVacancyById/{model.Id}");
+                vacancyResponse.EnsureSuccessStatusCode();
+                var vacancy = await vacancyResponse.Content.ReadFromJsonAsync<VacancyResponse>();
+
+                if (employer.CompanyId != vacancy.CompanyId)
+                    return RedirectToAction("AccessForbidden","Information");
+
                 using StringContent jsonContent = new(JsonSerializer.Serialize(model), Encoding.UTF8, "application/json");
 
                 var response = await httpClient.PutAsync($"{url}/api/Vacancy/UpdateVacancy", jsonContent);
