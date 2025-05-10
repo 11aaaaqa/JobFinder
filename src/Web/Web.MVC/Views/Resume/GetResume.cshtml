@@ -12,6 +12,12 @@
         {
             <h4 class="salary-undefined">Уровень дохода не указан</h4>
         }
+        @if (ViewBag.IsCurrentUserOwner == true)
+        {
+            <form method="post" asp-controller="Resume" asp-action="DeleteResume" asp-route-resumeId="@Model.Id">
+                <input type="submit" value="Удалить"/>
+            </form>
+        }
     </div>
 
     <div class="mb-3">

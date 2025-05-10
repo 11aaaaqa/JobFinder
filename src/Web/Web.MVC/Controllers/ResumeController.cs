@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web.MVC.DTOs.Resume;
 using Web.MVC.Models.ApiResponses;
+using Web.MVC.Models.ApiResponses.Employer;
 using Web.MVC.Models.ApiResponses.Resume;
 
 namespace Web.MVC.Controllers
@@ -97,10 +98,15 @@ namespace Web.MVC.Controllers
         {
             using HttpClient httpClient = httpClientFactory.CreateClient();
 
-            var response = await httpClient.GetAsync($"{url}/api/Resume/GetResumeById/{resumeId}");
-            response.EnsureSuccessStatusCode();
+            var resumeResponse = await httpClient.GetAsync($"{url}/api/Resume/GetResumeById/{resumeId}");
+            resumeResponse.EnsureSuccessStatusCode();
+            var resume = await resumeResponse.Content.ReadFromJsonAsync<ResumeResponse>();
 
-            var resume = await response.Content.ReadFromJsonAsync<ResumeResponse>();
+            var employeeResponse = await httpClient.GetAsync($"{url}/api/Employee/GetEmployeeByEmail?email={User.Identity.Name}");
+            employeeResponse.EnsureSuccessStatusCode();
+            var employee = await employeeResponse.Content.ReadFromJsonAsync<EmployeeResponse>();
+
+            ViewBag.IsCurrentUserOwner = resume.EmployeeId == employee.Id;
 
             if (resume.EmployeeExperience is not null)
             {
@@ -145,6 +151,30 @@ namespace Web.MVC.Controllers
             }
 
             return View(resume);
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("resume/delete/{resumeId}")]
+        public async Task<IActionResult> DeleteResume(Guid resumeId)
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+
+            var employeeResponse = await httpClient.GetAsync($"{url}/api/Employee/GetEmployeeByEmail?email={User.Identity.Name}");
+            employeeResponse.EnsureSuccessStatusCode();
+            var employee = await employeeResponse.Content.ReadFromJsonAsync<EmployeeResponse>();
+
+            var resumeResponse = await httpClient.GetAsync($"{url}/api/Resume/GetResumeById/{resumeId}");
+            resumeResponse.EnsureSuccessStatusCode();
+            var resume = await resumeResponse.Content.ReadFromJsonAsync<ResumeResponse>();
+
+            if (employee.Id != resume.EmployeeId)
+                return RedirectToAction("AccessForbidden", "Information");
+
+            var deleteResumeResponse = await httpClient.DeleteAsync($"{url}/api/Resume/DeleteResume/{resumeId}");
+            deleteResumeResponse.EnsureSuccessStatusCode();
+
+            return RedirectToAction("GetMyResumes");
         }
     }
 }
