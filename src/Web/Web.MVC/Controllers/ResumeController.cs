@@ -176,5 +176,54 @@ namespace Web.MVC.Controllers
 
             return RedirectToAction("GetMyResumes");
         }
+
+        [Authorize]
+        [HttpGet]
+        [Route("resume/edit/{resumeId}")]
+        public async Task<IActionResult> EditResume(Guid resumeId)
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+
+            var resumeResponse = await httpClient.GetAsync($"{url}/api/Resume/GetResumeById/{resumeId}");
+            resumeResponse.EnsureSuccessStatusCode();
+            var model = await resumeResponse.Content.ReadFromJsonAsync<EditResumeDto>();
+            return View(model);
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("resume/edit/{resumeId}")]
+        public async Task<IActionResult> EditResume(EditResumeDto model)
+        {
+            if (model.Educations is not null && model.Educations.Count == 0)
+                model.Educations = null;
+            if (model.EmployeeExperience is not null && model.EmployeeExperience.Count == 0)
+                model.EmployeeExperience = null;
+            if (model.ForeignLanguages is not null && model.ForeignLanguages.Count == 0)
+                model.ForeignLanguages = null;
+            if (ModelState.IsValid)
+            {
+                using HttpClient httpClient = httpClientFactory.CreateClient();
+
+                var employeeResponse = await httpClient.GetAsync($"{url}/api/Employee/GetEmployeeByEmail?email={User.Identity.Name}");
+                employeeResponse.EnsureSuccessStatusCode();
+                var employee = await employeeResponse.Content.ReadFromJsonAsync<EmployeeResponse>();
+
+                if (employee.Id != model.EmployeeId)
+                    return RedirectToAction("AccessForbidden", "Information");
+
+                using StringContent jsonContent = new(JsonSerializer.Serialize(new
+                {
+                    model.Id, model.ResumeTitle, model.OccupationTypes, model.WorkTypes, model.Name, model.Surname, model.Patronymic,
+                    model.Gender, model.DateOfBirth, model.City, model.ReadyToMove, model.PhoneNumber, model.Email, model.AboutMe,
+                    model.DesiredSalary, model.ForeignLanguages, model.Educations, model.EmployeeExperience
+                }), Encoding.UTF8, "application/json");
+                var updateResponse = await httpClient.PutAsync($"{url}/api/Resume/UpdateResume", jsonContent);
+                updateResponse.EnsureSuccessStatusCode();
+
+                return RedirectToAction("GetResume", new { resumeId = model.Id});
+            }
+            return View();
+        }
     }
 }
