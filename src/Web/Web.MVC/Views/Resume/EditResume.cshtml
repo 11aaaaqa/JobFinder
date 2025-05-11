@@ -58,29 +58,47 @@
     <div>
         <h3>Ваш пол</h3>
         <p>
-            <input type="radio" name="Gender" value="@GenderConstants.Male" />
+            <input type="radio" name="Gender" value="@GenderConstants.Male" checked="@(Model.Gender == GenderConstants.Male)" />
             @GenderConstants.Male
         </p>
         <p>
-            <input type="radio" name="Gender" value="@GenderConstants.Female" />
+            <input type="radio" name="Gender" value="@GenderConstants.Female" checked="@(Model.Gender == GenderConstants.Female)" />
             @GenderConstants.Female
         </p>
     </div>
 
     <div>
         <h3>Тип работы</h3>
-        <p>
-            <input type="checkbox" name="WorkTypes" value="@WorkTypesConstants.OfficeWork" />
-            @WorkTypesConstants.OfficeWork
-        </p>
-        <p>
-            <input type="checkbox" name="WorkTypes" value="@WorkTypesConstants.RemoteWork" />
-            @WorkTypesConstants.RemoteWork
-        </p>
-        <p>
-            <input type="checkbox" name="WorkTypes" value="@WorkTypesConstants.HybridWork" />
-            @WorkTypesConstants.HybridWork
-        </p>
+        @if (Model.WorkTypes is null)
+        {
+            <p>
+                <input type="checkbox" name="WorkTypes" value="@WorkTypesConstants.OfficeWork" />
+                @WorkTypesConstants.OfficeWork
+            </p>
+            <p>
+                <input type="checkbox" name="WorkTypes" value="@WorkTypesConstants.RemoteWork" />
+                @WorkTypesConstants.RemoteWork
+            </p>
+            <p>
+                <input type="checkbox" name="WorkTypes" value="@WorkTypesConstants.HybridWork" />
+                @WorkTypesConstants.HybridWork
+            </p>
+        }
+        else
+        {
+            <p>
+                <input type="checkbox" name="WorkTypes" value="@WorkTypesConstants.OfficeWork" checked="@(Model.WorkTypes.Contains(WorkTypesConstants.OfficeWork))" />
+                @WorkTypesConstants.OfficeWork
+            </p>
+            <p>
+                <input type="checkbox" name="WorkTypes" value="@WorkTypesConstants.RemoteWork" checked="@(Model.WorkTypes.Contains(WorkTypesConstants.RemoteWork))" />
+                @WorkTypesConstants.RemoteWork
+            </p>
+            <p>
+                <input type="checkbox" name="WorkTypes" value="@WorkTypesConstants.HybridWork" checked="@(Model.WorkTypes.Contains(WorkTypesConstants.HybridWork))" />
+                @WorkTypesConstants.HybridWork
+            </p>
+        }
 
         <div class="mb-2">
             <p>
@@ -92,14 +110,28 @@
 
     <div>
         <h3>Тип занятости</h3>
-        <p>
-            <input type="checkbox" name="OccupationTypes" value="@OccupationTypesConstants.FullTimeJob" />
-            @OccupationTypesConstants.FullTimeJob
-        </p>
-        <p>
-            <input type="checkbox" name="OccupationTypes" value="@OccupationTypesConstants.PartTimeJob" />
-            @OccupationTypesConstants.PartTimeJob
-        </p>
+        @if (Model.OccupationTypes is null)
+        {
+            <p>
+                <input type="checkbox" name="OccupationTypes" value="@OccupationTypesConstants.FullTimeJob" />
+                @OccupationTypesConstants.FullTimeJob
+            </p>
+            <p>
+                <input type="checkbox" name="OccupationTypes" value="@OccupationTypesConstants.PartTimeJob" />
+                @OccupationTypesConstants.PartTimeJob
+            </p>
+        }
+        else
+        {
+            <p>
+                <input type="checkbox" name="OccupationTypes" value="@OccupationTypesConstants.FullTimeJob" checked="@(Model.OccupationTypes.Contains(OccupationTypesConstants.FullTimeJob))" />
+                @OccupationTypesConstants.FullTimeJob
+            </p>
+            <p>
+                <input type="checkbox" name="OccupationTypes" value="@OccupationTypesConstants.PartTimeJob" checked="@(Model.OccupationTypes.Contains(OccupationTypesConstants.PartTimeJob))" />
+                @OccupationTypesConstants.PartTimeJob
+            </p>
+        }
     </div>
 
     <div class="mb-2">
@@ -226,7 +258,7 @@
                             }
                         </div>
                         <p>
-                            <input id="working-here-checkbox-@index" onchange="workingHereCheckboxOnChange('working-here-checkbox-@index', 'working-until-@index')" type="checkbox" name="EmployeeExperience[@index].CurrentlyWorkHere" value="@Model.EmployeeExperience[index].CurrentlyWorkHere" />
+                            <input id="working-here-checkbox-@index" onchange="workingHereCheckboxOnChange('working-here-checkbox-@index', 'working-until-@index')" type="checkbox" name="EmployeeExperience[@index].CurrentlyWorkHere" checked="@Model.EmployeeExperience[index].CurrentlyWorkHere" value="true" />
                             Работаю сейчас
                         </p>
                         <div class="mb-2">
