@@ -203,6 +203,15 @@ namespace Web.MVC.Controllers
                 model.ForeignLanguages = null;
             if (ModelState.IsValid)
             {
+                if (model.EmployeeExperience is not null)
+                {
+                    foreach (var experience in model.EmployeeExperience)
+                    {
+                        DateTime workingFrom = DateTime.ParseExact(experience.WorkingFrom + "-01", "yyyy-MM-dd", null);
+                        DateTime workingUntil = DateTime.ParseExact(experience.WorkingUntil + "-01", "yyyy-MM-dd", null);
+                        experience.WorkingDuration = workingUntil - workingFrom;
+                    }
+                }
                 using HttpClient httpClient = httpClientFactory.CreateClient();
 
                 var employeeResponse = await httpClient.GetAsync($"{url}/api/Employee/GetEmployeeByEmail?email={User.Identity.Name}");
