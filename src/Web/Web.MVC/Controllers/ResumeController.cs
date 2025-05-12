@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web.MVC.DTOs.Resume;
 using Web.MVC.Models.ApiResponses;
-using Web.MVC.Models.ApiResponses.Employer;
 using Web.MVC.Models.ApiResponses.Resume;
 
 namespace Web.MVC.Controllers
