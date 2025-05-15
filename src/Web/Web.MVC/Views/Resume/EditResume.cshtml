@@ -196,6 +196,8 @@
                             <h4>Специализация</h4>
                             <input type="text" class="input-text" placeholder="Введите специализацию" name="Educations[@index].Specialization" value="@Model.Educations[index].Specialization" />
                         </div>
+                        <input type="hidden" name="Educations[@index].ResumeId" value="@Model.Educations[index].ResumeId" />
+                        <input type="hidden" name="Educations[@index].Id" value="@Model.Educations[index].Id"/>
                         <button class="delete-btn" onclick="removeElement('education-container','education-element-block-@index')">Удалить</button>
                     </div>
                 }
@@ -267,6 +269,8 @@
                                 @Model.EmployeeExperience[index].Responsibilities
                                 </textarea>
                         </div>
+                        <input type="hidden" name="EmployeeExperience[@index].ResumeId" value="@Model.EmployeeExperience[index].ResumeId" />
+                        <input type="hidden" name="EmployeeExperience[@index].Id" value="@Model.EmployeeExperience[index].Id" />
                         <button class="delete-btn" onclick="removeElement('experience-container','experience-element-block-@index')">Удалить</button>
                     </div>
                 }
@@ -328,6 +332,8 @@
                                 @LanguageProficiencyLevelConstants.C2
                             </p>
                         </div>
+                        <input type="hidden" name="ForeignLanguages[@index].ResumeId" value="@Model.ForeignLanguages[index].ResumeId" />
+                        <input type="hidden" name="ForeignLanguages[@index].Id" value="@Model.ForeignLanguages[index].Id" />
                         <button class="delete-btn" onclick="removeElement('language-container','language-element-block-@index')">Удалить</button>
                     </div>
                 }
@@ -384,6 +390,15 @@
         let container = document.getElementById(containerBlockId);
         let elementBlock = document.getElementById(elementBlockId);
         container.removeChild(elementBlock);
+        if (container.id.contains('language')) {
+            languageIndex--;
+        }
+        if (container.id.contains('education')) {
+            educationIndex--;
+        }
+        if (container.id.contains('employee')) {
+            employeeExperienceIndex--;
+        }
     }
     let educationIndex = 0;
     let employeeExperienceIndex = 0;
@@ -499,11 +514,18 @@
         removeBtn.innerText = 'Удалить';
         removeBtn.onclick = function() {
             container.removeChild(div);
+            languageIndex--;
         };
+
+        const resumeIdHiddenInput = document.createElement('input');
+        resumeIdHiddenInput.type = 'hidden';
+        resumeIdHiddenInput.name = `ForeignLanguages[${languageIndex}].ResumeId`;
+        resumeIdHiddenInput.value = @Html.Raw(JsonSerializer.Serialize(ViewBag.ResumeId));
 
         div.appendChild(languageNameDiv);
         div.appendChild(proficiencyLevelDiv);
         div.appendChild(removeBtn);
+        div.appendChild(resumeIdHiddenInput);
 
         container.appendChild(div);
 
@@ -632,7 +654,13 @@
         removeBtn.innerText = 'Удалить';
         removeBtn.onclick = function() {
             container.removeChild(div);
+            employeeExperienceIndex--;
         };
+
+        const resumeIdHiddenInput = document.createElement('input');
+        resumeIdHiddenInput.type = 'hidden';
+        resumeIdHiddenInput.name = `EmployeeExperience[${employeeExperienceIndex}].ResumeId`;
+        resumeIdHiddenInput.value = @Html.Raw(JsonSerializer.Serialize(ViewBag.ResumeId));
 
         div.appendChild(companyPostDiv);
         div.appendChild(companyNameDiv);
@@ -640,6 +668,7 @@
         div.appendChild(workingUntilDiv);
         div.appendChild(responsibilitiesDiv);
         div.appendChild(removeBtn);
+        div.appendChild(resumeIdHiddenInput);
 
         container.appendChild(div);
 
@@ -734,12 +763,19 @@
         removeBtn.innerText = 'Удалить';
         removeBtn.onclick = function() {
             container.removeChild(div);
+            educationIndex--;
         };
+
+        const resumeIdHiddenInput = document.createElement('input');
+        resumeIdHiddenInput.type = 'hidden';
+        resumeIdHiddenInput.name = `Educations[${educationIndex}].ResumeId`;
+        resumeIdHiddenInput.value = @Html.Raw(JsonSerializer.Serialize(ViewBag.ResumeId));
 
         div.appendChild(educationTypeDiv);
         div.appendChild(educationalInstitutionDiv);
         div.appendChild(specializationDiv);
         div.appendChild(removeBtn);
+        div.appendChild(resumeIdHiddenInput);
 
         container.appendChild(div);
 
