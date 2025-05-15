@@ -4,6 +4,8 @@ using ResumeMicroservice.Api.Constants;
 using ResumeMicroservice.Api.Database;
 using ResumeMicroservice.Api.DTOs;
 using ResumeMicroservice.Api.Models;
+using ResumeMicroservice.Api.Models.Skills;
+using System.Linq;
 
 namespace ResumeMicroservice.Api.Services.Repositories
 {
@@ -86,8 +88,103 @@ namespace ResumeMicroservice.Api.Services.Repositories
             resume.Gender = model.Gender; resume.DateOfBirth = model.DateOfBirth; resume.ReadyToMove = model.ReadyToMove;
             resume.PhoneNumber = model.PhoneNumber; resume.Email = model.Email; resume.AboutMe = model.AboutMe;
             resume.DesiredSalary = model.DesiredSalary; resume.WorkingExperience = model.WorkingExperience;
-            resume.Educations = model.Educations; resume.ForeignLanguages = model.ForeignLanguages;
-            resume.EmployeeExperience = model.EmployeeExperience;
+
+            var educations = await context.Education.Where(x => x.ResumeId == model.Id).ToListAsync();
+            if (educations.Count == 0 && model.Educations is not null)
+            {
+                await context.Education.AddRangeAsync(model.Educations);
+            }
+            else if(educations.Count > 0 && model.Educations is not null)
+            {
+                var educationsToDelete = educations.Except(model.Educations).ToList();
+                if(educationsToDelete.Count > 0)
+                    context.Education.RemoveRange(educationsToDelete);
+
+                foreach (var education in educations)
+                {
+                    var educationNew = model.Educations.SingleOrDefault(x => x.Id == education.Id);
+                    if (educationNew is not null)
+                    {
+                        education.EducationalInstitution = educationNew.EducationalInstitution;
+                        education.Specialization = educationNew.Specialization;
+                        education.EducationType = educationNew.EducationType;
+
+                        model.Educations.Remove(educationNew);
+                    }
+                }
+
+                if(model.Educations.Count > 0)
+                    await context.Education.AddRangeAsync(model.Educations);
+            }
+            else
+            {
+                context.Education.RemoveRange(educations);
+            }
+
+            var experiences = await context.EmployeeExperience.Where(x => x.ResumeId == model.Id).ToListAsync();
+            if (experiences.Count == 0 && model.EmployeeExperience is not null)
+            {
+                await context.EmployeeExperience.AddRangeAsync(model.EmployeeExperience);
+            }
+            else if (experiences.Count > 0 && model.EmployeeExperience is not null)
+            {
+                var experiencesToDelete = experiences.Except(model.EmployeeExperience).ToList();
+                if(experiencesToDelete.Count > 0)
+                    context.EmployeeExperience.RemoveRange(experiencesToDelete);
+
+                foreach (var experience in experiences)
+                {
+                    var experienceNew = model.EmployeeExperience.SingleOrDefault(x => x.Id == experience.Id);
+                    if (experienceNew is not null)
+                    {
+                        experience.CompanyName = experienceNew.CompanyName; experience.CompanyPost = experienceNew.CompanyPost;
+                        experience.WorkingFrom = experienceNew.WorkingFrom; experience.WorkingUntil = experienceNew.WorkingUntil;
+                        experience.CurrentlyWorkHere = experienceNew.CurrentlyWorkHere;
+                        experience.WorkingDuration = experienceNew.WorkingDuration;
+                        experience.Responsibilities = experienceNew.Responsibilities;
+
+                        model.EmployeeExperience.Remove(experienceNew);
+                    }
+                }
+
+                if (model.EmployeeExperience.Count > 0)
+                    await context.EmployeeExperience.AddRangeAsync(model.EmployeeExperience);
+            }
+            else
+            {
+                context.EmployeeExperience.RemoveRange(experiences);
+            }
+
+            var foreignLanguages = await context.ForeignLanguage.Where(x => x.ResumeId == model.Id).ToListAsync();
+            if (foreignLanguages.Count == 0 && model.ForeignLanguages is not null)
+            {
+                await context.ForeignLanguage.AddRangeAsync(model.ForeignLanguages);
+            }
+            else if (foreignLanguages.Count > 0 && model.ForeignLanguages is not null)
+            {
+                var languagesToDelete = foreignLanguages.Except(model.ForeignLanguages).ToList();
+                if(languagesToDelete.Count > 0)
+                    context.ForeignLanguage.RemoveRange(languagesToDelete);
+
+                foreach (var language in foreignLanguages)
+                {
+                    var languageNew = model.ForeignLanguages.SingleOrDefault(x => x.Id == language.Id);
+                    if (languageNew is not null)
+                    {
+                        language.LanguageName = languageNew.LanguageName;
+                        language.LanguageProficiencyLevel = languageNew.LanguageProficiencyLevel;
+
+                        model.ForeignLanguages.Remove(languageNew);
+                    }
+                }
+
+                if (model.ForeignLanguages.Count > 0)
+                    await context.ForeignLanguage.AddRangeAsync(model.ForeignLanguages);
+            }
+            else
+            {
+                context.ForeignLanguage.RemoveRange(foreignLanguages);
+            }
 
             await context.SaveChangesAsync();
         }
