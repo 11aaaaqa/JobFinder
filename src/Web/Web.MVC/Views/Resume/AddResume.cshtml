@@ -249,11 +249,18 @@
         removeBtn.innerText = 'Удалить';
         removeBtn.onclick = function() {
             container.removeChild(div);
+            languageIndex--;
         };
 
+        const resumeIdHiddenInput = document.createElement('input');
+        resumeIdHiddenInput.type = 'hidden';
+        resumeIdHiddenInput.name = `ForeignLanguages[${languageIndex}].ResumeId`;
+        resumeIdHiddenInput.value = @Html.Raw(JsonSerializer.Serialize(ViewBag.ResumeId));
+        
         div.appendChild(languageNameDiv);
         div.appendChild(proficiencyLevelDiv);
         div.appendChild(removeBtn);
+        div.appendChild(resumeIdHiddenInput);
 
         container.appendChild(div);
 
@@ -382,7 +389,13 @@
         removeBtn.innerText = 'Удалить';
         removeBtn.onclick = function() {
             container.removeChild(div);
+            employeeExperienceIndex--;
         };
+
+        const resumeIdHiddenInput = document.createElement('input');
+        resumeIdHiddenInput.type = 'hidden';
+        resumeIdHiddenInput.name = `EmployeeExperience[${employeeExperienceIndex}].ResumeId`;
+        resumeIdHiddenInput.value = @Html.Raw(JsonSerializer.Serialize(ViewBag.ResumeId));
 
         div.appendChild(companyPostDiv);
         div.appendChild(companyNameDiv);
@@ -390,6 +403,7 @@
         div.appendChild(workingUntilDiv);
         div.appendChild(responsibilitiesDiv);
         div.appendChild(removeBtn);
+        div.appendChild(resumeIdHiddenInput);
 
         container.appendChild(div);
 
@@ -484,12 +498,19 @@
         removeBtn.innerText = 'Удалить';
         removeBtn.onclick = function() {
             container.removeChild(div);
+            educationIndex--;
         };
+
+        const resumeIdHiddenInput = document.createElement('input');
+        resumeIdHiddenInput.type = 'hidden';
+        resumeIdHiddenInput.name = `Educations[${educationIndex}].ResumeId`;
+        resumeIdHiddenInput.value = @Html.Raw(JsonSerializer.Serialize(ViewBag.ResumeId));
 
         div.appendChild(educationTypeDiv);
         div.appendChild(educationalInstitutionDiv);
         div.appendChild(specializationDiv);
         div.appendChild(removeBtn);
+        div.appendChild(resumeIdHiddenInput);
 
         container.appendChild(div);
 
