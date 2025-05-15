@@ -50,12 +50,16 @@ namespace Web.MVC.Controllers
             response.EnsureSuccessStatusCode();
 
             var employee = await response.Content.ReadFromJsonAsync<EmployeeResponse>();
-            return View(new AddResumeDto
+
+            var model = new AddResumeDto
             {
                 Id = Guid.NewGuid(), Status = employee.Status, EmployeeId = employee.Id, Name = employee.Name,
                 Surname = employee.Surname, Email = employee.Email, DateOfBirth = employee.DateOfBirth, City = employee.City,
                 PhoneNumber = employee.PhoneNumber, Patronymic = employee.Patronymic, Gender = employee.Gender
-            });
+            };
+
+            ViewBag.ResumeId = model.Id;
+            return View(model);
         }
 
         [Authorize]
@@ -88,6 +92,8 @@ namespace Web.MVC.Controllers
 
                 return RedirectToAction("GetResume", new { resumeId = model.Id});
             }
+
+            ViewBag.ResumeId = model.Id;
             return View();
         }
 
@@ -186,6 +192,9 @@ namespace Web.MVC.Controllers
             var resumeResponse = await httpClient.GetAsync($"{url}/api/Resume/GetResumeById/{resumeId}");
             resumeResponse.EnsureSuccessStatusCode();
             var model = await resumeResponse.Content.ReadFromJsonAsync<EditResumeDto>();
+
+            ViewBag.ResumeId = model.Id;
+
             return View(model);
         }
 
@@ -231,6 +240,8 @@ namespace Web.MVC.Controllers
 
                 return RedirectToAction("GetResume", new { resumeId = model.Id});
             }
+
+            ViewBag.ResumeId = model.Id;
             return View();
         }
     }
