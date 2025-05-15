@@ -150,12 +150,32 @@
 </form>
 
 <script>
-    let educationIndex = 0;
-    let employeeExperienceIndex = 0;
-    let languageIndex = 0;
+    function updateLanguageIndexes() {
+        const containers = document.querySelectorAll('.language-element-block');
+        
+        containers.forEach((block, index) => {
+            const languageNameInput = block.querySelector('.language-name');
+            if (languageNameInput !== null && languageNameInput !== undefined) {
+                languageNameInput.name = `ForeignLanguages[${index}].LanguageName`;
+            }
+
+            const radios = block.querySelectorAll('.proficiency-level');
+            radios.forEach(radio => {
+                radio.name = `ForeignLanguages[${index}].LanguageProficiencyLevel`;
+            });
+
+            const resumeIdInput = block.querySelector('.hidden-resume-id');
+            if (resumeIdInput !== null && resumeIdInput !== undefined) {
+                resumeIdInput.name = `ForeignLanguages[${index}].ResumeId`;
+            }
+        });
+    }
 
     function addLanguage() {
         const container = document.getElementById('language-container');
+
+        const languageIndex = container.children.length;
+
         const div = document.createElement('div');
         div.className = 'language-element-block';
 
@@ -165,6 +185,7 @@
         languageNameTitle.textContent = 'Язык';
         const languageNameInput = document.createElement('input');
         languageNameInput.classList.add('input-text');
+        languageNameInput.classList.add('language-name');
         languageNameInput.required = true;
         languageNameInput.type = 'text';
         languageNameInput.name = `ForeignLanguages[${languageIndex}].LanguageName`;
@@ -178,6 +199,7 @@
 
         const proficiencyLevelParagraph1 = document.createElement('p');
         const proficiencyLevelRadio1 = document.createElement('input');
+        proficiencyLevelRadio1.classList.add('proficiency-level');
         proficiencyLevelRadio1.required = true;
         proficiencyLevelRadio1.type = 'radio';
         proficiencyLevelRadio1.value = @Html.Raw(JsonSerializer.Serialize(LanguageProficiencyLevelConstants.A1));
@@ -188,6 +210,7 @@
 
         const proficiencyLevelParagraph2 = document.createElement('p');
         const proficiencyLevelRadio2 = document.createElement('input');
+        proficiencyLevelRadio2.classList.add('proficiency-level');
         proficiencyLevelRadio2.required = true;
         proficiencyLevelRadio2.type = 'radio';
         proficiencyLevelRadio2.value = @Html.Raw(JsonSerializer.Serialize(LanguageProficiencyLevelConstants.A2));
@@ -198,6 +221,7 @@
 
         const proficiencyLevelParagraph3 = document.createElement('p');
         const proficiencyLevelRadio3 = document.createElement('input');
+        proficiencyLevelRadio3.classList.add('proficiency-level');
         proficiencyLevelRadio3.required = true;
         proficiencyLevelRadio3.type = 'radio';
         proficiencyLevelRadio3.value = @Html.Raw(JsonSerializer.Serialize(LanguageProficiencyLevelConstants.B1));
@@ -208,6 +232,7 @@
 
         const proficiencyLevelParagraph4 = document.createElement('p');
         const proficiencyLevelRadio4 = document.createElement('input');
+        proficiencyLevelRadio4.classList.add('proficiency-level');
         proficiencyLevelRadio4.required = true;
         proficiencyLevelRadio4.type = 'radio';
         proficiencyLevelRadio4.value = @Html.Raw(JsonSerializer.Serialize(LanguageProficiencyLevelConstants.B2));
@@ -218,6 +243,7 @@
 
         const proficiencyLevelParagraph5 = document.createElement('p');
         const proficiencyLevelRadio5 = document.createElement('input');
+        proficiencyLevelRadio5.classList.add('proficiency-level');
         proficiencyLevelRadio5.required = true;
         proficiencyLevelRadio5.type = 'radio';
         proficiencyLevelRadio5.value = @Html.Raw(JsonSerializer.Serialize(LanguageProficiencyLevelConstants.C1));
@@ -228,6 +254,7 @@
 
         const proficiencyLevelParagraph6 = document.createElement('p');
         const proficiencyLevelRadio6 = document.createElement('input');
+        proficiencyLevelRadio6.classList.add('proficiency-level');
         proficiencyLevelRadio6.required = true;
         proficiencyLevelRadio6.type = 'radio';
         proficiencyLevelRadio6.value = @Html.Raw(JsonSerializer.Serialize(LanguageProficiencyLevelConstants.C2));
@@ -249,10 +276,11 @@
         removeBtn.innerText = 'Удалить';
         removeBtn.onclick = function() {
             container.removeChild(div);
-            languageIndex--;
+            updateLanguageIndexes();
         };
 
         const resumeIdHiddenInput = document.createElement('input');
+        resumeIdHiddenInput.classList.add('hidden-resume-id');
         resumeIdHiddenInput.type = 'hidden';
         resumeIdHiddenInput.name = `ForeignLanguages[${languageIndex}].ResumeId`;
         resumeIdHiddenInput.value = @Html.Raw(JsonSerializer.Serialize(ViewBag.ResumeId));
@@ -263,12 +291,52 @@
         div.appendChild(resumeIdHiddenInput);
 
         container.appendChild(div);
+    }
 
-        languageIndex++;
+    function updateExperienceIndexes() {
+        const containers = document.querySelectorAll('.experience-element-block');
+        containers.forEach((block, index) => {
+            const companyPostInput = block.querySelector('.company-post');
+            if (companyPostInput !== null && companyPostInput !== undefined) {
+                companyPostInput.name = `EmployeeExperience[${index}].CompanyPost`;
+            }
+
+            const companyNameInput = block.querySelector('.company-name');
+            if (companyNameInput !== null && companyNameInput !== undefined) {
+                companyNameInput.name = `EmployeeExperience[${index}].CompanyName`;
+            }
+
+            const workingFromInput = block.querySelector('.working-from');
+            if (workingFromInput !== null && workingFromInput !== undefined) {
+                workingFromInput.name = `EmployeeExperience[${index}].WorkingFrom`;
+            }
+
+            const workingUntilInput = block.querySelector('.working-until');
+            if (workingUntilInput !== null && workingUntilInput !== undefined) {
+                workingUntilInput.name = `EmployeeExperience[${index}].WorkingUntil`;
+            }
+
+            const currentlyWorkHereInput = block.querySelector('.currently-work-here');
+            if (currentlyWorkHereInput !== null && currentlyWorkHereInput !== undefined) {
+                currentlyWorkHereInput.name = `EmployeeExperience[${index}].CurrentlyWorkHere`;
+            }
+
+            const responsibilitiesInput = block.querySelector('.responsibilities');
+            if (responsibilitiesInput !== null && responsibilitiesInput !== undefined) {
+                responsibilitiesInput.name = `EmployeeExperience[${index}].Responsibilities`;
+            }
+
+            const resumeIdHiddenInput = block.querySelector('.hidden-resume-id');
+            if (resumeIdHiddenInput !== null && resumeIdHiddenInput !== undefined) {
+                resumeIdHiddenInput.name = `EmployeeExperience[${index}].ResumeId`;
+            }
+        });
     }
 
     function addExperience() {
         const container = document.getElementById('experience-container');
+
+        const employeeExperienceIndex = container.children.length;
 
         const div = document.createElement('div');
         div.className = 'experience-element-block';
@@ -279,6 +347,7 @@
         companyPostTitle.textContent = 'Должность';
         const companyPostInput = document.createElement('input');
         companyPostInput.classList.add('input-text');
+        companyPostInput.classList.add('company-post');
         companyPostInput.required = true;
         companyPostInput.type = 'text';
         companyPostInput.name = `EmployeeExperience[${employeeExperienceIndex}].CompanyPost`;
@@ -292,6 +361,7 @@
         companyNameTitle.textContent = 'Компания';
         const companyNameInput = document.createElement('input');
         companyNameInput.classList.add('input-text');
+        companyNameInput.classList.add('company-name');
         companyNameInput.required = true;
         companyNameInput.type = 'text';
         companyNameInput.name = `EmployeeExperience[${employeeExperienceIndex}].CompanyName`;
@@ -310,6 +380,7 @@
         workingFromTitle.textContent = 'Начало работы';
         const workingFromInput = document.createElement('input');
         workingFromInput.classList.add('input-text');
+        workingFromInput.classList.add('working-from');
         workingFromInput.required = true;
         workingFromInput.type = 'month';
         workingFromInput.min = '1950-01';
@@ -324,6 +395,7 @@
         const workingUntilInput = document.createElement('input');
         workingUntilInput.classList.add('input-text');
         workingUntilInput.classList.add('mb-1');
+        workingUntilInput.classList.add('working-until');
         workingUntilInput.required = true;
         workingUntilInput.type = 'hidden';
         workingUntilInput.min = '1950-01';
@@ -333,6 +405,7 @@
 
         const p = document.createElement('p');
         const currentlyWorkHereCheckbox = document.createElement('input');
+        currentlyWorkHereCheckbox.classList.add('currently-work-here');
         currentlyWorkHereCheckbox.type = 'checkbox';
         currentlyWorkHereCheckbox.checked = true;
         currentlyWorkHereCheckbox.value = true;
@@ -375,6 +448,7 @@
         responsibilitiesTitle.textContent = 'Расскажите о ваших обязанностях';
         const responsibilitiesTextarea = document.createElement('textarea');
         responsibilitiesTextarea.classList.add('textarea');
+        responsibilitiesTextarea.classList.add('responsibilities');
         responsibilitiesTextarea.rows = 3;
         responsibilitiesTextarea.name = `EmployeeExperience[${employeeExperienceIndex}].Responsibilities`;
         responsibilitiesTextarea.placeholder = 'Расскажите про ваши обязанности';
@@ -389,10 +463,11 @@
         removeBtn.innerText = 'Удалить';
         removeBtn.onclick = function() {
             container.removeChild(div);
-            employeeExperienceIndex--;
+            updateExperienceIndexes();
         };
 
         const resumeIdHiddenInput = document.createElement('input');
+        resumeIdHiddenInput.classList.add('hidden-resume-id');
         resumeIdHiddenInput.type = 'hidden';
         resumeIdHiddenInput.name = `EmployeeExperience[${employeeExperienceIndex}].ResumeId`;
         resumeIdHiddenInput.value = @Html.Raw(JsonSerializer.Serialize(ViewBag.ResumeId));
@@ -406,12 +481,38 @@
         div.appendChild(resumeIdHiddenInput);
 
         container.appendChild(div);
+    }
 
-        employeeExperienceIndex++;
+    function updateEducationIndexes() {
+        const containers = document.querySelectorAll('.education-element-block');
+
+        containers.forEach((block, index) => {
+            const educationLevelRadios = block.querySelectorAll('.education-type');
+            educationLevelRadios.forEach(radio => {
+                radio.name = `Educations[${index}].EducationType`;
+            });
+
+            const educationalInstitutionInput = block.querySelector('.educational-institution');
+            if (educationalInstitutionInput !== null && educationalInstitutionInput !== undefined) {
+                educationalInstitutionInput.name = `Educations[${index}].EducationalInstitution`;
+            }
+
+            const specializationInput = block.querySelector('.specialization');
+            if (specializationInput !== null && specializationInput !== undefined) {
+                specializationInput.name = `Educations[${index}].Specialization`;
+            }
+
+            const hiddenResumeIdInput = block.querySelector('.hidden-resume-id');
+            if (hiddenResumeIdInput !== null && hiddenResumeIdInput !== undefined) {
+                hiddenResumeIdInput.name = `Educations[${index}].ResumeId`;
+            }
+        });
     }
 
     function addEducation() {
         const container = document.getElementById('education-container');
+
+        const educationIndex = container.children.length;
 
         const div = document.createElement('div');
         div.className = 'education-element-block';
@@ -423,6 +524,7 @@
 
         const educationTypeParagraph1 = document.createElement('p');
         const educationTypeRadio1 = document.createElement('input');
+        educationTypeRadio1.classList.add('education-type');
         educationTypeRadio1.required = true;
         educationTypeRadio1.type = 'radio';
         educationTypeRadio1.value = @Html.Raw(JsonSerializer.Serialize(EducationTypeConstants.SecondaryEducation));
@@ -434,6 +536,7 @@
 
         const educationTypeParagraph2 = document.createElement('p');
         const educationTypeRadio2 = document.createElement('input');
+        educationTypeRadio2.classList.add('education-type');
         educationTypeRadio2.required = true;
         educationTypeRadio2.type = 'radio';
         educationTypeRadio2.value = @Html.Raw(JsonSerializer.Serialize(EducationTypeConstants.SecondarySpecializedEducation));
@@ -445,6 +548,7 @@
 
         const educationTypeParagraph3 = document.createElement('p');
         const educationTypeRadio3 = document.createElement('input');
+        educationTypeRadio3.classList.add('education-type');
         educationTypeRadio3.required = true;
         educationTypeRadio3.type = 'radio';
         educationTypeRadio3.value = @Html.Raw(JsonSerializer.Serialize(EducationTypeConstants.HigherEducation));
@@ -455,6 +559,7 @@
 
         const educationTypeParagraph4 = document.createElement('p');
         const educationTypeRadio4 = document.createElement('input');
+        educationTypeRadio4.classList.add('education-type');
         educationTypeRadio4.required = true;
         educationTypeRadio4.type = 'radio';
         educationTypeRadio4.value = @Html.Raw(JsonSerializer.Serialize(EducationTypeConstants.IncompleteHigherEducation));
@@ -474,6 +579,7 @@
         educationalInstitutionTitle.textContent = 'Образовательное учреждение';
         const educationalInstitutionInput = document.createElement('input');
         educationalInstitutionInput.classList.add('input-text');
+        educationalInstitutionInput.classList.add('educational-institution');
         educationalInstitutionInput.type = 'text';
         educationalInstitutionInput.placeholder = 'Введите образовательное учреждение';
         educationalInstitutionInput.name = `Educations[${educationIndex}].EducationalInstitution`;
@@ -487,6 +593,7 @@
         specializationTitle.textContent = 'Специализация';
         const specializationInput = document.createElement('input');
         specializationInput.classList.add('input-text');
+        specializationInput.classList.add('specialization');
         specializationInput.type = 'text';
         specializationInput.placeholder = 'Введите специализацию';
         specializationInput.name = `Educations[${educationIndex}].Specialization`;
@@ -498,10 +605,11 @@
         removeBtn.innerText = 'Удалить';
         removeBtn.onclick = function() {
             container.removeChild(div);
-            educationIndex--;
+            updateEducationIndexes();
         };
 
         const resumeIdHiddenInput = document.createElement('input');
+        resumeIdHiddenInput.classList.add('hidden-resume-id');
         resumeIdHiddenInput.type = 'hidden';
         resumeIdHiddenInput.name = `Educations[${educationIndex}].ResumeId`;
         resumeIdHiddenInput.value = @Html.Raw(JsonSerializer.Serialize(ViewBag.ResumeId));
@@ -513,8 +621,6 @@
         div.appendChild(resumeIdHiddenInput);
 
         container.appendChild(div);
-
-        educationIndex++;
     }
 </script>
 <script src="~/js/textarea-resizing.js"></script>
