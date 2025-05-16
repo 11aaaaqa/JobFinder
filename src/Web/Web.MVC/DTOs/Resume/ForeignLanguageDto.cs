@@ -5,6 +5,7 @@ namespace Web.MVC.DTOs.Resume
     public class ForeignLanguageDto
     {
         public Guid Id { get; set; } = Guid.NewGuid();
+        public Guid ResumeId { get; set; }
         [Required(ErrorMessage = "Поле \"Язык\" обязательно")]
         [Display(Name = "Язык")]
         public string LanguageName { get; set; }
