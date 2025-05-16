@@ -127,7 +127,54 @@
             <h3>Образование</h3>
             <button type="button" class="add-btn" id="add-education" onclick="addEducation()">+ Добавить</button>
         </div>
-        <div id="education-container" class="education-container"></div>
+        @if (Model.Educations is not null && Model.Educations.Count > 0)
+        {
+            <div id="education-container" class="education-container">
+                @for (int index = 0; index < Model.Educations.Count; index++)
+                {
+                    <div class="education-element-block" id="education-element-block-@index">
+                        <div>
+                            <h4>Уровень образования</h4>
+                            <p>
+                                <input type="radio" name="Educations[@index].EducationType" value="@EducationTypeConstants.SecondaryEducation"
+                                       checked="@(Model.Educations[index].EducationType == EducationTypeConstants.SecondaryEducation)" required />
+                                @EducationTypeConstants.SecondaryEducation
+                            </p>
+                            <p>
+                                <input type="radio" name="Educations[@index].EducationType" value="@EducationTypeConstants.SecondarySpecializedEducation"
+                                       checked="@(Model.Educations[index].EducationType == EducationTypeConstants.SecondarySpecializedEducation)" required />
+                                @EducationTypeConstants.SecondarySpecializedEducation
+                            </p>
+                            <p>
+                                <input type="radio" name="Educations[@index].EducationType" value="@EducationTypeConstants.HigherEducation"
+                                       checked="@(Model.Educations[index].EducationType == EducationTypeConstants.HigherEducation)" required />
+                                @EducationTypeConstants.HigherEducation
+                            </p>
+                            <p>
+                                <input type="radio" name="Educations[@index].EducationType" value="@EducationTypeConstants.IncompleteHigherEducation"
+                                       checked="@(Model.Educations[index].EducationType == EducationTypeConstants.IncompleteHigherEducation)" required />
+                                @EducationTypeConstants.IncompleteHigherEducation
+                            </p>
+                        </div>
+                        <div class="mb-2">
+                            <h4>Образовательное учреждение</h4>
+                            <input type="text" class="input-text" placeholder="Введите образовательное учреждение" name="Educations[@index].EducationalInstitution" value="@Model.Educations[index].EducationalInstitution" />
+                        </div>
+                        <div class="mb-2">
+                            <h4>Специализация</h4>
+                            <input type="text" class="input-text" placeholder="Введите специализацию" name="Educations[@index].Specialization" value="@Model.Educations[index].Specialization" />
+                        </div>
+                        <input type="hidden" name="Educations[@index].ResumeId" value="@Model.Educations[index].ResumeId" />
+                        <input type="hidden" name="Educations[@index].Id" value="@Model.Educations[index].Id" />
+                        <button class="delete-btn" onclick="removeElement('education-container','education-element-block-@index')">Удалить</button>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div id="education-container" class="education-container"></div>
+        }
     </div>
     
     <div class="mb-1">
@@ -135,7 +182,71 @@
             <h3>Опыт работы</h3>
             <button type="button" class="add-btn" id="add-experience" onclick="addExperience()">+ Добавить</button>
         </div>
-        <div id="experience-container" class="experience-container"></div>
+        @if (Model.EmployeeExperience is not null && Model.EmployeeExperience.Count > 0)
+        {
+            DateTime currentDate = DateTime.UtcNow;
+            int currentYear = currentDate.Year;
+            int currentMonth = currentDate.Month;
+            string maxDate = currentMonth < 10 ? $"{currentYear}-0{currentMonth}" : $"{currentYear}-{currentMonth}";
+            <div id="experience-container" class="experience-container">
+                @for (int index = 0; index < Model.EmployeeExperience.Count; index++)
+                {
+                    <div class="experience-element-block" id="experience-element-block-@index">
+                        <div class="mb-2">
+                            <h4>Должность</h4>
+                            <input type="text" class="input-text" name="EmployeeExperience[@index].CompanyPost" value="@Model.EmployeeExperience[index].CompanyPost" placeholder="Введите должность" required />
+                        </div>
+                        <div class="mb-2">
+                            <h4>Компания</h4>
+                            <input type="text" class="input-text" name="EmployeeExperience[@index].CompanyName" value="@Model.EmployeeExperience[index].CompanyName" placeholder="Введите название компании" required />
+                        </div>
+                        <div class="mb-2">
+                            <h4>Начало работы</h4>
+                            <input id="working-from-@index" onchange="workingFromInputOnChange('working-from-@index','working-until-@index','working-here-checkbox-@index')" type="month" class="input-text" min="1950-01" max="@maxDate" name="EmployeeExperience[@index].WorkingFrom" value="@Model.EmployeeExperience[index].WorkingFrom" required />
+                        </div>
+                        <div>
+                            @if (true)
+                            {
+                                string workingFromString = Model.EmployeeExperience[index].WorkingFrom;
+                                var workingFrom = DateTime.ParseExact(workingFromString + "-01", "yyyy-MM-dd", null);
+                                workingFrom = workingFrom.AddMonths(1);
+                                int minWorkingUntilYear = workingFrom.Year;
+                                int minWorkingUntilMonth = workingFrom.Month;
+                                string minDate = minWorkingUntilMonth < 10
+                                ? $"{minWorkingUntilYear}-0{minWorkingUntilMonth}"
+                                : $"{minWorkingUntilYear}-{minWorkingUntilMonth}";
+                                <h4>Окончание работы</h4>
+                                @if (Model.EmployeeExperience[index].CurrentlyWorkHere)
+                                {
+                                    <input id="working-until-@index" type="hidden" class="input-text mb-1" min="@minDate" max="@maxDate" value="@maxDate" name="EmployeeExperience[@index].WorkingUntil" required />
+                                }
+                                else
+                                {
+                                    <input id="working-until-@index" type="month" class="input-text mb-1" min="@minDate" max="@maxDate" name="EmployeeExperience[@index].WorkingUntil" value="@Model.EmployeeExperience[index].WorkingUntil" required />
+                                }
+                            }
+                        </div>
+                        <p>
+                            <input id="working-here-checkbox-@index" onchange="workingHereCheckboxOnChange('working-here-checkbox-@index', 'working-until-@index')" type="checkbox" name="EmployeeExperience[@index].CurrentlyWorkHere" checked="@Model.EmployeeExperience[index].CurrentlyWorkHere" value="true" />
+                            Работаю сейчас
+                        </p>
+                        <div class="mb-2">
+                            <h4>Расскажите о ваших обязанностях</h4>
+                            <textarea class="textarea" rows="3" name="EmployeeExperience[@index].Responsibilities" placeholder="Расскажите про ваши обязанности" oninput="autoResize(this)">
+                                @Model.EmployeeExperience[index].Responsibilities
+                                        </textarea>
+                        </div>
+                        <input type="hidden" name="EmployeeExperience[@index].ResumeId" value="@Model.EmployeeExperience[index].ResumeId" />
+                        <input type="hidden" name="EmployeeExperience[@index].Id" value="@Model.EmployeeExperience[index].Id" />
+                        <button class="delete-btn" onclick="removeElement('experience-container','experience-element-block-@index')">Удалить</button>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div id="experience-container" class="experience-container"></div>
+        }
     </div>
 
     <div class="mb-1">
@@ -143,13 +254,111 @@
             <h3>Иностранные языки</h3>
             <button type="button" class="add-btn" id="add-language" onclick="addLanguage()">+ Добавить</button>
         </div>
-        <div id="language-container" class="language-container"></div>
+        @if (Model.ForeignLanguages is not null && Model.ForeignLanguages.Count > 0)
+        {
+            <div id="language-container" class="language-container">
+                @for (int index = 0; index < Model.ForeignLanguages.Count; index++)
+                {
+                    <div class="language-element-block" id="language-element-block-@index">
+                        <div class="mb-2">
+                            <h4>Язык</h4>
+                            <input class="input-text" type="text" name="ForeignLanguages[@index].LanguageName" value="@Model.ForeignLanguages[index].LanguageName" placeholder="Введите язык" required />
+                        </div>
+                        <div>
+                            <h4>Уровень владения</h4>
+                            <p>
+                                <input type="radio" name="ForeignLanguages[@index].LanguageProficiencyLevel" value="@LanguageProficiencyLevelConstants.A1"
+                                       checked="@(Model.ForeignLanguages[index].LanguageProficiencyLevel == LanguageProficiencyLevelConstants.A1)" required />
+                                @LanguageProficiencyLevelConstants.A1
+                            </p>
+                            <p>
+                                <input type="radio" name="ForeignLanguages[@index].LanguageProficiencyLevel" value="@LanguageProficiencyLevelConstants.A2"
+                                       checked="@(Model.ForeignLanguages[index].LanguageProficiencyLevel == LanguageProficiencyLevelConstants.A2)" required />
+                                @LanguageProficiencyLevelConstants.A2
+                            </p>
+                            <p>
+                                <input type="radio" name="ForeignLanguages[@index].LanguageProficiencyLevel" value="@LanguageProficiencyLevelConstants.B1"
+                                       checked="@(Model.ForeignLanguages[index].LanguageProficiencyLevel == LanguageProficiencyLevelConstants.B1)" required />
+                                @LanguageProficiencyLevelConstants.B1
+                            </p>
+                            <p>
+                                <input type="radio" name="ForeignLanguages[@index].LanguageProficiencyLevel" value="@LanguageProficiencyLevelConstants.B2"
+                                       checked="@(Model.ForeignLanguages[index].LanguageProficiencyLevel == LanguageProficiencyLevelConstants.B2)" required />
+                                @LanguageProficiencyLevelConstants.B2
+                            </p>
+                            <p>
+                                <input type="radio" name="ForeignLanguages[@index].LanguageProficiencyLevel" value="@LanguageProficiencyLevelConstants.C1"
+                                       checked="@(Model.ForeignLanguages[index].LanguageProficiencyLevel == LanguageProficiencyLevelConstants.C1)" required />
+                                @LanguageProficiencyLevelConstants.C1
+                            </p>
+                            <p>
+                                <input type="radio" name="ForeignLanguages[@index].LanguageProficiencyLevel" value="@LanguageProficiencyLevelConstants.C2"
+                                       checked="@(Model.ForeignLanguages[index].LanguageProficiencyLevel == LanguageProficiencyLevelConstants.C2)" required />
+                                @LanguageProficiencyLevelConstants.C2
+                            </p>
+                        </div>
+                        <input type="hidden" name="ForeignLanguages[@index].ResumeId" value="@Model.ForeignLanguages[index].ResumeId" />
+                        <input type="hidden" name="ForeignLanguages[@index].Id" value="@Model.ForeignLanguages[index].Id" />
+                        <button class="delete-btn" onclick="removeElement('language-container','language-element-block-@index')">Удалить</button>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div id="language-container" class="language-container"></div>
+        }
     </div>
 
     <input type="submit" value="Создать"/>
 </form>
 
 <script>
+    function workingFromInputOnChange(workingFromInputId, workingUntilInputId, workHereCheckboxId) {
+        let currentlyWorkHereCheckbox = document.getElementById(workHereCheckboxId);
+        let workingFromInput = document.getElementById(workingFromInputId);
+        let workingUntilInput = document.getElementById(workingUntilInputId);
+
+        const [y, m] = workingFromInput.value.split('-').map(Number);
+        const d = new Date(y, m - 1, 1);
+        d.setMonth(d.getMonth() + 1);
+        const nY = d.getFullYear();
+        const nM = d.getMonth() + 1;
+        const formattedM = nM < 10 ? '0' + nM : nM;
+        workingUntilInput.min = `${nY}-${formattedM}`;
+        if (currentlyWorkHereCheckbox.checked !== true) {
+            workingUntilInput.value = '';
+        }
+    }
+
+    function workingHereCheckboxOnChange(checkboxId, workingUntilInputId) {
+        let date = new Date();
+        const year = date.getUTCFullYear();
+        const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+        const currentDate = `${year}-${month}`;
+
+        let currentlyWorkHereCheckbox = document.getElementById(checkboxId);
+        let workingUntilInput = document.getElementById(workingUntilInputId);
+        if (currentlyWorkHereCheckbox.checked === true) {
+            workingUntilInput.value = currentDate;
+            workingUntilInput.type = 'hidden';
+            currentlyWorkHereCheckbox.value = true;
+        } else {
+            workingUntilInput.value = '';
+            workingUntilInput.type = 'month';
+            currentlyWorkHereCheckbox.value = false;
+        }
+    }
+
+    function removeElement(containerBlockId, elementBlockId) {
+        let container = document.getElementById(containerBlockId);
+        let elementBlock = document.getElementById(elementBlockId);
+        container.removeChild(elementBlock);
+        updateEducationIndexes();
+        updateExperienceIndexes();
+        updateLanguageIndexes();
+    }
+    
     function updateLanguageIndexes() {
         const containers = document.querySelectorAll('.language-element-block');
         
