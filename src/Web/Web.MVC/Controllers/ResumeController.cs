@@ -94,7 +94,7 @@ namespace Web.MVC.Controllers
             }
 
             ViewBag.ResumeId = model.Id;
-            return View();
+            return View(model);
         }
 
         [HttpGet]
@@ -242,7 +242,7 @@ namespace Web.MVC.Controllers
             }
 
             ViewBag.ResumeId = model.Id;
-            return View();
+            return View(model);
         }
     }
 }
