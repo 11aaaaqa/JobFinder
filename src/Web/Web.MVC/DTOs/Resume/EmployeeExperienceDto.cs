@@ -5,6 +5,7 @@ namespace Web.MVC.DTOs.Resume
     public class EmployeeExperienceDto
     {
         public Guid Id { get; set; } = Guid.NewGuid();
+        public Guid ResumeId { get; set; }
         [Required(ErrorMessage = "Поле \"Должность\" обязательно")]
         [Display(Name = "Должность")]
         public string CompanyPost { get; set; }

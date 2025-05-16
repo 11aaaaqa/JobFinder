@@ -3,6 +3,7 @@
     public class ForeignLanguageResponse
     {
         public Guid Id { get; set; }
+        public Guid ResumeId { get; set; }
         public string LanguageName { get; set; }
         public string LanguageProficiencyLevel { get; set; }
     }

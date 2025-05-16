@@ -1,12 +1,13 @@
 ﻿@using System.Text.Json
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @using Web.MVC.Constants.Resume
-@model Web.MVC.DTOs.Resume.AddResumeDto
-<link rel="stylesheet" href="~/css/resume/add-resume.css"/>
-<link rel="stylesheet" href="~/css/site-themed-textarea.css"/>
+@model Web.MVC.DTOs.Resume.EditResumeDto
+<link rel="stylesheet" href="~/css/resume/add-resume.css" />
+<link rel="stylesheet" href="~/css/site-themed-textarea.css" />
 
 <form method="post">
     <div asp-validation-summary="ModelOnly"></div>
-    
+
     <span asp-validation-for="ResumeTitle"></span>
     <span asp-validation-for="OccupationTypes"></span>
     <span asp-validation-for="WorkTypes"></span>
@@ -24,16 +25,15 @@
     <span asp-validation-for="Educations"></span>
     <span asp-validation-for="EmployeeExperience"></span>
     <span asp-validation-for="ForeignLanguages"></span>
-    
-    <input type="hidden" asp-for="Id"/>
-    <input type="hidden" asp-for="Status" />
+
+    <input type="hidden" asp-for="Id" />
     <input type="hidden" asp-for="EmployeeId" />
 
     <div class="mb-2">
         <h3>Профессия или должность</h3>
-        <input class="input-text" asp-for="ResumeTitle" placeholder="Введите профессию или должность"/>
+        <input class="input-text" asp-for="ResumeTitle" placeholder="Введите профессию или должность" />
     </div>
-    
+
     <div class="mb-2">
         <h3>Желаемая зарплата</h3>
         <input class="input-text" asp-for="DesiredSalary" placeholder="Введите зарплату" />
@@ -54,34 +54,52 @@
             <input class="input-text" asp-for="DateOfBirth" placeholder="Дата рождения" />
         </div>
     </div>
-    
+
     <div>
         <h3>Ваш пол</h3>
         <p>
-            <input type="radio" name="Gender" value="@GenderConstants.Male" />
+            <input type="radio" name="Gender" value="@GenderConstants.Male" checked="@(Model.Gender == GenderConstants.Male)" />
             @GenderConstants.Male
         </p>
         <p>
-            <input type="radio" name="Gender" value="@GenderConstants.Female" />
+            <input type="radio" name="Gender" value="@GenderConstants.Female" checked="@(Model.Gender == GenderConstants.Female)" />
             @GenderConstants.Female
         </p>
     </div>
-    
+
     <div>
         <h3>Тип работы</h3>
-        <p>
-            <input type="checkbox" name="WorkTypes" value="@WorkTypesConstants.OfficeWork"/>
-            @WorkTypesConstants.OfficeWork
-        </p>
-        <p>
-            <input type="checkbox" name="WorkTypes" value="@WorkTypesConstants.RemoteWork" />
-            @WorkTypesConstants.RemoteWork
-        </p>
-        <p>
-            <input type="checkbox" name="WorkTypes" value="@WorkTypesConstants.HybridWork" />
-            @WorkTypesConstants.HybridWork
-        </p>
-        
+        @if (Model.WorkTypes is null)
+        {
+            <p>
+                <input type="checkbox" name="WorkTypes" value="@WorkTypesConstants.OfficeWork" />
+                @WorkTypesConstants.OfficeWork
+            </p>
+            <p>
+                <input type="checkbox" name="WorkTypes" value="@WorkTypesConstants.RemoteWork" />
+                @WorkTypesConstants.RemoteWork
+            </p>
+            <p>
+                <input type="checkbox" name="WorkTypes" value="@WorkTypesConstants.HybridWork" />
+                @WorkTypesConstants.HybridWork
+            </p>
+        }
+        else
+        {
+            <p>
+                <input type="checkbox" name="WorkTypes" value="@WorkTypesConstants.OfficeWork" checked="@(Model.WorkTypes.Contains(WorkTypesConstants.OfficeWork))" />
+                @WorkTypesConstants.OfficeWork
+            </p>
+            <p>
+                <input type="checkbox" name="WorkTypes" value="@WorkTypesConstants.RemoteWork" checked="@(Model.WorkTypes.Contains(WorkTypesConstants.RemoteWork))" />
+                @WorkTypesConstants.RemoteWork
+            </p>
+            <p>
+                <input type="checkbox" name="WorkTypes" value="@WorkTypesConstants.HybridWork" checked="@(Model.WorkTypes.Contains(WorkTypesConstants.HybridWork))" />
+                @WorkTypesConstants.HybridWork
+            </p>
+        }
+
         <div class="mb-2">
             <p>
                 <input type="checkbox" asp-for="ReadyToMove" />
@@ -89,29 +107,43 @@
             </p>
         </div>
     </div>
-    
+
     <div>
         <h3>Тип занятости</h3>
-        <p>
-            <input type="checkbox" name="OccupationTypes" value="@OccupationTypesConstants.FullTimeJob" />
-            @OccupationTypesConstants.FullTimeJob
-        </p>
-        <p>
-            <input type="checkbox" name="OccupationTypes" value="@OccupationTypesConstants.PartTimeJob" />
-            @OccupationTypesConstants.PartTimeJob
-        </p>
+        @if (Model.OccupationTypes is null)
+        {
+            <p>
+                <input type="checkbox" name="OccupationTypes" value="@OccupationTypesConstants.FullTimeJob" />
+                @OccupationTypesConstants.FullTimeJob
+            </p>
+            <p>
+                <input type="checkbox" name="OccupationTypes" value="@OccupationTypesConstants.PartTimeJob" />
+                @OccupationTypesConstants.PartTimeJob
+            </p>
+        }
+        else
+        {
+            <p>
+                <input type="checkbox" name="OccupationTypes" value="@OccupationTypesConstants.FullTimeJob" checked="@(Model.OccupationTypes.Contains(OccupationTypesConstants.FullTimeJob))" />
+                @OccupationTypesConstants.FullTimeJob
+            </p>
+            <p>
+                <input type="checkbox" name="OccupationTypes" value="@OccupationTypesConstants.PartTimeJob" checked="@(Model.OccupationTypes.Contains(OccupationTypesConstants.PartTimeJob))" />
+                @OccupationTypesConstants.PartTimeJob
+            </p>
+        }
     </div>
 
     <div class="mb-2">
         <h3>Где ищите работу</h3>
         <input class="input-text" asp-for="City" placeholder="Введите город работы" />
     </div>
-    
+
     <div class="mb-2">
         <h3>О себе</h3>
         <textarea class="textarea" asp-for="AboutMe" placeholder="Любая дополнительная информация" oninput="autoResize(this)" rows="4"></textarea>
     </div>
-    
+
     <div class="mb-2">
         <h3>Контактная информация</h3>
         <div class="mb-1">
@@ -121,7 +153,7 @@
             <input class="input-text" asp-for="Email" placeholder="Почта" />
         </div>
     </div>
-    
+
     <div class="mb-1">
         <div class="eel-title-btn-block mb-1">
             <h3>Образование</h3>
@@ -165,7 +197,7 @@
                             <input type="text" class="input-text" placeholder="Введите специализацию" name="Educations[@index].Specialization" value="@Model.Educations[index].Specialization" />
                         </div>
                         <input type="hidden" name="Educations[@index].ResumeId" value="@Model.Educations[index].ResumeId" />
-                        <input type="hidden" name="Educations[@index].Id" value="@Model.Educations[index].Id" />
+                        <input type="hidden" name="Educations[@index].Id" value="@Model.Educations[index].Id"/>
                         <button class="delete-btn" onclick="removeEducationElementBlock('@index')">Удалить</button>
                     </div>
                 }
@@ -176,7 +208,7 @@
             <div id="education-container" class="education-container"></div>
         }
     </div>
-    
+
     <div class="mb-1">
         <div class="eel-title-btn-block mb-1">
             <h3>Опыт работы</h3>
@@ -213,8 +245,8 @@
                                 int minWorkingUntilYear = workingFrom.Year;
                                 int minWorkingUntilMonth = workingFrom.Month;
                                 string minDate = minWorkingUntilMonth < 10
-                                ? $"{minWorkingUntilYear}-0{minWorkingUntilMonth}"
-                                : $"{minWorkingUntilYear}-{minWorkingUntilMonth}";
+                                    ? $"{minWorkingUntilYear}-0{minWorkingUntilMonth}"
+                                    : $"{minWorkingUntilYear}-{minWorkingUntilMonth}";
                                 <h4>Окончание работы</h4>
                                 @if (Model.EmployeeExperience[index].CurrentlyWorkHere)
                                 {
@@ -234,7 +266,7 @@
                             <h4>Расскажите о ваших обязанностях</h4>
                             <textarea class="textarea" rows="3" name="EmployeeExperience[@index].Responsibilities" placeholder="Расскажите про ваши обязанности" oninput="autoResize(this)">
                                 @Model.EmployeeExperience[index].Responsibilities
-                                        </textarea>
+                                </textarea>
                         </div>
                         <input type="hidden" name="EmployeeExperience[@index].ResumeId" value="@Model.EmployeeExperience[index].ResumeId" />
                         <input type="hidden" name="EmployeeExperience[@index].Id" value="@Model.EmployeeExperience[index].Id" />
@@ -247,6 +279,7 @@
         {
             <div id="experience-container" class="experience-container"></div>
         }
+        
     </div>
 
     <div class="mb-1">
@@ -308,9 +341,10 @@
         {
             <div id="language-container" class="language-container"></div>
         }
+        
     </div>
 
-    <input type="submit" value="Создать"/>
+    <input type="submit" value="Обновить" />
 </form>
 
 <script>
@@ -349,7 +383,7 @@
             currentlyWorkHereCheckbox.value = false;
         }
     }
-    
+
     function removeLanguageElementBlock(blockId) {
         const container = document.getElementById('language-container');
         const blockToRemove = document.getElementById(`language-element-block-${blockId}`);
@@ -401,7 +435,7 @@
 
     function updateLanguageIndexes() {
         const containers = document.querySelectorAll('.language-element-block');
-        
+
         containers.forEach((block, index) => {
             const languageNameInput = block.querySelector('.language-name');
             if (languageNameInput !== null && languageNameInput !== undefined) {
@@ -533,7 +567,7 @@
         resumeIdHiddenInput.type = 'hidden';
         resumeIdHiddenInput.name = `ForeignLanguages[${languageIndex}].ResumeId`;
         resumeIdHiddenInput.value = @Html.Raw(JsonSerializer.Serialize(ViewBag.ResumeId));
-        
+
         div.appendChild(languageNameDiv);
         div.appendChild(proficiencyLevelDiv);
         div.appendChild(removeBtn);
