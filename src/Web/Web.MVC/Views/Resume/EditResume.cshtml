@@ -198,7 +198,7 @@
                         </div>
                         <input type="hidden" name="Educations[@index].ResumeId" value="@Model.Educations[index].ResumeId" />
                         <input type="hidden" name="Educations[@index].Id" value="@Model.Educations[index].Id"/>
-                        <button class="delete-btn" onclick="removeElement('education-container','education-element-block-@index')">Удалить</button>
+                        <button class="delete-btn" onclick="removeEducationElementBlock('@index')">Удалить</button>
                     </div>
                 }
             </div>
@@ -270,7 +270,7 @@
                         </div>
                         <input type="hidden" name="EmployeeExperience[@index].ResumeId" value="@Model.EmployeeExperience[index].ResumeId" />
                         <input type="hidden" name="EmployeeExperience[@index].Id" value="@Model.EmployeeExperience[index].Id" />
-                        <button class="delete-btn" onclick="removeElement('experience-container','experience-element-block-@index')">Удалить</button>
+                        <button class="delete-btn" onclick="removeExperienceElementBlock('@index')">Удалить</button>
                     </div>
                 }
             </div>
@@ -332,7 +332,7 @@
                         </div>
                         <input type="hidden" name="ForeignLanguages[@index].ResumeId" value="@Model.ForeignLanguages[index].ResumeId" />
                         <input type="hidden" name="ForeignLanguages[@index].Id" value="@Model.ForeignLanguages[index].Id" />
-                        <button class="delete-btn" onclick="removeElement('language-container','language-element-block-@index')">Удалить</button>
+                        <button class="delete-btn" onclick="removeLanguageElementBlock('@index')">Удалить</button>
                     </div>
                 }
             </div>
@@ -348,7 +348,7 @@
 </form>
 
 <script>
-        function workingFromInputOnChange(workingFromInputId, workingUntilInputId, workHereCheckboxId) {
+    function workingFromInputOnChange(workingFromInputId, workingUntilInputId, workHereCheckboxId) {
         let currentlyWorkHereCheckbox = document.getElementById(workHereCheckboxId);
         let workingFromInput = document.getElementById(workingFromInputId);
         let workingUntilInput = document.getElementById(workingUntilInputId);
@@ -384,13 +384,53 @@
         }
     }
 
-    function removeElement(containerBlockId, elementBlockId) {
-        let container = document.getElementById(containerBlockId);
-        let elementBlock = document.getElementById(elementBlockId);
-        container.removeChild(elementBlock);
-        updateEducationIndexes();
-        updateExperienceIndexes();
+    function removeLanguageElementBlock(blockId) {
+        const container = document.getElementById('language-container');
+        const blockToRemove = document.getElementById(`language-element-block-${blockId}`);
+        container.removeChild(blockToRemove);
         updateLanguageIndexes();
+        updateLanguageIndexesOnRemoving();
+    }
+
+    function removeExperienceElementBlock(blockId) {
+        const container = document.getElementById('experience-container');
+        const blockToRemove = document.getElementById(`experience-element-block-${blockId}`);
+        container.removeChild(blockToRemove);
+        updateExperienceIndexes();
+        updateExperienceIndexesOnRemoving();
+    }
+
+    function removeEducationElementBlock(blockId) {
+        const container = document.getElementById('education-container');
+        const blockToRemove = document.getElementById(`education-element-block-${blockId}`);
+        container.removeChild(blockToRemove);
+        updateEducationIndexes();
+        updateEducationIndexesOnRemoving();
+    }
+
+    function updateLanguageIndexesOnRemoving() {
+        const containers = document.querySelectorAll('.language-element-block');
+        containers.forEach((block, index) => {
+            block.id = `$language-element-block-${index}`;
+            const removeBtn = block.querySelector('.delete-btn');
+            removeBtn.setAttribute('onclick', `removeLanguageElementBlock(\'${index}\')`);
+        });
+    }
+    function updateEducationIndexesOnRemoving() {
+        const containers = document.querySelectorAll('.education-element-block');
+        containers.forEach((block, index) => {
+            block.id = `education-element-block-${index}`;
+            const removeBtn = block.querySelector('.delete-btn');
+            removeBtn.setAttribute('onclick', `removeEducationElementBlock(\'${index}\')`);
+        });
+    }
+    function updateExperienceIndexesOnRemoving() {
+        const containers = document.querySelectorAll('.experience-element-block');
+        containers.forEach((block, index) => {
+            block.id = `experience-element-block-${index}`;
+            const removeBtn = block.querySelector('.delete-btn');
+            removeBtn.setAttribute('onclick', `removeExperienceElementBlock(\'${index}\')`);
+        });
     }
 
     function updateLanguageIndexes() {
