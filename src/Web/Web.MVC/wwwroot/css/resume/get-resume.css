@@ -38,3 +38,48 @@ p {
 .get-resume-page-block {
     margin: 0 16%;
 }
+
+.considering-resume-status {
+    padding: 3px 5px;
+    background-color: bisque;
+    border-radius: 7px;
+    color: black;
+}
+
+.looking-for-resume-status {
+    padding: 3px 5px;
+    background-color: lightgreen;
+    border-radius: 7px;
+    color: black;
+}
+
+.not-looking-for-status {
+    padding: 4px 7px;
+    background-color: lightcoral;
+    border-radius: 7px;
+    color: black;
+}
+
+.resume-actions-block {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.resume-action-btn {
+    text-decoration: none;
+    color: white;
+    background-color: deepskyblue;
+    border: none;
+    border-radius: 7px;
+    padding: 5px 12px;
+    margin-right: 4px;
+    margin-bottom: 4px;
+    transition: background-color 0.3s;
+}
+
+.resume-action-btn:hover {
+    background-color: dodgerblue;
+    cursor: pointer;
+}

@@ -1,0 +1,222 @@
+﻿@using Web.MVC.Constants.Resume
+@model List<Web.MVC.Models.ApiResponses.Resume.ResumeResponse>
+<link rel="stylesheet" href="~/css/resume/get-all-resumes.css"/>
+
+<div class="all-resumes-page-container">
+    <form method="get">
+        <input type="text" name="searchingQuery" placeholder="Поиск по резюме" />
+        <input type="submit" value="Найти" />
+    </form>
+
+    <div class="resumes-container">
+        @foreach (var resume in Model)
+        {
+            <a class="get-resume-link" asp-controller="Resume" asp-action="GetResume" asp-route-resumeId="@resume.Id">
+                <div class="resume-element-block">
+                    @if (resume.DesiredSalary is not null)
+                    {
+                        <h3 class="m-0">@resume.ResumeTitle</h3>
+                        <h4 class="format-number mb-2">@resume.DesiredSalary ₽</h4>
+                    }
+                    else
+                    {
+                        <h3 class="mb-2">@resume.ResumeTitle</h3>
+                    }
+
+                    @if (resume.DateOfBirth is not null)
+                    {
+                        TimeSpan employeeAgeDays = DateTime.UtcNow - new DateTime(resume.DateOfBirth.Value.Year, resume.DateOfBirth.Value.Month, 1);
+                        int employeeAgeYears = (int)employeeAgeDays.TotalDays / 365;
+
+                        string employeeAgeWord;
+                        int lastTwoDigitsYear = employeeAgeYears % 100;
+                        int lastDigitYear = employeeAgeYears % 10;
+
+                        if (lastTwoDigitsYear >= 11 && lastTwoDigitsYear <= 14)
+                        {
+                            employeeAgeWord = "лет";
+                        }
+                        else
+                        {
+                            switch (lastDigitYear)
+                            {
+                                case 1:
+                                    employeeAgeWord = "год";
+                                    break;
+                                case 2:
+                                case 3:
+                                case 4:
+                                    employeeAgeWord = "года";
+                                    break;
+                                default:
+                                    employeeAgeWord = "лет";
+                                    break;
+                            }
+                        }
+
+                        <p>@employeeAgeYears @employeeAgeWord</p>
+                    }
+
+                    @if (resume.WorkingExperience.TotalDays >= 30)
+                    {
+                        int totalExperienceMonths = (int)resume.WorkingExperience.TotalDays / 30;
+
+                        int experienceYears = totalExperienceMonths / 12;
+                        int experienceMonths = totalExperienceMonths - experienceYears * 12;
+                        string experienceYearWord;
+                        string experienceMonthWord;
+
+                        int lastTwoDigitsYear = experienceYears % 100;
+                        int lastDigitYear = experienceYears % 10;
+
+                        if (lastTwoDigitsYear >= 11 && lastTwoDigitsYear <= 14)
+                        {
+                            experienceYearWord = "лет";
+                        }
+                        else
+                        {
+                            switch (lastDigitYear)
+                            {
+                                case 1:
+                                    experienceYearWord = "год";
+                                    break;
+                                case 2:
+                                case 3:
+                                case 4:
+                                    experienceYearWord = "года";
+                                    break;
+                                default:
+                                    experienceYearWord = "лет";
+                                    break;
+                            }
+                        }
+
+                        int lastTwoDigitsMonth = experienceMonths % 100;
+                        int lastDigitMonth = experienceMonths % 10;
+                        if (lastTwoDigitsMonth >= 11 && lastTwoDigitsMonth <= 14)
+                        {
+                            experienceMonthWord = "месяцев";
+                        }
+                        else
+                        {
+                            switch (lastDigitMonth)
+                            {
+                                case 1:
+                                    experienceMonthWord = "месяц";
+                                    break;
+                                case 2:
+                                case 3:
+                                case 4:
+                                    experienceMonthWord = "месяца";
+                                    break;
+                                default:
+                                    experienceMonthWord = "месяцев";
+                                    break;
+                            }
+                        }
+
+                        @if (experienceYears == 0)
+                        {
+                            <p>Опыт работы: @experienceMonths @experienceMonthWord</p>
+                        }
+                        else if (experienceMonths == 0)
+                        {
+                            <p>Опыт работы: @experienceYears @experienceYearWord</p>
+                        }
+                        else
+                        {
+                            <p>Опыт работы: @experienceYears @experienceYearWord @experienceMonths @experienceMonthWord</p>
+                        }
+                    }
+                    else
+                    {
+                        <p>Нет опыта работы</p>
+                    }
+
+                    @if (resume.City is not null)
+                    {
+                        @if (resume.ReadyToMove)
+                        {
+                            if (resume.Gender is not null && resume.Gender == GenderConstants.Male)
+                            {
+                                <p>@resume.City, готов к переезду</p>
+                            }
+                            else if (resume.Gender is not null && resume.Gender == GenderConstants.Female)
+                            {
+                                <p>@resume.City, готова к переезду</p>
+                            }
+                            else
+                            {
+                                <p>@resume.City, готов к переезду</p>
+                            }
+                        }
+                        else
+                        {
+                            if (resume.Gender is not null && resume.Gender == GenderConstants.Male)
+                            {
+                                <p>@resume.City, не готов к переезду</p>
+                            }
+                            else if (resume.Gender is not null && resume.Gender == GenderConstants.Female)
+                            {
+                                <p>@resume.City, не готова к переезду</p>
+                            }
+                            else
+                            {
+                                <p>@resume.City, не готов к переезду</p>
+                            }
+                        }
+                    }
+                </div>
+            </a>
+        }
+    </div>
+
+    <div class="pagination-link-container">
+        @if (Model.Count > 0)
+        {
+            @if (ViewBag.CurrentPageNumber - 1 > 0)
+            {
+                if (ViewBag.SearchingQuery is null)
+                {
+                    <a class="previous-button" asp-controller="Resume" asp-action="GetAllResumes" asp-route-index="@(ViewBag.CurrentPageNumber - 1)">
+                        Назад
+                    </a>
+                }
+                else
+                {
+                    <a class="previous-button" asp-controller="Resume" asp-action="GetAllResumes" asp-route-index="@(ViewBag.CurrentPageNumber - 1)"
+                       asp-route-query="@ViewBag.SearchingQuery">
+                        Назад
+                    </a>
+                }
+            }
+            else
+            {
+                <a class="previous-doesnt-exist-button">Назад</a>
+            }
+
+            @if (ViewBag.DoesNextPageExist)
+            {
+                if (ViewBag.SearchingQuery is null)
+                {
+                    <a class="next-button" asp-controller="Resume" asp-action="GetAllResumes" asp-route-index="@(ViewBag.CurrentPageNumber + 1)">
+                        Вперед
+                    </a>
+                }
+                else
+                {
+                    <a class="next-button" asp-controller="Resume" asp-action="GetAllResumes" asp-route-index="@(ViewBag.CurrentPageNumber + 1)"
+                       asp-route-query="@ViewBag.SearchingQuery">
+                        Вперед
+                    </a>
+                }
+            }
+            else
+            {
+                <a class="next-doesnt-exist-button">Вперед</a>
+            }
+        }
+    </div>
+</div>
+
+<script src="~/js/format-number-displaying.js"></script>
