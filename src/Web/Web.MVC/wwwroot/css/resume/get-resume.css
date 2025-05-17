@@ -38,3 +38,24 @@ p {
 .get-resume-page-block {
     margin: 0 16%;
 }
+
+.considering-resume-status {
+    padding: 3px 5px;
+    background-color: bisque;
+    border-radius: 7px;
+    color: black;
+}
+
+.looking-for-resume-status {
+    padding: 3px 5px;
+    background-color: lightgreen;
+    border-radius: 7px;
+    color: black;
+}
+
+.not-looking-for-status {
+    padding: 4px 7px;
+    background-color: lightcoral;
+    border-radius: 7px;
+    color: black;
+}
