@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using System.Text.Json;
+using System.Web;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web.MVC.DTOs.Resume;
@@ -243,6 +244,32 @@ namespace Web.MVC.Controllers
 
             ViewBag.ResumeId = model.Id;
             return View(model);
+        }
+
+        [HttpGet]
+        [Route("resumes/all")]
+        public async Task<IActionResult> GetAllResumes(string? searchingQuery, int index = 1)
+        {
+            string? encodedQuery = HttpUtility.UrlEncode(searchingQuery);
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+
+            var resumesResponse = await httpClient.GetAsync(
+                $"{url}/api/Resume/GetAllResumes?searchingQuery={encodedQuery}&pageNumber={index}");
+            resumesResponse.EnsureSuccessStatusCode();
+
+            var resumes = await resumesResponse.Content.ReadFromJsonAsync<List<ResumeResponse>>();
+
+            var doesNextPageExistResponse = await httpClient.GetAsync(
+                $"{url}/api/Resume/DoesNextAllResumesPageExist?searchingQuery={encodedQuery}&currentPageNumber={index}");
+            doesNextPageExistResponse.EnsureSuccessStatusCode();
+
+            bool doesNextPageExist = await doesNextPageExistResponse.Content.ReadFromJsonAsync<bool>();
+
+            ViewBag.CurrentPageNumber = index;
+            ViewBag.DoesNextPageExist = doesNextPageExist;
+            ViewBag.SearchingQuery = searchingQuery;
+
+            return View(resumes);
         }
     }
 }
