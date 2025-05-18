@@ -271,5 +271,31 @@ namespace Web.MVC.Controllers
 
             return View(resumes);
         }
+
+        [HttpGet]
+        [Route("resumes")]
+        public async Task<IActionResult> GetResumesWithActiveStatus(string? searchingQuery, int index = 1)
+        {
+            string? encodedQuery = HttpUtility.UrlEncode(searchingQuery);
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+
+            var resumesResponse = await httpClient.GetAsync(
+                $"{url}/api/Resume/GetResumesWithActiveStatus?searchingQuery={encodedQuery}&pageNumber={index}");
+            resumesResponse.EnsureSuccessStatusCode();
+
+            var resumes = await resumesResponse.Content.ReadFromJsonAsync<List<ResumeResponse>>();
+
+            var doesNextPageExistResponse = await httpClient.GetAsync(
+                $"{url}/api/Resume/DoesNextResumesWithActiveStatusPageExist?searchingQuery={encodedQuery}&currentPageNumber={index}");
+            doesNextPageExistResponse.EnsureSuccessStatusCode();
+
+            bool doesNextPageExist = await doesNextPageExistResponse.Content.ReadFromJsonAsync<bool>();
+
+            ViewBag.CurrentPageNumber = index;
+            ViewBag.DoesNextPageExist = doesNextPageExist;
+            ViewBag.SearchingQuery = searchingQuery;
+
+            return View(resumes);
+        }
     }
 }
