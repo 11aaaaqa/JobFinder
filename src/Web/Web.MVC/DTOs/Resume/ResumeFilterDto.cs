@@ -1,6 +1,6 @@
-﻿namespace ResumeMicroservice.Api.DTOs
+﻿namespace Web.MVC.DTOs.Resume
 {
-    public class ResumeFilterModel
+    public class ResumeFilterDto
     {
         public string? ResumeTitle { get; set; }
         public List<string>? OccupationTypes { get; set; }
