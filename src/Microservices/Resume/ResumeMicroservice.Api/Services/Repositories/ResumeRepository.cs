@@ -58,8 +58,43 @@ namespace ResumeMicroservice.Api.Services.Repositories
                 resumes = resumes.Where(x => model.WorkTypes.Intersect(x.WorkTypes).Any());
             if (model.DesiredSalaryTo is not null)
                 resumes = resumes.Where(x => x.DesiredSalary <= model.DesiredSalaryTo);
-            if (model.WorkingExperienceFrom is not null)
-                resumes = resumes.Where(x => x.WorkingExperience >= model.WorkingExperienceFrom);
+            if (model.WorkExperience is not null)
+            {
+                switch (model.WorkExperience)
+                {
+                    case WorkExperienceConstants.NoExperience:
+                    {
+                        resumes = resumes.Where(x => x.WorkingExperience == TimeSpan.Zero);
+                        break;
+                    }
+                    case WorkExperienceConstants.LessThanOneYear:
+                    {
+                        resumes = resumes.Where(x =>
+                            x.WorkingExperience != TimeSpan.Zero && x.WorkingExperience <= TimeSpan.FromDays(365));
+                        break;
+                    }
+                    case WorkExperienceConstants.FromOneToThreeYears:
+                    {
+                        resumes = resumes.Where(x =>
+                            x.WorkingExperience >= TimeSpan.FromDays(365) &&
+                            x.WorkingExperience <= TimeSpan.FromDays(3 * 365));
+                        break;
+                    }
+                    case WorkExperienceConstants.FromThreeToSixYears:
+                    {
+                        resumes = resumes.Where(x =>
+                            x.WorkingExperience >= TimeSpan.FromDays(3 * 365) &&
+                            x.WorkingExperience <= TimeSpan.FromDays(6 * 365));
+                        break;
+                        }
+                    case WorkExperienceConstants.MoreThanSixYears:
+                    {
+                        resumes = resumes.Where(x => x.WorkingExperience >= TimeSpan.FromDays(6 * 365));
+                        break;
+                    }
+                }
+            }
+                
 
             if (searchingQuery is not null)
                 resumes = resumes.Where(x => x.ResumeTitle.ToLower().Contains(searchingQuery.ToLower()));
