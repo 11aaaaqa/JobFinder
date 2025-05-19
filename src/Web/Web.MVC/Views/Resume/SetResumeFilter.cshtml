@@ -1,0 +1,160 @@
+﻿@using System.Text.Json
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Web.MVC.Constants.Resume
+@using Web.MVC.Constants.Vacancy
+@model Web.MVC.DTOs.Resume.ResumeFilterDto
+
+<form method="post">
+    <div asp-validation-summary="ModelOnly"></div>
+    
+    <span asp-validation-for="ResumeTitle"></span>
+    <span asp-validation-for="DesiredSalaryTo"></span>
+    <span asp-validation-for="OccupationTypes"></span>
+    <span asp-validation-for="WorkTypes"></span>
+    <span asp-validation-for="WorkExperience"></span>
+    <span asp-validation-for="Cities"></span>
+    
+    <div class="mb-2">
+        <h3>Профессия или должность</h3>
+        <input asp-for="ResumeTitle" placeholder="Введите профессию или должность"/>
+    </div>
+    <div class="mb-2">
+        <h3>Зарплата</h3>
+        <input asp-for="DesiredSalaryTo" placeholder="до"/>
+    </div>
+    <div>
+        <h3>Тип занятости</h3>
+        <p>
+            <input type="checkbox" name="OccupationTypes" value="@OccupationTypesConstants.FullTimeJob" 
+                   checked="@(Model.OccupationTypes.Contains(OccupationTypesConstants.FullTimeJob))" />
+            @OccupationTypesConstants.FullTimeJob
+        </p>
+        <p>
+            <input type="checkbox" name="OccupationTypes" value="@OccupationTypesConstants.PartTimeJob" 
+                   checked="@(Model.OccupationTypes.Contains(OccupationTypesConstants.PartTimeJob))" />
+            @OccupationTypesConstants.PartTimeJob
+        </p>
+    </div>
+    <div>
+        <h3>Формат работы</h3>
+        <p>
+            <input type="checkbox" name="WorkTypes" value="@WorkTypesConstants.OfficeWork"
+                   checked="@(Model.WorkTypes.Contains(WorkTypesConstants.OfficeWork))" />
+            @WorkTypesConstants.OfficeWork
+        </p>
+        <p>
+            <input type="checkbox" name="WorkTypes" value="@WorkTypesConstants.RemoteWork"
+                   checked="@(Model.WorkTypes.Contains(WorkTypesConstants.RemoteWork))" />
+            @WorkTypesConstants.RemoteWork
+        </p>
+        <p>
+            <input type="checkbox" name="WorkTypes" value="@WorkTypesConstants.HybridWork"
+                   checked="@(Model.WorkTypes.Contains(WorkTypesConstants.HybridWork))" />
+            @WorkTypesConstants.HybridWork
+        </p>
+    </div>
+    <div>
+        <h3>Опыт работы</h3>
+        <p>
+            <input type="radio" name="WorkExperience" value="@WorkExperienceConstants.NoExperience"
+                   checked="@(Model.WorkExperience == WorkExperienceConstants.NoExperience)"/>
+            @WorkExperienceConstants.NoExperience
+        </p>
+        <p>
+            <input type="radio" name="WorkExperience" value="@WorkExperienceConstants.LessThanOneYear" 
+                   checked="@(Model.WorkExperience == WorkExperienceConstants.LessThanOneYear)" />
+            @WorkExperienceConstants.LessThanOneYear
+        </p>
+        <p>
+            <input type="radio" name="WorkExperience" value="@WorkExperienceConstants.FromOneToThreeYears" 
+                   checked="@(Model.WorkExperience == WorkExperienceConstants.FromOneToThreeYears)" />
+            @WorkExperienceConstants.FromOneToThreeYears
+        </p>
+        <p>
+            <input type="radio" name="WorkExperience" value="@WorkExperienceConstants.FromThreeToSixYears" 
+                   checked="@(Model.WorkExperience == WorkExperienceConstants.FromThreeToSixYears)" />
+            @WorkExperienceConstants.FromThreeToSixYears
+        </p>
+        <p>
+            <input type="radio" name="WorkExperience" value="@WorkExperienceConstants.MoreThanSixYears" 
+                   checked="@(Model.WorkExperience == WorkExperienceConstants.MoreThanSixYears)" />
+            @WorkExperienceConstants.MoreThanSixYears
+        </p>
+    </div>
+    <div class="mb-1">
+        <h3>Город</h3>
+        @if (Model.Cities is null || Model.Cities.Count == 0)
+        {
+            <div id="cityList"></div>
+        }
+        else
+        {
+            <div id="cityList">
+                @foreach (var city in Model.Cities)
+                {
+                    <div class="mb-1">
+                        <span class="city-name">@city</span>
+                        <input type="hidden" name="Cities" value="@city" />
+                        <button class="remove-button" type="button" onclick="removeCity(@JsonSerializer.Serialize(city))">Удалить</button>
+                    </div>
+                }
+            </div>
+        }
+
+        <input class="short-input mt-1" id="cityInput" placeholder="Введите название города" />
+        <button class="add-button" type="button" id="addCityButton">Добавить</button>
+    </div>
+    
+    <input type="submit" value="Найти"/>
+</form>
+<script>
+    const cityList = document.getElementById("cityList");
+    const cityInput = document.getElementById("cityInput");
+    const cities = @Html.Raw(Model.Cities != null ? JsonSerializer.Serialize(Model.Cities) : "[]");
+
+    document.getElementById("addCityButton").addEventListener("click", function() {
+        const cityName = cityInput.value.trim();
+        if (cityName && !cities.includes(cityName)) {
+            cities.push(cityName);
+            updateCityList();
+            cityInput.value = "";
+        }
+    });
+
+    function updateCityList() {
+        cityList.innerHTML = "";
+        cities.forEach((city, index) => {
+            const cityDiv = document.createElement("div");
+            cityDiv.classList.add('mb-1');
+            const citySpan = document.createElement('span');
+            citySpan.classList.add('city-name');
+            citySpan.textContent = city;
+            cityDiv.appendChild(citySpan);
+
+            const hiddenInput = document.createElement("input");
+            hiddenInput.type = "hidden";
+            hiddenInput.name = "Cities";
+            hiddenInput.value = city;
+
+            cityDiv.appendChild(hiddenInput);
+
+            const removeButton = document.createElement("button");
+            removeButton.classList.add('remove-button');
+            removeButton.textContent = "Удалить";
+            removeButton.type = "button";
+            removeButton.onclick = () => {
+                cities.splice(index, 1);
+                updateCityList();
+            };
+
+            cityDiv.appendChild(removeButton);
+            cityList.appendChild(cityDiv);
+        });
+    }
+
+    function removeCity(cityName) {
+        var index = cities.indexOf(cityName);
+        cities.splice(index, 1);
+        updateCityList();
+    }
+</script>
