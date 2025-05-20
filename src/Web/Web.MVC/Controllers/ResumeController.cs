@@ -271,5 +271,94 @@ namespace Web.MVC.Controllers
 
             return View(resumes);
         }
+
+        [HttpGet]
+        [Route("resumes")]
+        public async Task<IActionResult> GetResumesWithActiveStatus(string? searchingQuery, ResumeFilterDto? model, int index = 1)
+        {
+            if (model.Cities is null && model.DesiredSalaryTo is null && model.OccupationTypes is null &&
+                model.ResumeTitle is null && model.WorkTypes is null && model.WorkExperience is null)
+            {
+                model = null;
+            }
+
+            string? encodedQuery = HttpUtility.UrlEncode(searchingQuery);
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+
+            List<ResumeResponse> resumes = new();
+            bool doesNextPageExist;
+            if (model is null)
+            {
+                var resumesResponse = await httpClient.GetAsync(
+                    $"{url}/api/Resume/GetResumesWithActiveStatus?searchingQuery={encodedQuery}&pageNumber={index}");
+                resumesResponse.EnsureSuccessStatusCode();
+
+                resumes = await resumesResponse.Content.ReadFromJsonAsync<List<ResumeResponse>>();
+
+                var doesNextPageExistResponse = await httpClient.GetAsync(
+                    $"{url}/api/Resume/DoesNextResumesWithActiveStatusPageExist?searchingQuery={encodedQuery}&currentPageNumber={index}");
+                doesNextPageExistResponse.EnsureSuccessStatusCode();
+
+                doesNextPageExist = await doesNextPageExistResponse.Content.ReadFromJsonAsync<bool>();
+            }
+            else
+            {
+                using StringContent jsonContent = new(JsonSerializer.Serialize(model), Encoding.UTF8, "application/json");
+                var resumesResponse = await httpClient.PostAsync(
+                    $"{url}/api/Resume/GetFilteredResumes?searchingQuery={encodedQuery}&pageNumber={index}", jsonContent);
+                resumesResponse.EnsureSuccessStatusCode();
+
+                resumes = await resumesResponse.Content.ReadFromJsonAsync<List<ResumeResponse>>();
+
+                var doesNextPageExistResponse = await httpClient.PostAsync(
+                    $"{url}/api/Resume/DoesNextFilteredResumesPageExist?searchingQuery={encodedQuery}&currentPageNumber={index}", jsonContent);
+                doesNextPageExistResponse.EnsureSuccessStatusCode();
+
+                doesNextPageExist = await doesNextPageExistResponse.Content.ReadFromJsonAsync<bool>();
+            }
+
+            ViewBag.Filter = model;
+            ViewBag.CurrentPageNumber = index;
+            ViewBag.DoesNextPageExist = doesNextPageExist;
+            ViewBag.SearchingQuery = searchingQuery;
+
+            return View(resumes);
+        }
+
+        [HttpGet]
+        [Route("resumes/filter")]
+        public IActionResult SetResumeFilter(string? resumeTitle, List<string>? occupationTypes, List<string>? workTypes, List<string>? cities,
+            uint? desiredSalaryTo, string? workExperience)
+        {
+            occupationTypes ??= new List<string>();
+            cities ??= new List<string>();
+            workTypes ??= new List<string>();
+            return View(new ResumeFilterDto
+            {
+                OccupationTypes = occupationTypes, WorkTypes = workTypes, Cities = cities, DesiredSalaryTo = desiredSalaryTo,
+                ResumeTitle = resumeTitle, WorkExperience = workExperience
+            });
+        }
+
+        [HttpPost]
+        [Route("resumes/filter")]
+        public IActionResult SetResumeFilter(ResumeFilterDto model)
+        {
+            if (model.OccupationTypes is not null && model.OccupationTypes.Count == 0)
+                model.OccupationTypes = null;
+            if (model.Cities is not null && model.Cities.Count == 0)
+                model.Cities = null;
+            if (model.WorkTypes is not null && model.WorkTypes.Count == 0)
+                model.WorkTypes = null;
+            if (ModelState.IsValid)
+            {
+                return RedirectToAction("GetResumesWithActiveStatus", new
+                {
+                    model.OccupationTypes, model.WorkTypes, model.Cities, 
+                    model.DesiredSalaryTo, model.ResumeTitle, model.WorkExperience
+                });
+            }
+            return View(model);
+        }
     }
 }
