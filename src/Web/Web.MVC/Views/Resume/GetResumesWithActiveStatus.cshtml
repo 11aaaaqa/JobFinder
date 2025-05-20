@@ -1,0 +1,369 @@
+﻿@using Web.MVC.Constants.Resume
+@model List<Web.MVC.Models.ApiResponses.Resume.ResumeResponse>
+<link rel="stylesheet" href="~/css/resume/get-resumes-with-active-status.css" />
+
+<div class="all-resumes-page-container">
+    <div class="filter-searching-block">
+        <form method="get">
+            <input type="text" name="searchingQuery" placeholder="Поиск по резюме"/>
+            <input type="submit" value="Найти"/>
+        </form>
+        @if (ViewBag.Filter is null)
+        {
+            <a class="filter-link" asp-controller="Resume" asp-action="SetResumeFilter">Фильтр</a>
+        }
+        else
+        {
+            <a class="filter-link" id="filter-link" asp-controller="Resume" asp-action="SetResumeFilter" asp-route-resumeTitle="@ViewBag.Filter.ResumeTitle"
+               asp-route-desiredSalaryTo="@ViewBag.Filter.DesiredSalaryTo" asp-route-workExperience="@ViewBag.Filter.WorkExperience">Фильтр</a>
+        }
+    </div>
+
+    <div class="resumes-container">
+        @foreach (var resume in Model)
+        {
+            <a class="get-resume-link" asp-controller="Resume" asp-action="GetResume" asp-route-resumeId="@resume.Id">
+                <div class="resume-element-block">
+                    @if (resume.DesiredSalary is not null)
+                    {
+                        <h3 class="m-0">@resume.ResumeTitle</h3>
+                        <h4 class="format-number mb-2">@resume.DesiredSalary ₽</h4>
+                    }
+                    else
+                    {
+                        <h3 class="mb-2">@resume.ResumeTitle</h3>
+                    }
+
+                    @if (resume.DateOfBirth is not null)
+                    {
+                        TimeSpan employeeAgeDays = DateTime.UtcNow - new DateTime(resume.DateOfBirth.Value.Year, resume.DateOfBirth.Value.Month, 1);
+                        int employeeAgeYears = (int)employeeAgeDays.TotalDays / 365;
+
+                        string employeeAgeWord;
+                        int lastTwoDigitsYear = employeeAgeYears % 100;
+                        int lastDigitYear = employeeAgeYears % 10;
+
+                        if (lastTwoDigitsYear >= 11 && lastTwoDigitsYear <= 14)
+                        {
+                            employeeAgeWord = "лет";
+                        }
+                        else
+                        {
+                            switch (lastDigitYear)
+                            {
+                                case 1:
+                                    employeeAgeWord = "год";
+                                    break;
+                                case 2:
+                                case 3:
+                                case 4:
+                                    employeeAgeWord = "года";
+                                    break;
+                                default:
+                                    employeeAgeWord = "лет";
+                                    break;
+                            }
+                        }
+
+                        <p>@employeeAgeYears @employeeAgeWord</p>
+                    }
+
+                    @if (resume.WorkingExperience.TotalDays >= 30)
+                    {
+                        int totalExperienceMonths = (int)resume.WorkingExperience.TotalDays / 30;
+
+                        int experienceYears = totalExperienceMonths / 12;
+                        int experienceMonths = totalExperienceMonths - experienceYears * 12;
+                        string experienceYearWord;
+                        string experienceMonthWord;
+
+                        int lastTwoDigitsYear = experienceYears % 100;
+                        int lastDigitYear = experienceYears % 10;
+
+                        if (lastTwoDigitsYear >= 11 && lastTwoDigitsYear <= 14)
+                        {
+                            experienceYearWord = "лет";
+                        }
+                        else
+                        {
+                            switch (lastDigitYear)
+                            {
+                                case 1:
+                                    experienceYearWord = "год";
+                                    break;
+                                case 2:
+                                case 3:
+                                case 4:
+                                    experienceYearWord = "года";
+                                    break;
+                                default:
+                                    experienceYearWord = "лет";
+                                    break;
+                            }
+                        }
+
+                        int lastTwoDigitsMonth = experienceMonths % 100;
+                        int lastDigitMonth = experienceMonths % 10;
+                        if (lastTwoDigitsMonth >= 11 && lastTwoDigitsMonth <= 14)
+                        {
+                            experienceMonthWord = "месяцев";
+                        }
+                        else
+                        {
+                            switch (lastDigitMonth)
+                            {
+                                case 1:
+                                    experienceMonthWord = "месяц";
+                                    break;
+                                case 2:
+                                case 3:
+                                case 4:
+                                    experienceMonthWord = "месяца";
+                                    break;
+                                default:
+                                    experienceMonthWord = "месяцев";
+                                    break;
+                            }
+                        }
+
+                        @if (experienceYears == 0)
+                        {
+                            <p>Опыт работы: @experienceMonths @experienceMonthWord</p>
+                        }
+                        else if (experienceMonths == 0)
+                        {
+                            <p>Опыт работы: @experienceYears @experienceYearWord</p>
+                        }
+                        else
+                        {
+                            <p>Опыт работы: @experienceYears @experienceYearWord @experienceMonths @experienceMonthWord</p>
+                        }
+                    }
+                    else
+                    {
+                        <p>Нет опыта работы</p>
+                    }
+
+                    @if (resume.City is not null)
+                    {
+                        @if (resume.ReadyToMove)
+                        {
+                            if (resume.Gender is not null && resume.Gender == GenderConstants.Male)
+                            {
+                                <p>@resume.City, готов к переезду</p>
+                            }
+                            else if (resume.Gender is not null && resume.Gender == GenderConstants.Female)
+                            {
+                                <p>@resume.City, готова к переезду</p>
+                            }
+                            else
+                            {
+                                <p>@resume.City, готов к переезду</p>
+                            }
+                        }
+                        else
+                        {
+                            if (resume.Gender is not null && resume.Gender == GenderConstants.Male)
+                            {
+                                <p>@resume.City, не готов к переезду</p>
+                            }
+                            else if (resume.Gender is not null && resume.Gender == GenderConstants.Female)
+                            {
+                                <p>@resume.City, не готова к переезду</p>
+                            }
+                            else
+                            {
+                                <p>@resume.City, не готов к переезду</p>
+                            }
+                        }
+                    }
+                </div>
+            </a>
+        }
+    </div>
+
+    <div>
+        @if (Model.Count > 0)
+        {
+            @if (ViewBag.CurrentPageNumber - 1 > 0)
+            {
+                if (ViewBag.SearchingQuery is null)
+                {
+                    if (ViewBag.Filter is not null)
+                    {
+                        <a id="pagination-link-prev" class="" asp-controller="Resume" asp-action="GetResumesWithActiveStatus" asp-route-index="@(ViewBag.CurrentPageNumber - 1)"
+                           asp-route-resumeTitle="@ViewBag.Filter.ResumeTitle"
+                           asp-route-desiredSalaryTo="@ViewBag.Filter.DesiredSalaryTo" asp-route-workExperience="@ViewBag.Filter.WorkExperience">
+                            Назад
+                        </a>
+                    }
+                    else
+                    {
+                        <a class="" asp-controller="Resume" asp-action="GetResumesWithActiveStatus" asp-route-index="@(ViewBag.CurrentPageNumber - 1)">
+                            Назад
+                        </a>
+                    }
+                }
+                else
+                {
+                    if (ViewBag.Filter is not null)
+                    {
+                        <a id="pagination-link-prev" class="" asp-controller="Resume" asp-action="GetResumesWithActiveStatus" asp-route-index="@(ViewBag.CurrentPageNumber - 1)"
+                           asp-route-query="@ViewBag.SearchingQuery" asp-route-resumeTitle="@ViewBag.Filter.ResumeTitle"
+                           asp-route-desiredSalaryTo="@ViewBag.Filter.DesiredSalaryTo" asp-route-workExperience="@ViewBag.Filter.WorkExperience">
+                            Назад
+                        </a>
+                    }
+                    else
+                    {
+                        <a class="" asp-controller="Resume" asp-action="GetResumesWithActiveStatus" asp-route-index="@(ViewBag.CurrentPageNumber - 1)"
+                           asp-route-query="@ViewBag.SearchingQuery">
+                            Назад
+                        </a>
+                    }
+                }
+            }
+            else
+            {
+                <a class="">Назад</a>
+            }
+
+            @if (ViewBag.DoesNextPageExist)
+            {
+                if (ViewBag.SearchingQuery is null)
+                {
+                    if (ViewBag.Filter is not null)
+                    {
+                        <a id="pagination-link-next" class="" asp-controller="Resume" asp-action="GetResumesWithActiveStatus" asp-route-index="@(ViewBag.CurrentPageNumber + 1)"
+                           asp-route-resumeTitle="@ViewBag.Filter.ResumeTitle"
+                           asp-route-desiredSalaryTo="@ViewBag.Filter.DesiredSalaryTo" asp-route-workExperience="@ViewBag.Filter.WorkExperience">
+                            Вперед
+                        </a>
+                    }
+                    else
+                    {
+                        <a class="" asp-controller="Resume" asp-action="GetResumesWithActiveStatus" asp-route-index="@(ViewBag.CurrentPageNumber + 1)">
+                            Вперед
+                        </a>
+                    }
+                }
+                else
+                {
+                    if (ViewBag.Filter is not null)
+                    {
+                        <a id="pagination-link-next" class="" asp-controller="Resume" asp-action="GetResumesWithActiveStatus" asp-route-index="@(ViewBag.CurrentPageNumber + 1)"
+                           asp-route-query="@ViewBag.SearchingQuery"
+                           asp-route-resumeTitle="@ViewBag.Filter.ResumeTitle"
+                           asp-route-desiredSalaryTo="@ViewBag.Filter.DesiredSalaryTo" asp-route-workExperience="@ViewBag.Filter.WorkExperience">
+                            Вперед
+                        </a>
+                    }
+                    else
+                    {
+                        <a class="" asp-controller="Resume" asp-action="GetResumesWithActiveStatus" asp-route-index="@(ViewBag.CurrentPageNumber + 1)"
+                           asp-route-query="@ViewBag.SearchingQuery">
+                            Вперед
+                        </a>
+                    }
+                }
+            }
+            else
+            {
+                <a class="">Вперед</a>
+            }
+        }
+    </div>
+</div>
+
+<script src="~/js/format-number-displaying.js"></script>
+@if (ViewBag.Filter is not null)
+{
+    @section Scripts {
+    <script>
+        function updateLink(linkId)
+        {
+            var link = document.getElementById(linkId);
+            if (link) {
+                var url = new URL(link.href);
+                var params = new URLSearchParams(url.search);
+
+                var citiesList = @Html.Raw(Json.Serialize(ViewBag.Filter.Cities ??= new List<string>()));
+                if (citiesList) {
+                    if (Array.isArray(citiesList) && citiesList.length > 0) {
+                        citiesList.forEach(function(city) {
+                            params.append("cities", city);
+                        });
+                    }
+                }
+
+                var occupationTypesList = @Html.Raw(Json.Serialize(ViewBag.Filter.OccupationTypes ??= new List<string>()));
+                if (occupationTypesList) {
+                    if (Array.isArray(occupationTypesList) && occupationTypesList.length > 0) {
+                        occupationTypesList.forEach(function(occupationType) {
+                            params.append("occupationTypes", occupationType);
+                        });
+                    }
+                }
+
+                var workTypesList = @Html.Raw(Json.Serialize(ViewBag.Filter.WorkTypes ??= new List<string>()));
+                if (workTypesList) {
+                    if (Array.isArray(workTypesList) && workTypesList.length > 0) {
+                        workTypesList.forEach(function(workType) {
+                            params.append("workTypes", workType);
+                        });
+                    }
+                }
+
+
+                url.search = params.toString();
+                link.href = url.toString();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var link = document.getElementById('filter-link');
+            if (link) {
+                var url = new URL(link.href);
+                var params = new URLSearchParams(url.search);
+
+                var citiesList = @Html.Raw(Json.Serialize(ViewBag.Filter.Cities ??= new List<string>()));
+                if (citiesList) {
+                    if (Array.isArray(citiesList) && citiesList.length > 0) {
+                        citiesList.forEach(function(city) {
+                            params.append("cities", city);
+                        });
+                    }
+                }
+
+                var occupationTypesList = @Html.Raw(Json.Serialize(ViewBag.Filter.OccupationTypes ??= new List<string>()));
+                if (occupationTypesList) {
+                    if (Array.isArray(occupationTypesList) && occupationTypesList.length > 0) {
+                        occupationTypesList.forEach(function(occupationType) {
+                            params.append("occupationTypes", occupationType);
+                        });
+                    }
+                }
+
+                var workTypesList = @Html.Raw(Json.Serialize(ViewBag.Filter.WorkTypes ??= new List<string>()));
+                if (workTypesList) {
+                    if (Array.isArray(workTypesList) && workTypesList.length > 0) {
+                        workTypesList.forEach(function(workType) {
+                            params.append("workTypes", workType);
+                        });
+                    }
+                }
+
+                url.search = params.toString();
+                link.href = url.toString();
+            }
+        });
+
+        var prevLink = document.getElementById('pagination-link-prev');
+        var nextLink = document.getElementById('pagination-link-next');
+        if (nextLink || prevLink) {
+            document.addEventListener('DOMContentLoaded', updateLink('pagination-link-prev'));
+            document.addEventListener('DOMContentLoaded', updateLink('pagination-link-next'));
+        }
+    </script>
+    }
+}
