@@ -1,0 +1,46 @@
+﻿.input-text {
+    border: 1.8px solid #ccc;
+    padding: 11px;
+    width: 35%;
+    outline: none;
+    border-radius: 5px;
+    transition: border-color 0.1s, box-shadow 0.1s;
+}
+
+.input-text:focus {
+    border-color: deepskyblue;
+    box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
+}
+
+.add-button {
+    border: none;
+    border-radius: 11px;
+    color: white;
+    background-color: deepskyblue;
+    padding: 10px 18px;
+    transition: background-color 0.3s;
+}
+
+.add-button:hover {
+    background-color: dodgerblue;
+    cursor: pointer;
+}
+
+.remove-button {
+    margin-left: 10px;
+    border: none;
+    color: white;
+    background-color: deepskyblue;
+    padding: 5px 9px;
+    border-radius: 11px;
+    transition: background-color 0.3s;
+}
+
+.remove-button:hover {
+    background-color: dodgerblue;
+    cursor: pointer;
+}
+
+.city-name {
+    font-size: 1.1em;
+}
