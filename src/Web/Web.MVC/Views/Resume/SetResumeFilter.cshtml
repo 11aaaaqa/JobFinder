@@ -3,6 +3,7 @@
 @using Web.MVC.Constants.Resume
 @using Web.MVC.Constants.Vacancy
 @model Web.MVC.DTOs.Resume.ResumeFilterDto
+<link rel="stylesheet" href="~/css/resume/set-resume-filter.css"/>
 
 <form method="post">
     <div asp-validation-summary="ModelOnly"></div>
@@ -14,13 +15,13 @@
     <span asp-validation-for="WorkExperience"></span>
     <span asp-validation-for="Cities"></span>
     
-    <div class="mb-2">
+    <div class="mb-3">
         <h3>Профессия или должность</h3>
-        <input asp-for="ResumeTitle" placeholder="Введите профессию или должность"/>
+        <input class="input-text" asp-for="ResumeTitle" placeholder="Введите профессию или должность"/>
     </div>
-    <div class="mb-2">
+    <div class="mb-4">
         <h3>Зарплата</h3>
-        <input asp-for="DesiredSalaryTo" placeholder="до"/>
+        <input class="input-text" asp-for="DesiredSalaryTo" placeholder="до" />
     </div>
     <div>
         <h3>Тип занятости</h3>
@@ -101,7 +102,7 @@
             </div>
         }
 
-        <input class="short-input mt-1" id="cityInput" placeholder="Введите название города" />
+        <input class="input-text mt-1" id="cityInput" placeholder="Введите название города" />
         <button class="add-button" type="button" id="addCityButton">Добавить</button>
     </div>
     
