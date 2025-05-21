@@ -65,6 +65,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{8E2954D7
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeMicroservice.UnitTests", "src\Microservices\Employee\tests\EmployeeMicroservice.UnitTests\EmployeeMicroservice.UnitTests.csproj", "{43C6DC0C-F892-4EE7-9FB5-D669F62FAAEF}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bookmark", "Bookmark", "{5D7062BB-C9D8-4153-A42B-EBED9452637E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookmarkMicroservice.Api", "src\Microservices\Bookmark\BookmarkMicroservice.Api\BookmarkMicroservice.Api.csproj", "{2E8F8A70-A6AC-4933-98BA-D6FE83E14FF7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -131,6 +135,10 @@ Global
 		{43C6DC0C-F892-4EE7-9FB5-D669F62FAAEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{43C6DC0C-F892-4EE7-9FB5-D669F62FAAEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{43C6DC0C-F892-4EE7-9FB5-D669F62FAAEF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E8F8A70-A6AC-4933-98BA-D6FE83E14FF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E8F8A70-A6AC-4933-98BA-D6FE83E14FF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E8F8A70-A6AC-4933-98BA-D6FE83E14FF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E8F8A70-A6AC-4933-98BA-D6FE83E14FF7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -165,5 +173,7 @@ Global
 		{10BDAAA8-2F07-4C69-A18D-146C6BF2EEF6} = {66C61060-8D58-48F6-A563-762FD464928C}
 		{8E2954D7-8598-49D5-B3C1-817203DD06AA} = {DCDC55C5-B730-4DB9-B026-7CA81A7AE319}
 		{43C6DC0C-F892-4EE7-9FB5-D669F62FAAEF} = {8E2954D7-8598-49D5-B3C1-817203DD06AA}
+		{5D7062BB-C9D8-4153-A42B-EBED9452637E} = {62C5CF3F-E56E-4E4D-9192-FB9B689CFFD6}
+		{2E8F8A70-A6AC-4933-98BA-D6FE83E14FF7} = {5D7062BB-C9D8-4153-A42B-EBED9452637E}
 	EndGlobalSection
 EndGlobal
