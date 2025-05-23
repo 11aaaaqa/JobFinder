@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Text.Json;
+using Confluent.Kafka;
+using Microsoft.AspNetCore.Mvc;
 using VacancyMicroservice.Api.DTOs;
+using VacancyMicroservice.Api.Kafka.Produce;
 using VacancyMicroservice.Api.Models;
 using VacancyMicroservice.Api.Services;
 using VacancyMicroservice.Api.Services.Pagination;
@@ -8,7 +11,8 @@ namespace VacancyMicroservice.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class VacancyController(IVacancyRepository vacancyRepository, IPaginationService paginationService) : ControllerBase
+    public class VacancyController(IVacancyRepository vacancyRepository, IPaginationService paginationService,
+        IKafkaProducer kafkaProducer) : ControllerBase
     {
         [HttpGet]
         [Route("GetVacancyById/{vacancyId}")]
@@ -66,6 +70,12 @@ namespace VacancyMicroservice.Api.Controllers
         public async Task<IActionResult> DeleteVacancyAsync(Guid vacancyId)
         {
             await vacancyRepository.DeleteVacancyAsync(vacancyId);
+
+            await kafkaProducer.ProduceAsync("vacancy-deleted-topic", new Message<Null, string>
+            {
+                Value = JsonSerializer.Serialize(new { VacancyId = vacancyId})
+            });
+
             return Ok();
         }
 
@@ -74,6 +84,17 @@ namespace VacancyMicroservice.Api.Controllers
         public async Task<IActionResult> UpdateVacancyAsync([FromBody] UpdateVacancyDto model)
         {
             await vacancyRepository.UpdateVacancyAsync(model);
+
+            await kafkaProducer.ProduceAsync("vacancy-updated-topic", new Message<Null, string>
+            {
+                Value = JsonSerializer.Serialize(new
+                {
+                    VacancyId = model.Id, NewPosition = model.Position, NewSalaryFrom = model.SalaryFrom,
+                    NewSalaryTo = model.SalaryTo, NewWorkExperience = model.WorkExperience,
+                    NewVacancyCity = model.VacancyCity
+                })
+            });
+
             return Ok();
         }
 
