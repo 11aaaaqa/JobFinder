@@ -11,7 +11,8 @@
         "web.mvc": "StartDebugging",
         "companymicroservice.api": "StartDebugging",
         "vacancymicroservice.api": "StartDebugging",
-        "resumemicroservice.api": "StartDebugging"
+        "resumemicroservice.api": "StartDebugging",
+        "bookmarkmicroservice.api": "StartDebugging"
       }
     }
   }
