@@ -51,7 +51,8 @@ namespace CompanyMicroservice.Api.Controllers
                     Value = JsonSerializer.Serialize(new
                     {
                         CompanyId = company.Id,
-                        NewCompanyName = model.CompanyName
+                        NewCompanyName = model.CompanyName,
+                        OldCompanyName = oldCompanyName
                     })
                 });
             }
