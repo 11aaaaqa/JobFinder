@@ -264,5 +264,23 @@ namespace Web.MVC.Controllers
 
             return LocalRedirect(returnUrl);
         }
+
+        [Authorize]
+        [HttpPost]
+        [Route("vacancy/favorite/remove")]
+        public async Task<IActionResult> RemoveVacancyFromFavorites(Guid vacancyId, string returnUrl)
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+
+            var employeeResponse = await httpClient.GetAsync($"{url}/api/Employee/GetEmployeeByEmail?email={User.Identity.Name}");
+            employeeResponse.EnsureSuccessStatusCode();
+            var employee = await employeeResponse.Content.ReadFromJsonAsync<EmployerResponse>();
+
+            var response = await httpClient.DeleteAsync(
+                $"{url}/api/FavoriteVacancy/DeleteFromFavorites?employeeId={employee.Id}&vacancyId={vacancyId}");
+            response.EnsureSuccessStatusCode();
+
+            return LocalRedirect(returnUrl);
+        }
     }
 }
