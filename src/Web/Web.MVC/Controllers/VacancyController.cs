@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Web.MVC.Constants.Permissions_constants;
 using Web.MVC.DTOs.Vacancy;
 using Web.MVC.Filters.Authorization_filters.Company_filters;
+using Web.MVC.Models.ApiResponses;
 using Web.MVC.Models.ApiResponses.Company;
 using Web.MVC.Models.ApiResponses.Employer;
 using Web.MVC.Models.ApiResponses.Vacancy;
@@ -233,6 +234,35 @@ namespace Web.MVC.Controllers
             }
 
             return View(model);
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("vacancy/favorite/add")]
+        public async Task<IActionResult> AddVacancyToFavorites(Guid vacancyId, string returnUrl)
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+
+            var employeeResponse = await httpClient.GetAsync(
+                $"{url}/api/Employee/GetEmployeeByEmail?email={User.Identity.Name}");
+            employeeResponse.EnsureSuccessStatusCode();
+            var employee = await employeeResponse.Content.ReadFromJsonAsync<EmployeeResponse>();
+
+            var vacancyResponse = await httpClient.GetAsync($"{url}/api/Vacancy/GetVacancyById/{vacancyId}");
+            vacancyResponse.EnsureSuccessStatusCode();
+            var vacancy = await vacancyResponse.Content.ReadFromJsonAsync<VacancyResponse>();
+
+            using StringContent jsonContent = new(JsonSerializer.Serialize(new
+            {
+                EmployeeId = employee.Id, VacancyId = vacancy.Id,
+                vacancy.Position, vacancy.SalaryFrom, vacancy.SalaryTo,
+                vacancy.WorkExperience, vacancy.CompanyName, vacancy.VacancyCity
+            }), Encoding.UTF8, "application/json");
+
+            var response = await httpClient.PostAsync($"{url}/api/FavoriteVacancy/AddToFavorites", jsonContent);
+            response.EnsureSuccessStatusCode();
+
+            return LocalRedirect(returnUrl);
         }
     }
 }
