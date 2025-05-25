@@ -39,7 +39,7 @@ namespace BookmarkMicroservice.Api.Controllers
 
         [HttpGet]
         [Route("IsVacancyInFavorites")]
-        public async Task<IActionResult> IsVacancyInFavoritesAsync(Guid employeeId, Guid vacancyId)
+        public async Task<IActionResult> IsVacancyInFavoritesAsync([FromQuery]Guid employeeId, [FromQuery]Guid vacancyId)
             => Ok(await favoriteVacancyRepository.IsVacancyInFavouritesAsync(vacancyId, employeeId));
     }
 }
