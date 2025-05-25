@@ -73,3 +73,37 @@
     background-color: dodgerblue;
     cursor: pointer;
 }
+
+.add-to-favorites-action-btn {
+    text-decoration: none;
+    color: black;
+    background-color: rgba(144, 238, 144, 0.7);
+    border: none;
+    border-radius: 7px;
+    padding: 5px 12px;
+    margin-right: 4px;
+    margin-bottom: 4px;
+    transition: background-color 0.3s;
+}
+
+.add-to-favorites-action-btn:hover {
+    background-color: rgba(144, 238, 144, 1) ;
+    cursor: pointer;
+}
+
+.remove-from-favorites-action-btn {
+    text-decoration: none;
+    color: black;
+    background-color: rgba(255, 0, 0, 0.3);
+    border: none;
+    border-radius: 7px;
+    padding: 5px 12px;
+    margin-right: 4px;
+    margin-bottom: 4px;
+    transition: background-color 0.3s;
+}
+
+.remove-from-favorites-action-btn:hover {
+    background-color: rgba(255, 0, 0, 0.6);
+    cursor: pointer;
+}
