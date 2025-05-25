@@ -47,7 +47,7 @@ namespace BookmarkMicroservice.Api.Services.Repositories
             var vacancy = await context.FavoriteVacancies.Where(x => x.EmployeeId == employeeId)
                 .SingleOrDefaultAsync(x => x.VacancyId == vacancyId);
 
-            return vacancy == null;
+            return vacancy != null;
         }
     }
 }
