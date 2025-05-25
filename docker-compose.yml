@@ -36,9 +36,24 @@ services:
       - gateway-api
       - kafka
 
+  bookmark-microservice-api:
+    container_name: bookmark-microservice-api
+    image: ${DOCKER_REGISTRY-}bookmarkmicroservice-api
+    build:
+      context: .
+      dockerfile: src/Microservices/Bookmark/BookmarkMicroservice.Api/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - 11549:8080
+    depends_on:
+      - postgres-bookmark
+      - gateway-api
+      - kafka
+
   employee-microservice-api:
-    image: ${DOCKER_REGISTRY-}employeemicroservice-api
     container_name: employee-microservice-api
+    image: ${DOCKER_REGISTRY-}employeemicroservice-api
     build:
       context: .
       dockerfile: src/Microservices/Employee/EmployeeMicroservice.Api/Dockerfile
@@ -52,8 +67,8 @@ services:
       - kafka
 
   employer-microservice-api:
-    image: ${DOCKER_REGISTRY-}employermicroservice-api
     container_name: employer-microservice-api
+    image: ${DOCKER_REGISTRY-}employermicroservice-api
     build:
       context: .
       dockerfile: src/Microservices/Employer/EmployerMicroservice.Api/Dockerfile
@@ -67,8 +82,8 @@ services:
       - kafka
 
   company-microservice-api:
-    image: ${DOCKER_REGISTRY-}companymicroservice-api
     container_name: company-microservice-api
+    image: ${DOCKER_REGISTRY-}companymicroservice-api
     build:
       context: .
       dockerfile: src/Microservices/Company/CompanyMicroservice.Api/Dockerfile
@@ -82,6 +97,7 @@ services:
       - kafka
 
   vacancy-microservice-api:
+    container_name: vacancy-microservice-api
     image: ${DOCKER_REGISTRY-}vacancymicroservice-api
     build:
       context: .
@@ -96,6 +112,7 @@ services:
       - kafka
 
   resume-microservice-api:
+    container_name: resume-microservice-api
     image: ${DOCKER_REGISTRY-}resumemicroservice-api
     build:
       context: .
@@ -106,21 +123,6 @@ services:
       - 22983:8080
     depends_on:
       - postgres-resume
-      - gateway-api
-      - kafka
-
-
-  bookmark-microservice-api:
-    image: ${DOCKER_REGISTRY-}bookmarkmicroservice-api
-    build:
-      context: .
-      dockerfile: src/Microservices/Bookmark/BookmarkMicroservice.Api/Dockerfile
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-    ports:
-      - 21769:8080
-    depends_on:
-      - postgres-bookmark
       - gateway-api
       - kafka
 
