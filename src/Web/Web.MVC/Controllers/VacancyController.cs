@@ -151,18 +151,16 @@ namespace Web.MVC.Controllers
         public async Task<IActionResult> GetVacancy(Guid vacancyId)
         {
             using HttpClient httpClient = httpClientFactory.CreateClient();
-
             var response = await httpClient.GetAsync($"{url}/api/Vacancy/GetVacancyById/{vacancyId}");
             response.EnsureSuccessStatusCode();
 
             var vacancy = await response.Content.ReadFromJsonAsync<VacancyResponse>();
 
-            if (User.Identity.IsAuthenticated)
+            var employerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
+            var employeeResponse = await httpClient.GetAsync($"{url}/api/Employee/GetEmployeeByEmail?email={User.Identity.Name}");
+            
+            if (User.Identity.IsAuthenticated && employerResponse.IsSuccessStatusCode)
             {
-                var employerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
-                if (!employerResponse.IsSuccessStatusCode)
-                    return View(vacancy);
-
                 var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
                 if(vacancy.CompanyId != employer.CompanyId)
                     return View(vacancy);
@@ -188,6 +186,18 @@ namespace Web.MVC.Controllers
                     ViewBag.DoesEmployerHavePermissionToArchiveAndUnarchiveVacancies = employerPermissions.Contains(VacancyPermissionsConstants.ArchiveUnarchiveVacancyPermission);
                     ViewBag.DoesEmployerHavePermissionToEditVacancies = employerPermissions.Contains(VacancyPermissionsConstants.EditVacancyPermission);
                 }
+            }
+
+            if (User.Identity.IsAuthenticated && employeeResponse.IsSuccessStatusCode)
+            {
+                var employee = await employeeResponse.Content.ReadFromJsonAsync<EmployerResponse>();
+
+                var favoriteVacancyResponse = await httpClient.GetAsync(
+                    $"{url}/api/FavoriteVacancy/IsVacancyInFavorites?employeeId={employee.Id}&vacancyId={vacancyId}");
+                favoriteVacancyResponse.EnsureSuccessStatusCode();
+
+                bool isVacancyInFavorites = await favoriteVacancyResponse.Content.ReadFromJsonAsync<bool>();
+                ViewBag.IsVacancyInFavorites = isVacancyInFavorites;
             }
             
             return View(vacancy);
