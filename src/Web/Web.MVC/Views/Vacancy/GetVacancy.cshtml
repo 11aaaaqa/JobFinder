@@ -100,9 +100,23 @@
                             <input class="vacancy-action-btn" type="submit" value="Удалить вакансию" onclick="return confirm('Вы действительно хотите удалить эту вакансию?');" />
                         </form>
                     }
+                    @if (ViewBag.IsVacancyInFavorites is not null && ViewBag.IsVacancyInFavorites == true)
+                    {
+                        <form method="post" asp-controller="Vacancy" asp-action="RemoveVacancyFromFavorites" asp-route-returnUrl="@returnUrl">
+                            <input type="hidden" name="vacancyId"  value="@Model.Id"/>
+                            <input class="remove-from-favorites-action-btn" type="submit" value="✖ Удалить из избранного"/>
+                        </form>
+                    }
+                    @if (ViewBag.IsVacancyInFavorites is not null && ViewBag.IsVacancyInFavorites == false)
+                    {
+                        <form method="post" asp-controller="Vacancy" asp-action="AddVacancyToFavorites" asp-route-returnUrl="@returnUrl">
+                            <input type="hidden" name="vacancyId" value="@Model.Id" />
+                            <input class="add-to-favorites-action-btn" type="submit" value="+ В избранное"/>
+                        </form>
+                    }
                 </div>
             }
-            @* кнопки откликнуться и добавить в избранное *@
+            @* кнопки откликнуться и написать сообщение *@
         </div>
 
         <div class="vacancy-company-info">
