@@ -17,7 +17,6 @@ namespace BookmarkMicroservice.Api.Kafka.Consumers
             {
                 GroupId = KafkaConstants.GroupId,
                 BootstrapServers = configuration["Kafka:BootstrapServers"],
-                AllowAutoCreateTopics = true,
                 AutoOffsetReset = AutoOffsetReset.Earliest
             };
 
@@ -30,17 +29,11 @@ namespace BookmarkMicroservice.Api.Kafka.Consumers
 
             while (!stoppingToken.IsCancellationRequested)
             {
-                ConsumeResult<Null, string> consumeResult = new();
-                try
+                using var adminClient = new AdminClientBuilder(config).Build();
+                var metadata = adminClient.GetMetadata(TimeSpan.FromSeconds(10));
+                bool topicExists = metadata.Topics.Exists(x => x.Topic == topicName);
+                if (!topicExists)
                 {
-                    consumeResult = consumer.Consume(stoppingToken);
-                }
-                catch (Exception exc)
-                {
-                    if (!exc.Message.ToLower().Contains("unknown topic"))
-                        throw;
-
-                    using var adminClient = new AdminClientBuilder(config).Build();
                     try
                     {
                         await adminClient.CreateTopicsAsync(new List<TopicSpecification> { new TopicSpecification
@@ -48,14 +41,14 @@ namespace BookmarkMicroservice.Api.Kafka.Consumers
                             Name = topicName, NumPartitions = 1, ReplicationFactor = 1
                         }});
                     }
-                    catch (Exception ex)
+                    catch (Exception exc)
                     {
-                        if (!ex.Message.ToLower().Contains("already exists"))
+                        if (!exc.Message.ToLower().Contains("already exists"))
                             throw;
                     }
-                    continue;
                 }
 
+                var consumeResult = consumer.Consume(stoppingToken);
                 var model = JsonSerializer.Deserialize<CompanyUpdatedKafkaModel>(consumeResult.Message.Value);
 
                 var vacanciesToUpdate = await context.FavoriteVacancies
