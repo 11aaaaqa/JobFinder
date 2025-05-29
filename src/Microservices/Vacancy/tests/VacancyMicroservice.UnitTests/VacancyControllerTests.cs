@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using VacancyMicroservice.Api.Controllers;
 using VacancyMicroservice.Api.DTOs;
+using VacancyMicroservice.Api.Kafka.Produce;
 using VacancyMicroservice.Api.Models;
 using VacancyMicroservice.Api.Services;
 using VacancyMicroservice.Api.Services.Pagination;
@@ -20,7 +21,7 @@ namespace VacancyMicroservice.UnitTests
             {
                 Id = vacancyId
             });
-            var controller = new VacancyController(mock.Object, new Mock<IPaginationService>().Object);
+            var controller = new VacancyController(mock.Object, new Mock<IPaginationService>().Object, new Mock<IKafkaProducer>().Object);
 
             var result = await controller.GetVacancyByIdAsync(vacancyId);
 
@@ -37,7 +38,7 @@ namespace VacancyMicroservice.UnitTests
             Guid vacancyId = Guid.NewGuid();
             var mock = new Mock<IVacancyRepository>();
             mock.Setup(x => x.GetVacancyByIdAsync(vacancyId)).ReturnsAsync((Vacancy?)null);
-            var controller = new VacancyController(mock.Object, new Mock<IPaginationService>().Object);
+            var controller = new VacancyController(mock.Object, new Mock<IPaginationService>().Object, new Mock<IKafkaProducer>().Object);
 
             var result = await controller.GetVacancyByIdAsync(vacancyId);
 
@@ -57,7 +58,7 @@ namespace VacancyMicroservice.UnitTests
             int pageNumber = 5;
             var mock = new Mock<IVacancyRepository>();
             mock.Setup(x => x.GetAllVacanciesAsync(5)).ReturnsAsync(vacancies);
-            var controller = new VacancyController(mock.Object, new Mock<IPaginationService>().Object);
+            var controller = new VacancyController(mock.Object, new Mock<IPaginationService>().Object, new Mock<IKafkaProducer>().Object);
 
             var result = await controller.GetAllVacanciesAsync(pageNumber);
 
@@ -80,7 +81,7 @@ namespace VacancyMicroservice.UnitTests
             };
             var mock = new Mock<IVacancyRepository>();
             mock.Setup(x => x.SearchVacanciesAsync(searchingQuery, pageNumber)).ReturnsAsync(vacancies);
-            var controller = new VacancyController(mock.Object, new Mock<IPaginationService>().Object);
+            var controller = new VacancyController(mock.Object, new Mock<IPaginationService>().Object, new Mock<IKafkaProducer>().Object);
 
             var result = await controller.FindVacanciesAsync(searchingQuery, pageNumber);
 
@@ -107,7 +108,7 @@ namespace VacancyMicroservice.UnitTests
             var mock = new Mock<IVacancyRepository>();
             mock.Setup(x => x.GetFilteredVacanciesAsync(model, pageNumber))
                 .ReturnsAsync(vacancies);
-            var controller = new VacancyController(mock.Object, new Mock<IPaginationService>().Object);
+            var controller = new VacancyController(mock.Object, new Mock<IPaginationService>().Object, new Mock<IKafkaProducer>().Object);
 
             var result = await controller.GetFilteredVacanciesAsync(model, pageNumber);
 
@@ -135,7 +136,7 @@ namespace VacancyMicroservice.UnitTests
             var mock = new Mock<IVacancyRepository>();
             mock.Setup(x => x.SearchFilteredVacanciesAsync(model, searchingQuery, pageNumber))
                 .ReturnsAsync(vacancies);
-            var controller = new VacancyController(mock.Object, new Mock<IPaginationService>().Object);
+            var controller = new VacancyController(mock.Object, new Mock<IPaginationService>().Object, new Mock<IKafkaProducer>().Object);
 
             var result = await controller.FindFilteredVacanciesAsync(model, searchingQuery, pageNumber);
 
@@ -159,7 +160,7 @@ namespace VacancyMicroservice.UnitTests
             var mock = new Mock<IVacancyRepository>();
             mock.Setup(x => x.GetVacanciesByCompanyIdAsync(companyId, pageNumber, null))
                 .ReturnsAsync(vacancies);
-            var controller = new VacancyController(mock.Object, new Mock<IPaginationService>().Object);
+            var controller = new VacancyController(mock.Object, new Mock<IPaginationService>().Object, new Mock<IKafkaProducer>().Object);
 
             var result = await controller.GetVacanciesByCompanyIdAsync(companyId, pageNumber, null);
 
@@ -175,7 +176,7 @@ namespace VacancyMicroservice.UnitTests
         public async Task AddVacancyAsync_ReturnsOk()
         {
             var mock = new Mock<IVacancyRepository>();
-            var controller = new VacancyController(mock.Object, new Mock<IPaginationService>().Object);
+            var controller = new VacancyController(mock.Object, new Mock<IPaginationService>().Object, new Mock<IKafkaProducer>().Object);
 
             var result = await controller.AddVacancyAsync(new AddVacancyDto
             {
@@ -194,7 +195,7 @@ namespace VacancyMicroservice.UnitTests
             Guid vacancyId = Guid.NewGuid();
             var mock = new Mock<IVacancyRepository>();
             mock.Setup(x => x.DeleteVacancyAsync(vacancyId));
-            var controller = new VacancyController(mock.Object, new Mock<IPaginationService>().Object);
+            var controller = new VacancyController(mock.Object, new Mock<IPaginationService>().Object, new Mock<IKafkaProducer>().Object);
 
             var result = await controller.DeleteVacancyAsync(vacancyId);
 
@@ -212,7 +213,7 @@ namespace VacancyMicroservice.UnitTests
             };
             var mock = new Mock<IVacancyRepository>();
             mock.Setup(x => x.UpdateVacancyAsync(model));
-            var controller = new VacancyController(mock.Object, new Mock<IPaginationService>().Object);
+            var controller = new VacancyController(mock.Object, new Mock<IPaginationService>().Object, new Mock<IKafkaProducer>().Object);
 
             var result = await controller.UpdateVacancyAsync(model);
 
@@ -226,7 +227,7 @@ namespace VacancyMicroservice.UnitTests
             Guid vacancyId = Guid.NewGuid();
             var mock = new Mock<IVacancyRepository>();
             mock.Setup(x => x.ArchiveVacancyAsync(vacancyId));
-            var controller = new VacancyController(mock.Object, new Mock<IPaginationService>().Object);
+            var controller = new VacancyController(mock.Object, new Mock<IPaginationService>().Object, new Mock<IKafkaProducer>().Object);
 
             var result = await controller.ArchiveVacancyAsync(vacancyId);
 
@@ -240,7 +241,7 @@ namespace VacancyMicroservice.UnitTests
             Guid vacancyId = Guid.NewGuid();
             var mock = new Mock<IVacancyRepository>();
             mock.Setup(x => x.UnarchiveVacancyAsync(vacancyId));
-            var controller = new VacancyController(mock.Object, new Mock<IPaginationService>().Object);
+            var controller = new VacancyController(mock.Object, new Mock<IPaginationService>().Object, new Mock<IKafkaProducer>().Object);
 
             var result = await controller.UnarchiveVacancyAsync(vacancyId);
 
@@ -262,7 +263,7 @@ namespace VacancyMicroservice.UnitTests
             var mock = new Mock<IVacancyRepository>();
             mock.Setup(x => x.GetArchivedVacanciesByCompanyIdAsync(companyId, pageNumber, null))
                 .ReturnsAsync(vacancies);
-            var controller = new VacancyController(mock.Object, new Mock<IPaginationService>().Object);
+            var controller = new VacancyController(mock.Object, new Mock<IPaginationService>().Object, new Mock<IKafkaProducer>().Object);
 
             var result = await controller.GetArchivedVacanciesByCompanyIdAsync(companyId, pageNumber, null);
 

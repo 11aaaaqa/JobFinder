@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using VacancyMicroservice.Api.Database;
 using VacancyMicroservice.Api.Kafka.Consumers;
+using VacancyMicroservice.Api.Kafka.Produce;
 using VacancyMicroservice.Api.Services;
 using VacancyMicroservice.Api.Services.Pagination;
 
@@ -12,6 +13,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(x =>
 builder.Services.AddHostedService<CompanyUpdatedKafkaConsumer>();
 builder.Services.AddHostedService<CompanyDeletedKafkaConsumer>();
 
+builder.Services.AddScoped<IKafkaProducer, KafkaProducer>();
 builder.Services.AddTransient<IPaginationService, PaginationService>();
 builder.Services.AddTransient<IVacancyRepository, VacancyRepository>();
 

@@ -28,32 +28,26 @@ namespace EmployerMicroservice.Api.Kafka.Consumers
 
             while (!stoppingToken.IsCancellationRequested)
             {
-                ConsumeResult<Null, string> consumeResult = new();
-                try
+                using var adminClient = new AdminClientBuilder(config).Build();
+                var metadata = adminClient.GetMetadata(TimeSpan.FromSeconds(10));
+                bool topicExists = metadata.Topics.Exists(x => x.Topic == topicName);
+                if (!topicExists)
                 {
-                    consumeResult = consumer.Consume(stoppingToken);
-                }
-                catch (Exception exc)
-                {
-                    if (!exc.Message.ToLower().Contains("unknown topic"))
-                        throw;
-                    using var adminClient = new AdminClientBuilder(config).Build();
-
                     try
                     {
-                        await adminClient.CreateTopicsAsync(new List<TopicSpecification>
+                        await adminClient.CreateTopicsAsync(new List<TopicSpecification> { new TopicSpecification
                         {
-                            new() {Name = topicName, NumPartitions = 1, ReplicationFactor = 1}
-                        });
+                            Name = topicName, NumPartitions = 1, ReplicationFactor = 1
+                        }});
                     }
-                    catch (Exception ex)
+                    catch (Exception exc)
                     {
-                        if (!ex.Message.ToLower().Contains("already exists"))
+                        if (!exc.Message.ToLower().Contains("already exists"))
                             throw;
                     }
-                    continue;
                 }
 
+                var consumeResult = consumer.Consume(stoppingToken);
                 var model = JsonSerializer.Deserialize<CompanyAddedConsumerModel>(consumeResult.Message.Value);
                 var employer = await context.Employers.SingleAsync(x => x.Id == model.EmployerId,
                     cancellationToken: CancellationToken.None);

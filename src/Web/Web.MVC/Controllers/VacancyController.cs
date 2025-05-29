@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Web.MVC.Constants.Permissions_constants;
 using Web.MVC.DTOs.Vacancy;
 using Web.MVC.Filters.Authorization_filters.Company_filters;
+using Web.MVC.Models.ApiResponses;
 using Web.MVC.Models.ApiResponses.Company;
 using Web.MVC.Models.ApiResponses.Employer;
 using Web.MVC.Models.ApiResponses.Vacancy;
@@ -150,18 +151,16 @@ namespace Web.MVC.Controllers
         public async Task<IActionResult> GetVacancy(Guid vacancyId)
         {
             using HttpClient httpClient = httpClientFactory.CreateClient();
-
             var response = await httpClient.GetAsync($"{url}/api/Vacancy/GetVacancyById/{vacancyId}");
             response.EnsureSuccessStatusCode();
 
             var vacancy = await response.Content.ReadFromJsonAsync<VacancyResponse>();
 
-            if (User.Identity.IsAuthenticated)
+            var employerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
+            var employeeResponse = await httpClient.GetAsync($"{url}/api/Employee/GetEmployeeByEmail?email={User.Identity.Name}");
+            
+            if (User.Identity.IsAuthenticated && employerResponse.IsSuccessStatusCode)
             {
-                var employerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
-                if (!employerResponse.IsSuccessStatusCode)
-                    return View(vacancy);
-
                 var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
                 if(vacancy.CompanyId != employer.CompanyId)
                     return View(vacancy);
@@ -187,6 +186,18 @@ namespace Web.MVC.Controllers
                     ViewBag.DoesEmployerHavePermissionToArchiveAndUnarchiveVacancies = employerPermissions.Contains(VacancyPermissionsConstants.ArchiveUnarchiveVacancyPermission);
                     ViewBag.DoesEmployerHavePermissionToEditVacancies = employerPermissions.Contains(VacancyPermissionsConstants.EditVacancyPermission);
                 }
+            }
+
+            if (User.Identity.IsAuthenticated && employeeResponse.IsSuccessStatusCode)
+            {
+                var employee = await employeeResponse.Content.ReadFromJsonAsync<EmployerResponse>();
+
+                var favoriteVacancyResponse = await httpClient.GetAsync(
+                    $"{url}/api/FavoriteVacancy/IsVacancyInFavorites?employeeId={employee.Id}&vacancyId={vacancyId}");
+                favoriteVacancyResponse.EnsureSuccessStatusCode();
+
+                bool isVacancyInFavorites = await favoriteVacancyResponse.Content.ReadFromJsonAsync<bool>();
+                ViewBag.IsVacancyInFavorites = isVacancyInFavorites;
             }
             
             return View(vacancy);
@@ -233,6 +244,53 @@ namespace Web.MVC.Controllers
             }
 
             return View(model);
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("vacancy/favorite/add")]
+        public async Task<IActionResult> AddVacancyToFavorites(Guid vacancyId, string returnUrl)
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+
+            var employeeResponse = await httpClient.GetAsync(
+                $"{url}/api/Employee/GetEmployeeByEmail?email={User.Identity.Name}");
+            employeeResponse.EnsureSuccessStatusCode();
+            var employee = await employeeResponse.Content.ReadFromJsonAsync<EmployeeResponse>();
+
+            var vacancyResponse = await httpClient.GetAsync($"{url}/api/Vacancy/GetVacancyById/{vacancyId}");
+            vacancyResponse.EnsureSuccessStatusCode();
+            var vacancy = await vacancyResponse.Content.ReadFromJsonAsync<VacancyResponse>();
+
+            using StringContent jsonContent = new(JsonSerializer.Serialize(new
+            {
+                EmployeeId = employee.Id, VacancyId = vacancy.Id,
+                vacancy.Position, vacancy.SalaryFrom, vacancy.SalaryTo,
+                vacancy.WorkExperience, vacancy.CompanyName, vacancy.VacancyCity
+            }), Encoding.UTF8, "application/json");
+
+            var response = await httpClient.PostAsync($"{url}/api/FavoriteVacancy/AddToFavorites", jsonContent);
+            response.EnsureSuccessStatusCode();
+
+            return LocalRedirect(returnUrl);
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("vacancy/favorite/remove")]
+        public async Task<IActionResult> RemoveVacancyFromFavorites(Guid vacancyId, string returnUrl)
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+
+            var employeeResponse = await httpClient.GetAsync($"{url}/api/Employee/GetEmployeeByEmail?email={User.Identity.Name}");
+            employeeResponse.EnsureSuccessStatusCode();
+            var employee = await employeeResponse.Content.ReadFromJsonAsync<EmployerResponse>();
+
+            var response = await httpClient.DeleteAsync(
+                $"{url}/api/FavoriteVacancy/DeleteFromFavorites?employeeId={employee.Id}&vacancyId={vacancyId}");
+            response.EnsureSuccessStatusCode();
+
+            return LocalRedirect(returnUrl);
         }
     }
 }
