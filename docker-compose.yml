@@ -32,9 +32,12 @@ services:
     ports:
       - 35123:8080
     depends_on:
-      - postgres-account
-      - gateway-api
-      - kafka
+       postgres-account:
+         condition: service_started
+       gateway-api:
+         condition: service_started
+       kafka:
+         condition: service_started
 
   bookmark-microservice-api:
     container_name: bookmark-microservice-api
@@ -47,9 +50,12 @@ services:
     ports:
       - 11549:8080
     depends_on:
-      - postgres-bookmark
-      - gateway-api
-      - kafka
+      postgres-bookmark:
+        condition: service_started
+      gateway-api:
+        condition: service_started
+      kafka:
+        condition: service_started
 
   employee-microservice-api:
     container_name: employee-microservice-api
@@ -62,9 +68,12 @@ services:
     ports:
       - 35124:8080
     depends_on:
-      - postgres-employee
-      - gateway-api
-      - kafka
+      postgres-employee:
+        condition: service_started
+      gateway-api:
+        condition: service_started
+      kafka:
+        condition: service_started
 
   employer-microservice-api:
     container_name: employer-microservice-api
@@ -77,9 +86,12 @@ services:
     ports:
       - 35125:8080
     depends_on:
-      - postgres-employer
-      - gateway-api
-      - kafka
+      postgres-employer:
+        condition: service_started
+      gateway-api:
+        condition: service_started
+      kafka:
+        condition: service_started
 
   company-microservice-api:
     container_name: company-microservice-api
@@ -92,9 +104,12 @@ services:
     ports:
       - 35235:8080
     depends_on:
-      - postgres-company
-      - gateway-api
-      - kafka
+      postgres-company:
+        condition: service_started
+      gateway-api:
+        condition: service_started
+      kafka:
+        condition: service_started
 
   vacancy-microservice-api:
     container_name: vacancy-microservice-api
@@ -107,9 +122,12 @@ services:
     ports:
       - 25912:8080
     depends_on:
-      - postgres-vacancy
-      - gateway-api
-      - kafka
+      postgres-vacancy:
+        condition: service_started
+      gateway-api:
+        condition: service_started
+      kafka:
+        condition: service_started
 
   resume-microservice-api:
     container_name: resume-microservice-api
@@ -122,9 +140,12 @@ services:
     ports:
       - 22983:8080
     depends_on:
-      - postgres-resume
-      - gateway-api
-      - kafka
+      postgres-resume:
+        condition: service_started
+      gateway-api:
+        condition: service_started
+      kafka:
+        condition: service_started
 
   postgres-bookmark:
     container_name: postgres-bookmark
@@ -226,16 +247,23 @@ services:
     container_name: kafka
     ports:
       - 9092:9092
-      - 9094:9094
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:9094
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     depends_on:
       - zookeeper
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui
+    ports:
+      - 10255:8080
+    environment:
+      KAFKA_CLUSTERS_0_NAME: "local"
+      KAFKA_CLUSTERS_0_BOOTSTRAP_SERVERS: "kafka:9092"
 
 
 volumes:
