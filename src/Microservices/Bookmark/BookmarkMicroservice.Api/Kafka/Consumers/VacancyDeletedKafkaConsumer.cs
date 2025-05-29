@@ -17,7 +17,6 @@ namespace BookmarkMicroservice.Api.Kafka.Consumers
             {
                 GroupId = KafkaConstants.GroupId,
                 BootstrapServers = configuration["Kafka:BootstrapServers"],
-                AllowAutoCreateTopics = true,
                 AutoOffsetReset = AutoOffsetReset.Earliest
             };
 
@@ -30,17 +29,36 @@ namespace BookmarkMicroservice.Api.Kafka.Consumers
 
             while (!stoppingToken.IsCancellationRequested)
             {
-                ConsumeResult<Null, string> consumeResult = new();
-                try
-                {
-                    consumeResult = consumer.Consume(stoppingToken);
-                }
-                catch (Exception exc)
-                {
-                    if (!exc.Message.ToLower().Contains("unknown topic"))
-                        throw;
+                //ConsumeResult<Null, string> consumeResult = new();
+                //try
+                //{
+                //    consumeResult = consumer.Consume(stoppingToken);
+                //}
+                //catch (Exception exc)
+                //{
+                //    if (!exc.Message.ToLower().Contains("unknown topic"))
+                //        throw;
 
-                    using var adminClient = new AdminClientBuilder(config).Build();
+                //    using var adminClient = new AdminClientBuilder(config).Build();
+                //    try
+                //    {
+                //        await adminClient.CreateTopicsAsync(new List<TopicSpecification> { new TopicSpecification
+                //        {
+                //            Name = topicName, NumPartitions = 1, ReplicationFactor = 1
+                //        }});
+                //    }
+                //    catch (Exception ex)
+                //    {
+                //        if (!ex.Message.ToLower().Contains("already exists"))
+                //            throw;
+                //    }
+                //    continue;
+                //}
+                using var adminClient = new AdminClientBuilder(config).Build();
+                var metadata = adminClient.GetMetadata(TimeSpan.FromSeconds(10));
+                bool topicExists = metadata.Topics.Exists(x => x.Topic == topicName);
+                if (!topicExists)
+                {
                     try
                     {
                         await adminClient.CreateTopicsAsync(new List<TopicSpecification> { new TopicSpecification
@@ -48,14 +66,14 @@ namespace BookmarkMicroservice.Api.Kafka.Consumers
                             Name = topicName, NumPartitions = 1, ReplicationFactor = 1
                         }});
                     }
-                    catch (Exception ex)
+                    catch (Exception exc)
                     {
-                        if (!ex.Message.ToLower().Contains("already exists"))
+                        if (!exc.Message.ToLower().Contains("already exists"))
                             throw;
                     }
-                    continue;
                 }
 
+                var consumeResult = consumer.Consume(stoppingToken);
                 var model = JsonSerializer.Deserialize<VacancyDeletedKafkaModel>(consumeResult.Message.Value);
 
                 var vacanciesToDelete = await context.FavoriteVacancies.Where(x => x.VacancyId == model.VacancyId)
