@@ -19,45 +19,42 @@ namespace EmployeeMicroservice.Api.Kafka
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            const string topicName = "user-registered-topic";
             var config = new ConsumerConfig
             {
-                GroupId = "user-group",
+                GroupId = "employee-group",
                 BootstrapServers = configuration["Kafka:BootstrapServers"],
                 AutoOffsetReset = AutoOffsetReset.Earliest
             };
 
             using var consumer = new ConsumerBuilder<Null, string>(config).Build();
-            consumer.Subscribe("user-registered-topic");
+            consumer.Subscribe(topicName);
 
             using var scope = scopeFactory.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
             while (!stoppingToken.IsCancellationRequested)
             {
-                ConsumeResult<Null, string> consumeResult = new();
-                try
+                using var adminClient = new AdminClientBuilder(config).Build();
+                var metadata = adminClient.GetMetadata(TimeSpan.FromSeconds(10));
+                bool topicExists = metadata.Topics.Exists(x => x.Topic == topicName);
+                if (!topicExists)
                 {
-                    consumeResult = consumer.Consume(stoppingToken);
-                }
-                catch (ConsumeException ex)
-                {
-                    if (!ex.Message.ToLower().Contains("unknown topic"))
-                        throw;
-                    using var adminClient = new AdminClientBuilder(config).Build();
                     try
                     {
-                        await adminClient.CreateTopicsAsync(new List<TopicSpecification>
+                        await adminClient.CreateTopicsAsync(new List<TopicSpecification> { new TopicSpecification
                         {
-                            new(){Name = "user-registered-topic", ReplicationFactor = 1, NumPartitions = 1}
-                        });
+                            Name = topicName, NumPartitions = 1, ReplicationFactor = 1
+                        }});
                     }
                     catch (Exception exc)
                     {
                         if (!exc.Message.ToLower().Contains("already exists"))
                             throw;
                     }
-                    continue;
                 }
+
+                var consumeResult = consumer.Consume(stoppingToken);
                 var account = JsonSerializer.Deserialize<AccountConsumerModel>(consumeResult.Message.Value);
                 if (account.AccountType == AccountTypeConstants.Employee)
                 {

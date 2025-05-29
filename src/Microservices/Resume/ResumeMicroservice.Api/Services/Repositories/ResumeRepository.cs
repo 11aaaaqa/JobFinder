@@ -4,8 +4,6 @@ using ResumeMicroservice.Api.Constants;
 using ResumeMicroservice.Api.Database;
 using ResumeMicroservice.Api.DTOs;
 using ResumeMicroservice.Api.Models;
-using ResumeMicroservice.Api.Models.Skills;
-using System.Linq;
 
 namespace ResumeMicroservice.Api.Services.Repositories
 {
