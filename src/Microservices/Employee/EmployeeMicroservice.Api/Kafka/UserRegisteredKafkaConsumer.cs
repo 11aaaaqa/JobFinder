@@ -21,7 +21,7 @@ namespace EmployeeMicroservice.Api.Kafka
         {
             var config = new ConsumerConfig
             {
-                GroupId = "user-group",
+                GroupId = "employee-group",
                 BootstrapServers = configuration["Kafka:BootstrapServers"],
                 AutoOffsetReset = AutoOffsetReset.Earliest
             };
