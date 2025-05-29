@@ -9,9 +9,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ApplicationDbContext>(x =>
     x.UseNpgsql(builder.Configuration["Database:ConnectionString"]));
 
+builder.Services.AddHostedService<CompanyUpdatedKafkaConsumer>();
 builder.Services.AddHostedService<VacancyDeletedKafkaConsumer>();
 builder.Services.AddHostedService<VacancyUpdatedKafkaConsumer>();
-builder.Services.AddHostedService<CompanyUpdatedKafkaConsumer>();
 
 builder.Services.AddTransient<IFavoriteVacancyRepository, FavoriteVacancyRepository>();
 builder.Services.AddTransient<ICheckForNextPageExistingService, CheckForNextPageExistingService>();
