@@ -1,4 +1,5 @@
 ﻿using Confluent.Kafka;
+using Confluent.Kafka.Admin;
 
 namespace CompanyMicroservice.Api.Kafka.Producer
 {
@@ -9,15 +10,23 @@ namespace CompanyMicroservice.Api.Kafka.Producer
             var config = new ProducerConfig
             {
                 BootstrapServers = configuration["Kafka:BootstrapServers"],
-                AllowAutoCreateTopics = true,
                 Acks = Acks.All
             };
+            using var adminClient = new AdminClientBuilder(config).Build();
+            var metadata = adminClient.GetMetadata(TimeSpan.FromSeconds(10));
+            bool topicExists = metadata.Topics.Exists(x => x.Topic == topic);
+            if (!topicExists)
+            {
+                await adminClient.CreateTopicsAsync(new List<TopicSpecification>
+                {
+                    new (){Name = topic, NumPartitions = 1, ReplicationFactor = 1}
+                });
+            }
 
             using var producer = new ProducerBuilder<Null, string>(config).Build();
 
             await producer.ProduceAsync(topic, message);
-
-            producer.Flush();
+            producer.Flush(TimeSpan.FromSeconds(10));
         }
     }
 }
