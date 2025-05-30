@@ -1,9 +1,12 @@
 ﻿using System.Text;
 using System.Text.Json;
+using System.Web;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web.MVC.DTOs.Employee;
 using Web.MVC.Models.ApiResponses;
+using Web.MVC.Models.ApiResponses.Bookmark;
+using Web.MVC.Models.ApiResponses.Vacancy;
 
 namespace Web.MVC.Controllers
 {
@@ -73,6 +76,32 @@ namespace Web.MVC.Controllers
             response.EnsureSuccessStatusCode();
 
             return LocalRedirect(returnUrl);
+        }
+
+        [Authorize]
+        [Route("employee/favorite/vacancies")]
+        [HttpGet]
+        public async Task<IActionResult> GetFavoriteVacanciesByEmployeeId(Guid employeeId, string? query, int index = 1)
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+            var encodedQuery = HttpUtility.UrlEncode(query);
+
+            var vacancyResponse = await httpClient.GetAsync(
+                $"{url}/api/FavoriteVacancy/GetFavoriteVacancies/{employeeId}?searchingQuery={encodedQuery}&pageNumber={index}");
+            vacancyResponse.EnsureSuccessStatusCode();
+            var vacancies = await vacancyResponse.Content.ReadFromJsonAsync<List<FavoriteVacancyResponse>>();
+
+            var doesNextPageExistResponse = await httpClient.GetAsync(
+                $"{url}/api/FavoriteVacancy/DoesNextFavoriteVacanciesPageExist/{employeeId}?searchingQuery={encodedQuery}&currentPageNumber={index}");
+            doesNextPageExistResponse.EnsureSuccessStatusCode();
+            bool doesNextPageExist = await doesNextPageExistResponse.Content.ReadFromJsonAsync<bool>();
+
+            ViewBag.CurrentPageNumber = index;
+            ViewBag.DoesNextPageExist = doesNextPageExist;
+            ViewBag.SearchingQuery = query;
+            ViewBag.EmployeeId = employeeId;
+
+            return View(vacancies);
         }
     }
 }
