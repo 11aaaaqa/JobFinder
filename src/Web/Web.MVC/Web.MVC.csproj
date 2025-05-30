@@ -18,8 +18,4 @@
     <ProjectReference Include="..\..\BuildingBlocks\GeneralLibrary\GeneralLibrary.csproj" />
   </ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Views\Employee\" />
-	</ItemGroup>
-
 </Project>
