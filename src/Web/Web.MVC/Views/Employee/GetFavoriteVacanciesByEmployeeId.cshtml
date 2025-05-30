@@ -74,14 +74,15 @@
         {
             if (ViewBag.SearchingQuery is null)
             {
-                <a class="previous-button" asp-controller="Employee" asp-action="GetFavoriteVacanciesByEmployeeId" asp-route-index="@(ViewBag.CurrentPageNumber - 1)">
+                <a class="previous-button" asp-controller="Employee" asp-action="GetFavoriteVacanciesByEmployeeId" asp-route-index="@(ViewBag.CurrentPageNumber - 1)"
+                   asp-route-employeeId="@ViewBag.EmployeeId">
                     Назад
                 </a>
             }
             else
             {
                 <a class="previous-button" asp-controller="Employee" asp-action="GetFavoriteVacanciesByEmployeeId" asp-route-index="@(ViewBag.CurrentPageNumber - 1)"
-                   asp-route-query="@ViewBag.SearchingQuery">
+                   asp-route-query="@ViewBag.SearchingQuery" asp-route-employeeId="@ViewBag.EmployeeId">
                     Назад
                 </a>
             }
@@ -95,14 +96,15 @@
         {
             if (ViewBag.SearchingQuery is null)
             {
-                <a class="next-button" asp-controller="Employee" asp-action="GetFavoriteVacanciesByEmployeeId" asp-route-index="@(ViewBag.CurrentPageNumber + 1)">
+                <a class="next-button" asp-controller="Employee" asp-action="GetFavoriteVacanciesByEmployeeId" asp-route-index="@(ViewBag.CurrentPageNumber + 1)"
+                   asp-route-employeeId="@ViewBag.EmployeeId">
                     Вперед
                 </a>
             }
             else
             {
                 <a class="next-button" asp-controller="Employee" asp-action="GetFavoriteVacanciesByEmployeeId" asp-route-index="@(ViewBag.CurrentPageNumber + 1)"
-                   asp-route-query="@ViewBag.SearchingQuery">
+                   asp-route-query="@ViewBag.SearchingQuery" asp-route-employeeId="@ViewBag.EmployeeId">
                     Вперед
                 </a>
             }
