@@ -48,7 +48,29 @@ namespace BookmarkMicroservice.Api.Kafka.Consumers
                     }
                 }
 
-                var consumeResult = consumer.Consume(stoppingToken);
+                ConsumeResult<Null, string> consumeResult;
+                try
+                {
+                    consumeResult = consumer.Consume(stoppingToken);
+                }
+                catch (Exception e)
+                {
+                    if (!e.Message.ToLower().Contains("unknown topic"))
+                        throw;
+                    try
+                    {
+                        await adminClient.CreateTopicsAsync(new List<TopicSpecification> { new TopicSpecification
+                        {
+                            Name = topicName, NumPartitions = 1, ReplicationFactor = 1
+                        }});
+                    }
+                    catch (Exception exc)
+                    {
+                        if (!exc.Message.ToLower().Contains("already exists"))
+                            throw;
+                    }
+                    continue;
+                }
                 var model = JsonSerializer.Deserialize<VacancyDeletedKafkaModel>(consumeResult.Message.Value);
 
                 var vacanciesToDelete = await context.FavoriteVacancies.Where(x => x.VacancyId == model.VacancyId)
