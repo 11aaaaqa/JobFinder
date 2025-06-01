@@ -8,6 +8,9 @@ namespace ResponseMicroservice.Api.Services.Interview_invitation_services
 {
     public class InterviewInvitationService(ApplicationDbContext context) : IInterviewInvitationService
     {
+        public async Task<InterviewInvitation?> GetInterviewInvitationByIdAsync(Guid interviewInvitationId)
+            => await context.InterviewInvitations.SingleOrDefaultAsync(x => x.Id == interviewInvitationId);
+
         public async Task<List<InterviewInvitation>> GetInterviewInvitationsByCompanyIdAsync(Guid companyId, DateTimeOrderByType orderByTimeType, int pageNumber)
         {
             var interviewInvitations =
