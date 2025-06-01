@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Net;
+using System.Text;
 using System.Text.Json;
 using System.Web;
 using Microsoft.AspNetCore.Authorization;
@@ -152,6 +153,8 @@ namespace Web.MVC.Controllers
         {
             using HttpClient httpClient = httpClientFactory.CreateClient();
             var response = await httpClient.GetAsync($"{url}/api/Vacancy/GetVacancyById/{vacancyId}");
+            if (response.StatusCode == HttpStatusCode.NotFound)
+                return RedirectToAction("PageNotFound","Information");
             response.EnsureSuccessStatusCode();
 
             var vacancy = await response.Content.ReadFromJsonAsync<VacancyResponse>();
