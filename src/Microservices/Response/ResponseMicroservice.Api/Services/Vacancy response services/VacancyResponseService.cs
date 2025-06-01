@@ -32,7 +32,8 @@ namespace ResponseMicroservice.Api.Services.Vacancy_response_services
 
         public async Task<List<VacancyResponse>> GetVacancyResponsesByCompanyIdAsync(Guid companyId, DateTimeOrderByType orderByTimeType, int pageNumber)
         {
-            var vacancyResponses = context.VacancyResponses.Where(x => x.VacancyCompanyId == companyId).AsQueryable();
+            var vacancyResponses = context.VacancyResponses.Where(x => x.VacancyCompanyId == companyId)
+                .Where(x => x.ResponseStatus == VacancyResponseStatusConstants.Waiting).AsQueryable();
 
             switch (orderByTimeType)
             {
@@ -51,7 +52,8 @@ namespace ResponseMicroservice.Api.Services.Vacancy_response_services
 
         public async Task<List<VacancyResponse>> GetCompanyVacancyResponsesByVacancyIdAsync(Guid vacancyId, DateTimeOrderByType orderByTimeType, int pageNumber)
         {
-            var vacancyResponses = context.VacancyResponses.Where(x => x.VacancyId == vacancyId).AsQueryable();
+            var vacancyResponses = context.VacancyResponses.Where(x => x.VacancyId == vacancyId)
+                .Where(x => x.ResponseStatus == VacancyResponseStatusConstants.Waiting).AsQueryable();
 
             switch (orderByTimeType)
             {
