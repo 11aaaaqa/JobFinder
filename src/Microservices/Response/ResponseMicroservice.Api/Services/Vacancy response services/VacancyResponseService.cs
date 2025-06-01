@@ -8,6 +8,9 @@ namespace ResponseMicroservice.Api.Services.Vacancy_response_services
 {
     public class VacancyResponseService(ApplicationDbContext context) : IVacancyResponseService
     {
+        public async Task<VacancyResponse?> GetVacancyResponseByIdAsync(Guid vacancyResponseId)
+            => await context.VacancyResponses.SingleOrDefaultAsync(x => x.Id == vacancyResponseId);
+
         public async Task<List<VacancyResponse>> GetVacancyResponsesByEmployeeIdAsync(Guid employeeId, string? searchingQuery,
             DateTimeOrderByType orderByTimeType, int pageNumber)
         {
