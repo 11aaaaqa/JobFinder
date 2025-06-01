@@ -33,7 +33,7 @@ namespace VacancyMicroservice.UnitTests
         }
 
         [Fact]
-        public async Task GetVacancyByIdAsync_ReturnsBadRequest()
+        public async Task GetVacancyByIdAsync_ReturnsNotFound()
         {
             Guid vacancyId = Guid.NewGuid();
             var mock = new Mock<IVacancyRepository>();
@@ -42,7 +42,7 @@ namespace VacancyMicroservice.UnitTests
 
             var result = await controller.GetVacancyByIdAsync(vacancyId);
 
-            Assert.IsType<BadRequestResult>(result);
+            Assert.IsType<NotFoundResult>(result);
             mock.VerifyAll();
         }
 
