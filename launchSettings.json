@@ -12,7 +12,8 @@
         "companymicroservice.api": "StartDebugging",
         "vacancymicroservice.api": "StartDebugging",
         "resumemicroservice.api": "StartDebugging",
-        "bookmarkmicroservice.api": "StartDebugging"
+        "bookmarkmicroservice.api": "StartDebugging",
+        "responsemicroservice.api": "StartDebugging"
       }
     }
   }
