@@ -21,5 +21,6 @@
         public int? VacancySalaryTo { get; set; }
         public string? VacancyWorkExperience { get; set; }
         public string VacancyCity { get; set; }
+        public string VacancyCompanyName { get; set; }
     }
 }
