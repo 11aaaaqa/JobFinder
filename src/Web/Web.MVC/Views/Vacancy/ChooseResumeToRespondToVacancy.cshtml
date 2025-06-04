@@ -1,0 +1,33 @@
+﻿@model List<Web.MVC.Models.ApiResponses.Resume.ResumeResponse>
+
+<h3>Выберите Ваше резюме, которое хотите отправить работодателю</h3>
+<form method="post">
+    <input type="hidden" name="vacancyId" value="@ViewBag.VacancyId" />
+    @foreach (var resume in Model)
+    {
+        @if (resume.DesiredSalary is not null && resume.City is not null)
+        {
+            <p>
+                <input type="radio" name="resumeId" value="@resume.Id" required/>
+                <strong>@resume.ResumeTitle</strong>; Желаемая зарплата: <span class="format-number">@resume.DesiredSalary</span> ₽; Город: @resume.City
+            </p>
+        }
+        if (resume.DesiredSalary is not null && resume.City is null)
+        {
+            <p>
+                <input type="radio" name="resumeId" value="@resume.Id" required/>
+                <strong>@resume.ResumeTitle</strong>; Желаемая зарплата: <span class="format-number">@resume.DesiredSalary</span> ₽
+            </p>
+        }
+
+        if (resume.DesiredSalary is null && resume.City is not null)
+        {
+            <p>
+                <input type="radio" name="resumeId" value="@resume.Id" required/>
+                <strong>@resume.ResumeTitle</strong>; Город: @resume.City
+            </p>
+        }
+    }
+    <input type="submit" value="Сохранить"/>
+</form>
+<script src="~/js/format-number-displaying.js"></script>
