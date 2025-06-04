@@ -1,4 +1,4 @@
-﻿namespace ResponseMicroservice.Api.Constants
+﻿namespace GeneralLibrary.Constants
 {
     public class VacancyResponseStatusConstants
     {
