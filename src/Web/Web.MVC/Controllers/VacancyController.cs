@@ -337,7 +337,8 @@ namespace Web.MVC.Controllers
                 VacancySalaryFrom = vacancy.SalaryFrom,
                 VacancySalaryTo = vacancy.SalaryTo,
                 VacancyWorkExperience = vacancy.WorkExperience,
-                VacancyCity = vacancy.VacancyCity
+                VacancyCity = vacancy.VacancyCity,
+                VacancyCompanyName = vacancy.CompanyName
             }), Encoding.UTF8, "application/json");
             var respondToVacancyResponse = await httpClient.PostAsync($"{url}/api/VacancyResponse/AddVacancyResponse", jsonContent);
             respondToVacancyResponse.EnsureSuccessStatusCode();

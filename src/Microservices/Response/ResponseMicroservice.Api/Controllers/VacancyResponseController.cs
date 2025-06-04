@@ -59,7 +59,7 @@ namespace ResponseMicroservice.Api.Controllers
                 Id = Guid.NewGuid(), VacancyCity = model.VacancyCity, VacancyId = model.VacancyId, ResponseDate = DateTime.UtcNow,
                 ResponseStatus = VacancyResponseStatusConstants.Waiting, RespondedEmployeeResumeId = model.RespondedEmployeeResumeId,
                 VacancyCompanyId = model.VacancyCompanyId, VacancyPosition = model.VacancyPosition, VacancySalaryFrom = model.VacancySalaryFrom,
-                VacancySalaryTo = model.VacancySalaryTo, VacancyWorkExperience = model.VacancyWorkExperience
+                VacancySalaryTo = model.VacancySalaryTo, VacancyWorkExperience = model.VacancyWorkExperience, VacancyCompanyName = model.VacancyCompanyName
             });
             return Ok();
         }
@@ -94,7 +94,8 @@ namespace ResponseMicroservice.Api.Controllers
                 VacancyCity = vacancyResponse.VacancyCity, VacancyId = vacancyResponse.VacancyId,
                 InvitationDate = DateTime.UtcNow, InvitedCompanyId = vacancyResponse.VacancyCompanyId,
                 VacancyPosition = vacancyResponse.VacancyPosition, VacancySalaryFrom = vacancyResponse.VacancySalaryFrom,
-                VacancySalaryTo = vacancyResponse.VacancySalaryTo, VacancyWorkExperience = vacancyResponse.VacancyWorkExperience
+                VacancySalaryTo = vacancyResponse.VacancySalaryTo, VacancyWorkExperience = vacancyResponse.VacancyWorkExperience,
+                VacancyCompanyName = vacancyResponse.VacancyCompanyName
             });
             await vacancyResponseService.SetVacancyResponseStatusAsync(vacancyResponseId, VacancyResponseStatusConstants.Accepted);
             return Ok();
