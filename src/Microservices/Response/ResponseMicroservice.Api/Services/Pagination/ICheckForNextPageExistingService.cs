@@ -1,4 +1,4 @@
-﻿using ResponseMicroservice.Api.Enums;
+﻿using GeneralLibrary.Enums;
 
 namespace ResponseMicroservice.Api.Services.Pagination
 {
