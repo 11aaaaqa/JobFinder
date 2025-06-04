@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using ResponseMicroservice.Api.Enums;
+﻿using GeneralLibrary.Enums;
+using Microsoft.AspNetCore.Mvc;
 using ResponseMicroservice.Api.Services.Interview_invitation_services;
 using ResponseMicroservice.Api.Services.Pagination;
 
