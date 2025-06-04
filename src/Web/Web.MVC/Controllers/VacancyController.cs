@@ -10,6 +10,7 @@ using Web.MVC.Filters.Authorization_filters.Company_filters;
 using Web.MVC.Models.ApiResponses;
 using Web.MVC.Models.ApiResponses.Company;
 using Web.MVC.Models.ApiResponses.Employer;
+using Web.MVC.Models.ApiResponses.Resume;
 using Web.MVC.Models.ApiResponses.Vacancy;
 
 namespace Web.MVC.Controllers
@@ -199,6 +200,12 @@ namespace Web.MVC.Controllers
                     $"{url}/api/FavoriteVacancy/IsVacancyInFavorites?employeeId={employee.Id}&vacancyId={vacancyId}");
                 favoriteVacancyResponse.EnsureSuccessStatusCode();
 
+                var employeeRespondedToVacancyResponse = await httpClient.GetAsync(
+                    $"{url}/api/VacancyResponse/HasEmployeeRespondedToVacancy?employeeId={employee.Id}&vacancyId={vacancyId}");
+                employeeRespondedToVacancyResponse.EnsureSuccessStatusCode();
+                bool hasEmployeeRespondedToVacancy = await employeeRespondedToVacancyResponse.Content.ReadFromJsonAsync<bool>();
+                ViewBag.HasEmployeeRespondedToVacancy = hasEmployeeRespondedToVacancy;
+
                 bool isVacancyInFavorites = await favoriteVacancyResponse.Content.ReadFromJsonAsync<bool>();
                 ViewBag.IsVacancyInFavorites = isVacancyInFavorites;
             }
@@ -294,6 +301,88 @@ namespace Web.MVC.Controllers
             response.EnsureSuccessStatusCode();
 
             return LocalRedirect(returnUrl);
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("vacancy/{vacancyId}/respond")]
+        public async Task<IActionResult> RespondToVacancy(Guid vacancyId, Guid resumeId)
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+
+            var employeeResponse = await httpClient.GetAsync($"{url}/api/Employee/GetEmployeeByEmail?email={User.Identity.Name}");
+            employeeResponse.EnsureSuccessStatusCode();
+            var employee = await employeeResponse.Content.ReadFromJsonAsync<EmployerResponse>();
+
+            var vacancyResponse = await httpClient.GetAsync($"{url}/api/Vacancy/GetVacancyById/{vacancyId}");
+            vacancyResponse.EnsureSuccessStatusCode();
+            var vacancy = await vacancyResponse.Content.ReadFromJsonAsync<VacancyResponse>();
+
+            var resumeResponse = await httpClient.GetAsync($"{url}/api/Resume/GetResumeById/{resumeId}");
+            resumeResponse.EnsureSuccessStatusCode();
+            var resume = await resumeResponse.Content.ReadFromJsonAsync<ResumeResponse>();
+
+            using StringContent jsonContent = new(JsonSerializer.Serialize(new
+            {
+                VacancyCompanyId = vacancy.CompanyId,
+                EmployeeId = employee.Id,
+                RespondedEmployeeResumeId = resumeId,
+                EmployeeName = employee.Name,
+                EmployeeSurname = employee.Surname,
+                EmployeeDateOfBirth = resume.DateOfBirth,
+                EmployeeWorkingExperience = resume.WorkingExperience,
+                EmployeeCity = resume.City,
+                VacancyId = vacancyId,
+                VacancyPosition = vacancy.Position,
+                VacancySalaryFrom = vacancy.SalaryFrom,
+                VacancySalaryTo = vacancy.SalaryTo,
+                VacancyWorkExperience = vacancy.WorkExperience,
+                VacancyCity = vacancy.VacancyCity
+            }), Encoding.UTF8, "application/json");
+            var respondToVacancyResponse = await httpClient.PostAsync($"{url}/api/VacancyResponse/AddVacancyResponse", jsonContent);
+            respondToVacancyResponse.EnsureSuccessStatusCode();
+
+            return RedirectToAction("GetVacancy", new { vacancyId });
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("vacancy/{vacancyId}/respond/choose-resume")]
+        public async Task<IActionResult> ChooseResumeToRespondToVacancy(Guid vacancyId)
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+
+            var employeeResponse = await httpClient.GetAsync($"{url}/api/Employee/GetEmployeeByEmail?email={User.Identity.Name}");
+            employeeResponse.EnsureSuccessStatusCode();
+            var employee = await employeeResponse.Content.ReadFromJsonAsync<EmployerResponse>();
+
+            var resumeResponse = await httpClient.GetAsync($"{url}/api/Resume/GetResumesByEmployeeId/{employee.Id}");
+            resumeResponse.EnsureSuccessStatusCode();
+            var resumes = await resumeResponse.Content.ReadFromJsonAsync<List<ResumeResponse>>();
+
+            if (resumes.Count == 0)
+            {
+                string returnUrl = Request.Path;
+                if (Request.QueryString.HasValue)
+                    returnUrl += Request.QueryString.Value;
+                return RedirectToAction("AddResume", "Resume", new { returnUrl });
+            }
+                
+
+            if (resumes.Count == 1)
+                return RedirectToAction("RespondToVacancy", new { vacancyId, resumeId = resumes[0].Id });
+
+            ViewBag.VacancyId = vacancyId;
+
+            return View(resumes);
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("vacancy/{vacancyId}/respond/choose-resume")]
+        public IActionResult ChooseResumeToRespondToVacancy(Guid vacancyId, Guid resumeId)
+        {
+            return RedirectToAction("RespondToVacancy", new { vacancyId, resumeId});
         }
     }
 }
