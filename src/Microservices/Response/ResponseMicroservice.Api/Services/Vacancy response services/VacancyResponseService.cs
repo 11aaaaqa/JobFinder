@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using GeneralLibrary.Enums;
+using Microsoft.EntityFrameworkCore;
 using ResponseMicroservice.Api.Constants;
 using ResponseMicroservice.Api.Database;
-using ResponseMicroservice.Api.Enums;
 using ResponseMicroservice.Api.Models;
 
 namespace ResponseMicroservice.Api.Services.Vacancy_response_services

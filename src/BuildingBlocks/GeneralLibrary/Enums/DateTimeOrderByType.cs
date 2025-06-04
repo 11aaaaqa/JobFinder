@@ -1,4 +1,4 @@
-﻿namespace ResponseMicroservice.Api.Enums
+﻿namespace GeneralLibrary.Enums
 {
     public enum DateTimeOrderByType
     {

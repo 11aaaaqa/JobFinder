@@ -1,4 +1,4 @@
-﻿using ResponseMicroservice.Api.Enums;
+﻿using GeneralLibrary.Enums;
 using ResponseMicroservice.Api.Models;
 
 namespace ResponseMicroservice.Api.Services.Interview_invitation_services
