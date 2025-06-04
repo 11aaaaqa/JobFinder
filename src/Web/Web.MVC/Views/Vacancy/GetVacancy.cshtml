@@ -114,6 +114,19 @@
                             <input class="add-to-favorites-action-btn" type="submit" value="+ В избранное"/>
                         </form>
                     }
+                    
+                    @if (ViewBag.HasEmployeeRespondedToVacancy is not null)
+                    {
+                        @if (ViewBag.HasEmployeeRespondedToVacancy == true)
+                        {
+                            <button>✓ Вы откликнулись на вакансию</button>
+                        }
+                        else
+                        {
+                            <br/>
+                            <a asp-controller="Vacancy" asp-action="ChooseResumeToRespondToVacancy" asp-route-vacancyId="@Model.Id">Откликнуться</a>
+                        }
+                    }
                 </div>
             }
             @* кнопки откликнуться и написать сообщение *@
