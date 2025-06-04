@@ -12,6 +12,7 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["src/Microservices/Response/ResponseMicroservice.Api/ResponseMicroservice.Api.csproj", "src/Microservices/Response/ResponseMicroservice.Api/"]
+COPY ["src/BuildingBlocks/GeneralLibrary/GeneralLibrary.csproj", "src/BuildingBlocks/GeneralLibrary/"]
 RUN dotnet restore "./src/Microservices/Response/ResponseMicroservice.Api/ResponseMicroservice.Api.csproj"
 COPY . .
 WORKDIR "/src/src/Microservices/Response/ResponseMicroservice.Api"
