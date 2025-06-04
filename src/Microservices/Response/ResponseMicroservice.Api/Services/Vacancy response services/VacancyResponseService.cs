@@ -104,9 +104,9 @@ namespace ResponseMicroservice.Api.Services.Vacancy_response_services
                 return false;
 
             if (vacancyResponse.ResponseDate.AddMonths(1) > DateTime.UtcNow)
-                return false;
+                return true;
 
-            return true;
+            return false;
         }
     }
 }
