@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Text.Json;
+using Confluent.Kafka;
+using Microsoft.AspNetCore.Mvc;
 using ResumeMicroservice.Api.DTOs;
+using ResumeMicroservice.Api.Kafka.Producing;
 using ResumeMicroservice.Api.Models;
 using ResumeMicroservice.Api.Services.Pagination;
 using ResumeMicroservice.Api.Services.Repositories;
@@ -9,7 +12,7 @@ namespace ResumeMicroservice.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     public class ResumeController(IResumeRepository resumeRepository, 
-        ICheckForNextPageExistingService checkForNextPageService) : ControllerBase
+        ICheckForNextPageExistingService checkForNextPageService, IKafkaProducer kafkaProducer) : ControllerBase
     {
         [HttpGet]
         [Route("GetResumeById/{resumeId}")]
@@ -63,6 +66,10 @@ namespace ResumeMicroservice.Api.Controllers
         public async Task<IActionResult> DeleteResumeAsync(Guid resumeId)
         {
             await resumeRepository.DeleteResumeAsync(resumeId);
+            await kafkaProducer.ProduceAsync("resume-deleted-topic", new Message<Null, string>
+            {
+                Value = JsonSerializer.Serialize(new {resumeId})
+            });
             return Ok();
         }
 
