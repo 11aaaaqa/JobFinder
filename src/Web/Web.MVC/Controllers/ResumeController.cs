@@ -66,7 +66,7 @@ namespace Web.MVC.Controllers
         [Authorize]
         [HttpPost]
         [Route("employee/profile/resumes/create")]
-        public async Task<IActionResult> AddResume(AddResumeDto model)
+        public async Task<IActionResult> AddResume(AddResumeDto model, string? returnUrl)
         {
             if (model.Educations is not null && model.Educations.Count == 0)
                 model.Educations = null;
@@ -90,6 +90,9 @@ namespace Web.MVC.Controllers
 
                 var response = await httpClient.PostAsync($"{url}/api/Resume/AddResume", jsonContent);
                 response.EnsureSuccessStatusCode();
+
+                if (returnUrl is not null)
+                    return LocalRedirect(returnUrl);
 
                 return RedirectToAction("GetResume", new { resumeId = model.Id});
             }
