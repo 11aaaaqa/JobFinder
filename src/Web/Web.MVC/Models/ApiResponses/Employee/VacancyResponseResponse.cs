@@ -11,6 +11,7 @@
         public Guid RespondedEmployeeResumeId { get; set; }
         public string EmployeeName { get; set; }
         public string EmployeeSurname { get; set; }
+        public uint? EmployeeDesiredSalary { get; set; }
         public DateOnly? EmployeeDateOfBirth { get; set; }
         public TimeSpan EmployeeWorkingExperience { get; set; }
         public string? EmployeeCity { get; set; }
