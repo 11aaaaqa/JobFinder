@@ -114,20 +114,28 @@
                             <input class="add-to-favorites-action-btn" type="submit" value="+ В избранное"/>
                         </form>
                     }
-                    
-                    @if (ViewBag.HasEmployeeRespondedToVacancy is not null)
+
+                    @if (ViewBag.IsEmployerVacancyOwner is not null && ViewBag.IsEmployerVacancyOwner == true)
                     {
-                        @if (ViewBag.HasEmployeeRespondedToVacancy == true)
-                        {
-                            <button>✓ Вы откликнулись на вакансию</button>
-                        }
-                        else
-                        {
-                            <br/>
-                            <a asp-controller="Vacancy" asp-action="ChooseResumeToRespondToVacancy" asp-route-vacancyId="@Model.Id">Откликнуться</a>
-                        }
+                        <a class="vacancy-action-btn" asp-controller="Company" asp-action="GetVacancyResponsesByVacancyId" asp-route-vacancyId="@Model.Id"
+                           asp-route-timeSort="Descending">
+                            Отклики на вакансию
+                        </a>
                     }
                 </div>
+                @if (ViewBag.HasEmployeeRespondedToVacancy is not null)
+                {
+                    @if (ViewBag.HasEmployeeRespondedToVacancy == true)
+                    {
+                        <button>✓ Вы откликнулись на вакансию</button>
+                    }
+                    else
+                    {
+                        <div>
+                            <a asp-controller="Vacancy" asp-action="ChooseResumeToRespondToVacancy" asp-route-vacancyId="@Model.Id">Откликнуться</a>
+                        </div>
+                    }
+                }
             }
             @* кнопки откликнуться и написать сообщение *@
         </div>
