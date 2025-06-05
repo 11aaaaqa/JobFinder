@@ -2,6 +2,7 @@
 using System.Text;
 using System.Text.Json;
 using System.Web;
+using GeneralLibrary.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web.MVC.Constants.Permissions_constants;
@@ -9,6 +10,7 @@ using Web.MVC.DTOs.Company;
 using Web.MVC.DTOs.Vacancy;
 using Web.MVC.Filters.Authorization_filters.Company_filters;
 using Web.MVC.Models.ApiResponses.Company;
+using Web.MVC.Models.ApiResponses.Employee;
 using Web.MVC.Models.ApiResponses.Employer;
 using Web.MVC.Models.ApiResponses.Vacancy;
 
@@ -647,6 +649,34 @@ namespace Web.MVC.Controllers
             ViewBag.DoesNextPageExist = doesNextPageExist;
 
             return View(vacancies);
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("employer/company/my-company/vacancy-responses")]
+        public async Task<IActionResult> GetCompanyVacancyResponses(DateTimeOrderByType timeSort, int index = 1)
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+
+            var employerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
+            employerResponse.EnsureSuccessStatusCode();
+            var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
+
+            var vacancyResponsesResponse = await httpClient.GetAsync(
+                $"{url}/api/VacancyResponse/GetVacancyResponsesByCompanyId/{employer.CompanyId}?orderByTimeType={timeSort}&pageNumber={index}");
+            vacancyResponsesResponse.EnsureSuccessStatusCode();
+            var vacancyResponses = await vacancyResponsesResponse.Content.ReadFromJsonAsync<List<VacancyResponseResponse>>();
+
+            var doesNextPageExistResponse = await httpClient.GetAsync(
+                $"{url}/api/VacancyResponse/DoesNextVacancyResponsesByCompanyIdPageExist/{employer.CompanyId}?orderByTimeType={timeSort}&currentPageNumber={index}");
+            doesNextPageExistResponse.EnsureSuccessStatusCode();
+            bool doesNextPageExist = await doesNextPageExistResponse.Content.ReadFromJsonAsync<bool>();
+
+            ViewBag.DoesNextPageExist = doesNextPageExist;
+            ViewBag.CurrentPageNumber = index;
+            ViewBag.TimeSort = timeSort;
+
+            return View(vacancyResponses);
         }
     }
 }
