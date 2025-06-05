@@ -169,6 +169,8 @@ namespace Web.MVC.Controllers
                 if(vacancy.CompanyId != employer.CompanyId)
                     return View(vacancy);
 
+                ViewBag.IsEmployerVacancyOwner = true;
+
                 var companyResponse = await httpClient.GetAsync($"{url}/api/Company/GetCompanyByCompanyId/{employer.CompanyId}");
                 companyResponse.EnsureSuccessStatusCode();
 
