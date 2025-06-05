@@ -2,6 +2,7 @@
 using Moq;
 using ResumeMicroservice.Api.Controllers;
 using ResumeMicroservice.Api.DTOs;
+using ResumeMicroservice.Api.Kafka.Producing;
 using ResumeMicroservice.Api.Models;
 using ResumeMicroservice.Api.Services.Pagination;
 using ResumeMicroservice.Api.Services.Repositories;
@@ -17,7 +18,7 @@ namespace ResumeMicroservice.UnitTests
             var mock = new Mock<IResumeRepository>();
             mock.Setup(x => x.GetResumeByIdAsync(resumeId))
                 .ReturnsAsync(new Resume { Id = resumeId });
-            var controller = new ResumeController(mock.Object, new Mock<ICheckForNextPageExistingService>().Object);
+            var controller = new ResumeController(mock.Object, new Mock<ICheckForNextPageExistingService>().Object, new Mock<IKafkaProducer>().Object);
 
             var result = await controller.GetResumeByIdAsync(resumeId);
 
@@ -35,7 +36,7 @@ namespace ResumeMicroservice.UnitTests
             var mock = new Mock<IResumeRepository>();
             mock.Setup(x => x.GetResumeByIdAsync(resumeId))
                 .ReturnsAsync((Resume?) null);
-            var controller = new ResumeController(mock.Object, new Mock<ICheckForNextPageExistingService>().Object);
+            var controller = new ResumeController(mock.Object, new Mock<ICheckForNextPageExistingService>().Object, new Mock<IKafkaProducer>().Object);
 
             var result = await controller.GetResumeByIdAsync(resumeId);
 
@@ -54,7 +55,7 @@ namespace ResumeMicroservice.UnitTests
             };
             mock.Setup(x => x.GetAllResumesAsync(null, pageNumber))
                 .ReturnsAsync(resumesList);
-            var controller = new ResumeController(mock.Object, new Mock<ICheckForNextPageExistingService>().Object);
+            var controller = new ResumeController(mock.Object, new Mock<ICheckForNextPageExistingService>().Object, new Mock<IKafkaProducer>().Object);
 
             var result = await controller.GetAllResumesAsync(null, pageNumber);
 
@@ -76,7 +77,7 @@ namespace ResumeMicroservice.UnitTests
             };
             mock.Setup(x => x.GetResumesWithActiveStatusAsync(null, pageNumber))
                 .ReturnsAsync(resumesList);
-            var controller = new ResumeController(mock.Object, new Mock<ICheckForNextPageExistingService>().Object);
+            var controller = new ResumeController(mock.Object, new Mock<ICheckForNextPageExistingService>().Object, new Mock<IKafkaProducer>().Object);
 
             var result = await controller.GetResumesWithActiveStatusAsync(null, pageNumber);
 
@@ -99,7 +100,7 @@ namespace ResumeMicroservice.UnitTests
             var mock = new Mock<IResumeRepository>();
             mock.Setup(x => x.GetFilteredResumesAsync(model, null, pageNumber))
                 .ReturnsAsync(resumesList);
-            var controller = new ResumeController(mock.Object, new Mock<ICheckForNextPageExistingService>().Object);
+            var controller = new ResumeController(mock.Object, new Mock<ICheckForNextPageExistingService>().Object, new Mock<IKafkaProducer>().Object);
 
             var result = await controller.GetFilteredResumesAsync(model, null, pageNumber);
 
@@ -120,7 +121,7 @@ namespace ResumeMicroservice.UnitTests
             };
             var mock = new Mock<IResumeRepository>();
             mock.Setup(x => x.GetResumesByEmployeeIdAsync(employeeId)).ReturnsAsync(resumesList);
-            var controller = new ResumeController(mock.Object, new Mock<ICheckForNextPageExistingService>().Object);
+            var controller = new ResumeController(mock.Object, new Mock<ICheckForNextPageExistingService>().Object, new Mock<IKafkaProducer>().Object);
 
             var result = await controller.GetResumesByEmployeeIdAsync(employeeId);
 
@@ -137,7 +138,7 @@ namespace ResumeMicroservice.UnitTests
             Guid resumeId = Guid.NewGuid();
             var mock = new Mock<IResumeRepository>();
             mock.Setup(x => x.DeleteResumeAsync(resumeId));
-            var controller = new ResumeController(mock.Object, new Mock<ICheckForNextPageExistingService>().Object);
+            var controller = new ResumeController(mock.Object, new Mock<ICheckForNextPageExistingService>().Object, new Mock<IKafkaProducer>().Object);
 
             var result = await controller.DeleteResumeAsync(resumeId);
 
@@ -149,7 +150,7 @@ namespace ResumeMicroservice.UnitTests
         public async Task AddResumeAsync_ReturnsOk()
         {
             var mock = new Mock<IResumeRepository>();
-            var controller = new ResumeController(mock.Object, new Mock<ICheckForNextPageExistingService>().Object);
+            var controller = new ResumeController(mock.Object, new Mock<ICheckForNextPageExistingService>().Object, new Mock<IKafkaProducer>().Object);
 
             var result = await controller.AddResumeAsync(new AddResumeDto
             {
@@ -165,7 +166,7 @@ namespace ResumeMicroservice.UnitTests
         public async Task UpdateResumeAsync_ReturnsOk()
         {
             var mock = new Mock<IResumeRepository>();
-            var controller = new ResumeController(mock.Object, new Mock<ICheckForNextPageExistingService>().Object);
+            var controller = new ResumeController(mock.Object, new Mock<ICheckForNextPageExistingService>().Object, new Mock<IKafkaProducer>().Object);
 
             var result = await controller.UpdateResumeAsync(new UpdateResumeControllerDto()
             {

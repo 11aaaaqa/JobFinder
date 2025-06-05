@@ -20,7 +20,7 @@ namespace VacancyMicroservice.Api.Controllers
         {
             var vacancy = await vacancyRepository.GetVacancyByIdAsync(vacancyId);
             if (vacancy is null)
-                return BadRequest();
+                return NotFound();
             return Ok(vacancy);
         }
 
