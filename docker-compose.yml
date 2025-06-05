@@ -147,6 +147,35 @@ services:
       kafka:
         condition: service_started
 
+  response-microservice-api:
+    image: ${DOCKER_REGISTRY-}responsemicroservice-api
+    build:
+      context: .
+      dockerfile: src/Microservices/Response/ResponseMicroservice.Api/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - 21731:8080
+    depends_on:
+      postgres-response:
+        condition: service_started
+      gateway-api:
+        condition: service_started
+      kafka:
+        condition: service_started
+
+  postgres-response:
+    container_name: postgres-response
+    image: postgres:latest
+    expose:
+      - 5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: JobFinderResponseMicroservice
+    volumes: 
+      - postgres-response-data:/var/lib/postgresql/data
+
   postgres-bookmark:
     container_name: postgres-bookmark
     image: postgres:latest
@@ -274,3 +303,4 @@ volumes:
   postgres-vacancy-data: {}
   postgres-resume-data: {}
   postgres-bookmark-data: {}
+  postgres-response-data: {}

@@ -9,6 +9,7 @@
         <a asp-controller="Company" asp-action="GetMyCompanyColleagues">Коллеги</a>
         <a asp-controller="Company" asp-action="GetEmployersRequestedJoiningMyCompany">Запросы на присоединение</a>
         <a asp-controller="Company" asp-action="GetMyCompanyVacancies">Вакансии компании</a>
+        <a asp-controller="Company" asp-action="GetCompanyVacancyResponses" asp-route-timeSort="Descending">Отклики</a>
         <form method="post" asp-controller="Company" asp-action="LeaveFromCompany" asp-route-returnUrl="@returnUrl">
             <input type="submit" value="Выйти из компании" />
         </form>
