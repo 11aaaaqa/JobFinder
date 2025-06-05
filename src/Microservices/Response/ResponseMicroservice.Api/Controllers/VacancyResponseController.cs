@@ -46,8 +46,8 @@ namespace ResponseMicroservice.Api.Controllers
         [HttpGet]
         [Route("DoesNextCompanyVacancyResponsesByVacancyIdPageExist/{vacancyId}")]
         public async Task<IActionResult> DoesNextCompanyVacancyResponsesByVacancyIdPageExistAsync(Guid vacancyId,
-            DateTimeOrderByType orderTimeType, int currentPageNumber)
-            => Ok(await paginationService.DoesNextCompanyVacancyResponsesByVacancyIdPageExistAsync(vacancyId, orderTimeType, currentPageNumber));
+            DateTimeOrderByType orderByTimeType, int currentPageNumber)
+            => Ok(await paginationService.DoesNextCompanyVacancyResponsesByVacancyIdPageExistAsync(vacancyId, orderByTimeType, currentPageNumber));
 
         [HttpPost]
         [Route("AddVacancyResponse")]
