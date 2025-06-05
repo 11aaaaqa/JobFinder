@@ -329,6 +329,7 @@ namespace Web.MVC.Controllers
                 RespondedEmployeeResumeId = resumeId,
                 EmployeeName = employee.Name,
                 EmployeeSurname = employee.Surname,
+                EmployeeDesiredSalary = resume.DesiredSalary,
                 EmployeeDateOfBirth = resume.DateOfBirth,
                 EmployeeWorkingExperience = resume.WorkingExperience,
                 EmployeeCity = resume.City,
