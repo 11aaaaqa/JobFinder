@@ -1,0 +1,96 @@
+﻿.get-vacancy-link {
+    text-decoration: none;
+    color: black;
+}
+
+.get-vacancy-link:hover {
+    color: black;
+}
+
+.vacancy-block {
+    border: 1px solid #ccc;
+    border-radius: 13px;
+    padding: 13px;
+    margin: 5px 0;
+}
+
+.vacancy-block p {
+    margin: 0;
+}
+
+.vacancy-info {
+    display: flex;
+    align-content: center;
+    flex-wrap: wrap;
+}
+
+.vacancy-info p {
+    margin-right: 10px;
+}
+
+.salary-p {
+    font-size: 18px;
+}
+
+.vacancy-info-internal {
+    display: flex;
+}
+
+.experience-p {
+    background-color: rgba(224, 247, 250, 0.45);
+    color: rgba(0,0,0, 0.7);
+    border-radius: 8px;
+    padding: 2px 5px;
+}
+
+.response-status-accepted {
+    padding: 8px 15px;
+    border-radius: 6px;
+    background-color: rgba(0,255,0, 0.45);
+}
+
+.response-status-rejected {
+    padding: 8px 15px;
+    border-radius: 6px;
+    background-color: rgba(255,0,0, 0.45);
+}
+
+.response-status-waiting {
+    padding: 8px 15px;
+    border-radius: 6px;
+    background-color: rgba(255,170,0, 0.5);
+}
+
+.time-sort {
+    text-decoration: none;
+    padding: 8px 40px;
+    color: white;
+    border-radius: 10px;
+    background-color: deepskyblue;
+    transition: background-color 0.3s;
+}
+
+.time-sort:hover {
+    background-color: dodgerblue;
+    cursor: pointer;
+}
+
+.time-sort-active {
+    text-decoration: none;
+    padding: 8px 40px;
+    color: white;
+    border-radius: 10px;
+    background-color: dodgerblue;
+}
+
+.time-sort-active:hover {
+    cursor: pointer;
+}
+
+.mr {
+    margin-right: 1px;
+}
+
+.vacancy-responses-block {
+    margin-top: 8px;
+}
