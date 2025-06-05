@@ -678,5 +678,41 @@ namespace Web.MVC.Controllers
 
             return View(vacancyResponses);
         }
+
+        [Authorize]
+        [HttpGet]
+        [Route("vacancy/{vacancyId}/responses")]
+        public async Task<IActionResult> GetVacancyResponsesByVacancyId(Guid vacancyId, DateTimeOrderByType timeSort, int index = 1)
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+
+            var employerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
+            employerResponse.EnsureSuccessStatusCode();
+            var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
+
+            var vacancyResponse = await httpClient.GetAsync($"{url}/api/Vacancy/GetVacancyById/{vacancyId}");
+            vacancyResponse.EnsureSuccessStatusCode();
+            var vacancy = await vacancyResponse.Content.ReadFromJsonAsync<VacancyResponse>();
+
+            if (vacancy.CompanyId != employer.CompanyId)
+                return RedirectToAction("AccessForbidden", "Information");
+
+            var vacancyResponsesResponse = await httpClient.GetAsync(
+                $"{url}/api/VacancyResponse/GetCompanyVacancyResponsesByVacancyId/{vacancyId}?orderByTimeType={timeSort}&pageNumber={index}");
+            vacancyResponsesResponse.EnsureSuccessStatusCode();
+            var vacancyResponses = await vacancyResponsesResponse.Content.ReadFromJsonAsync<List<VacancyResponseResponse>>();
+
+            var doesNextPageExistResponse = await httpClient.GetAsync(
+                $"{url}/api/VacancyResponse/DoesNextCompanyVacancyResponsesByVacancyIdPageExist/{vacancyId}?orderByTimeType={timeSort}&currentPageNumber={index}");
+            doesNextPageExistResponse.EnsureSuccessStatusCode();
+            bool doesNextPageExist = await doesNextPageExistResponse.Content.ReadFromJsonAsync<bool>();
+
+            ViewBag.DoesNextPageExist = doesNextPageExist;
+            ViewBag.CurrentPageNumber = index;
+            ViewBag.TimeSort = timeSort;
+            ViewBag.VacancyId = vacancyId;
+
+            return View(vacancyResponses);
+        }
     }
 }
