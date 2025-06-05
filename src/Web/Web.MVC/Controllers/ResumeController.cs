@@ -112,10 +112,11 @@ namespace Web.MVC.Controllers
             var resume = await resumeResponse.Content.ReadFromJsonAsync<ResumeResponse>();
 
             var employeeResponse = await httpClient.GetAsync($"{url}/api/Employee/GetEmployeeByEmail?email={User.Identity.Name}");
-            employeeResponse.EnsureSuccessStatusCode();
-            var employee = await employeeResponse.Content.ReadFromJsonAsync<EmployeeResponse>();
-
-            ViewBag.IsCurrentUserOwner = resume.EmployeeId == employee.Id;
+            if (employeeResponse.IsSuccessStatusCode)
+            {
+                var employee = await employeeResponse.Content.ReadFromJsonAsync<EmployeeResponse>();
+                ViewBag.IsCurrentUserOwner = resume.EmployeeId == employee.Id;
+            }
 
             if (resume.EmployeeExperience is not null)
             {
