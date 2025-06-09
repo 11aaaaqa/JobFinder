@@ -28,6 +28,19 @@
                 break;
         }
 
+        @if (ViewBag.VacancyResponseValid is not null && ViewBag.VacancyResponseValid == true)
+        {
+            <div class="vacancy-response-actions-block mt-2">
+                <form method="post" asp-controller="Company" asp-action="AcceptVacancyResponse" asp-route-vacancyResponseId="@ViewBag.VacancyResponseId">
+                    <input class="resume-action-btn" type="submit" value="Принять отклик" />
+                </form>
+                <form method="post" asp-controller="Company" asp-action="RejectVacancyResponse" asp-route-returnUrl="@ViewBag.ReturnUrl"
+                      asp-route-vacancyResponseId="@ViewBag.VacancyResponseId">
+                    <input class="resume-action-btn" type="submit" value="Отклонить отклик" />
+                </form>
+            </div>
+        }
+
         @if (ViewBag.IsCurrentUserOwner == true)
         {
             <div class="resume-actions-block">

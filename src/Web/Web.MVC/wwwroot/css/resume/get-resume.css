@@ -83,3 +83,8 @@ p {
     background-color: dodgerblue;
     cursor: pointer;
 }
+
+.vacancy-response-actions-block {
+    display: flex;
+    flex-wrap: wrap;
+}
