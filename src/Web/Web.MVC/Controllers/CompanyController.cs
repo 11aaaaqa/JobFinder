@@ -2,6 +2,7 @@
 using System.Text;
 using System.Text.Json;
 using System.Web;
+using GeneralLibrary.Constants;
 using GeneralLibrary.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -713,6 +714,53 @@ namespace Web.MVC.Controllers
             ViewBag.VacancyId = vacancyId;
 
             return View(vacancyResponses);
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("vacancy-responses/{vacancyResponseId}/accept")]
+        public async Task<IActionResult> AcceptVacancyResponse(Guid vacancyResponseId)
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+
+            var vacancyResponseResponse = await httpClient.GetAsync($"{url}/api/VacancyResponse/GetVacancyResponseById/{vacancyResponseId}");
+            vacancyResponseResponse.EnsureSuccessStatusCode();
+            var vacancyResponse = await vacancyResponseResponse.Content.ReadFromJsonAsync<VacancyResponseResponse>();
+
+            var employerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
+            employerResponse.EnsureSuccessStatusCode();
+            var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
+
+            if (employer.CompanyId != vacancyResponse.VacancyCompanyId || vacancyResponse.ResponseStatus != VacancyResponseStatusConstants.Waiting)
+                return StatusCode((int)HttpStatusCode.Forbidden);
+
+            var acceptVacancyResponseResponse = await httpClient.GetAsync($"{url}/api/VacancyResponse/AcceptVacancyResponse/{vacancyResponseId}");
+            acceptVacancyResponseResponse.EnsureSuccessStatusCode();
+            return RedirectToAction("GetResume","Resume", new { resumeId = vacancyResponse.RespondedEmployeeResumeId});
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("vacancy-response/{vacancyResponseId}/reject")]
+        public async Task<IActionResult> RejectVacancyResponse(Guid vacancyResponseId, string returnUrl)
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+
+            var vacancyResponseResponse = await httpClient.GetAsync($"{url}/api/VacancyResponse/GetVacancyResponseById/{vacancyResponseId}");
+            vacancyResponseResponse.EnsureSuccessStatusCode();
+            var vacancyResponse = await vacancyResponseResponse.Content.ReadFromJsonAsync<VacancyResponseResponse>();
+
+            var employerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
+            employerResponse.EnsureSuccessStatusCode();
+            var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
+
+            if (employer.CompanyId != vacancyResponse.VacancyCompanyId || vacancyResponse.ResponseStatus != VacancyResponseStatusConstants.Waiting)
+                return StatusCode((int)HttpStatusCode.Forbidden);
+
+            var rejectVacancyResponseResponse = await httpClient.GetAsync($"{url}/api/VacancyResponse/RejectVacancyResponse/{vacancyResponseId}");
+            rejectVacancyResponseResponse.EnsureSuccessStatusCode();
+
+            return LocalRedirect(returnUrl);
         }
     }
 }
