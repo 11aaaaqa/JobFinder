@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Net;
+using System.Text;
 using System.Text.Json;
 using System.Web;
 using Microsoft.AspNetCore.Authorization;
@@ -190,7 +191,7 @@ namespace Web.MVC.Controllers
             var resume = await resumeResponse.Content.ReadFromJsonAsync<ResumeResponse>();
 
             if (employee.Id != resume.EmployeeId)
-                return RedirectToAction("AccessForbidden", "Information");
+                return StatusCode((int)HttpStatusCode.Forbidden);
 
             var deleteResumeResponse = await httpClient.DeleteAsync($"{url}/api/Resume/DeleteResume/{resumeId}");
             deleteResumeResponse.EnsureSuccessStatusCode();
@@ -243,7 +244,7 @@ namespace Web.MVC.Controllers
                 var employee = await employeeResponse.Content.ReadFromJsonAsync<EmployeeResponse>();
 
                 if (employee.Id != model.EmployeeId)
-                    return RedirectToAction("AccessForbidden", "Information");
+                    return StatusCode((int)HttpStatusCode.Forbidden);
 
                 using StringContent jsonContent = new(JsonSerializer.Serialize(new
                 {
