@@ -103,7 +103,7 @@ namespace Web.MVC.Controllers
 
         [HttpGet]
         [Route("resume/{resumeId}")]
-        public async Task<IActionResult> GetResume(Guid resumeId)
+        public async Task<IActionResult> GetResume(Guid resumeId, Guid? vacancyResponseId, string? returnUrl)
         {
             using HttpClient httpClient = httpClientFactory.CreateClient();
 
@@ -157,6 +157,17 @@ namespace Web.MVC.Controllers
                     }), Encoding.UTF8, "application/json");
                     var updateResumeResponse = await httpClient.PutAsync($"{url}/api/Resume/UpdateResume", jsonContent);
                     updateResumeResponse.EnsureSuccessStatusCode();
+                }
+            }
+
+            if (vacancyResponseId is not null)
+            {
+                var vacancyResponseResponse = await httpClient.GetAsync($"{url}/api/VacancyResponse/GetVacancyResponseById/{vacancyResponseId}");
+                if (vacancyResponseResponse.IsSuccessStatusCode && returnUrl is not null)
+                {
+                    ViewBag.VacancyResponseValid = true;
+                    ViewBag.ReturnUrl = returnUrl;
+                    ViewBag.VacancyResponseId = vacancyResponseId;
                 }
             }
 
