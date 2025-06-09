@@ -15,6 +15,17 @@ namespace ResponseMicroservice.Api.Controllers
         ICheckForNextPageExistingService paginationService, IInterviewInvitationService interviewInvitationService) : ControllerBase
     {
         [HttpGet]
+        [Route("GetVacancyResponseById/{vacancyResponseId}")]
+        public async Task<IActionResult> GetVacancyResponseById(Guid vacancyResponseId)
+        {
+            var vacancyResponse = await vacancyResponseService.GetVacancyResponseByIdAsync(vacancyResponseId);
+            if (vacancyResponse is null)
+                return NotFound();
+
+            return Ok(vacancyResponse);
+        }
+
+        [HttpGet]
         [Route("GetVacancyResponsesByEmployeeId/{employeeId}")]
         public async Task<IActionResult> GetVacancyResponsesByEmployeeIdAsync(Guid employeeId, string? searchingQuery,
             DateTimeOrderByType orderByTimeType, int pageNumber)
