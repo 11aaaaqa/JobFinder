@@ -1,5 +1,7 @@
 ﻿using GeneralLibrary.Enums;
 using Microsoft.AspNetCore.Mvc;
+using ResponseMicroservice.Api.DTOs;
+using ResponseMicroservice.Api.Models;
 using ResponseMicroservice.Api.Services.Interview_invitation_services;
 using ResponseMicroservice.Api.Services.Pagination;
 
@@ -43,5 +45,27 @@ namespace ResponseMicroservice.Api.Controllers
         public async Task<IActionResult> DoesNextCompanyInterviewInvitationsByVacancyIdPageExistAsync(Guid vacancyId, DateTimeOrderByType orderByTimeType,
             int currentPageNumber)
             => Ok(await paginationService.DoesNextCompanyInterviewInvitationsByVacancyIdPageExistAsync(vacancyId, orderByTimeType, currentPageNumber));
+
+        [HttpPost]
+        [Route("InviteToInterview")]
+        public async Task<IActionResult> AddInterviewInvitationAsync([FromBody]AddInterviewInvitationDto model)
+        {
+            await interviewInvitationService.AddInvitationAsync(new InterviewInvitation
+            {
+                Id = Guid.NewGuid(), InvitationDate = DateTime.UtcNow, EmployeeId = model.EmployeeId,
+                VacancyCity = model.VacancyCity, VacancyId = model.VacancyId, EmployeeDateOfBirth = model.EmployeeDateOfBirth,
+                VacancyPosition = model.VacancyPosition, EmployeeName = model.EmployeeName, EmployeeSurname = model.EmployeeSurname,
+                EmployeeWorkingExperience = model.EmployeeWorkingExperience, VacancySalaryFrom = model.VacancySalaryFrom,
+                VacancyWorkExperience = model.VacancyWorkExperience, EmployeeCity = model.EmployeeCity, VacancySalaryTo = model.VacancySalaryTo,
+                EmployeeDesiredSalary = model.EmployeeDesiredSalary, VacancyCompanyName = model.VacancyCompanyName, 
+                EmployeeResumeId = model.EmployeeResumeId, InvitedCompanyId = model.InvitedCompanyId, IsClosed = false
+            });
+            return Ok();
+        }
+
+        [HttpGet]
+        [Route("HasEmployeeInvitedToInterview")]
+        public async Task<IActionResult> HasEmployeeInvitedToInterviewAsync(Guid employeeId, Guid vacancyId)
+            => Ok(await interviewInvitationService.HasEmployeeInvitedToInterviewAsync(employeeId, vacancyId));
     }
 }
