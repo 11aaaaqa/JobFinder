@@ -155,7 +155,7 @@ namespace Web.MVC.Controllers
             using HttpClient httpClient = httpClientFactory.CreateClient();
             var response = await httpClient.GetAsync($"{url}/api/Vacancy/GetVacancyById/{vacancyId}");
             if (response.StatusCode == HttpStatusCode.NotFound)
-                return RedirectToAction("PageNotFound","Information");
+                return StatusCode((int)HttpStatusCode.NotFound);
             response.EnsureSuccessStatusCode();
 
             var vacancy = await response.Content.ReadFromJsonAsync<VacancyResponse>();
