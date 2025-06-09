@@ -22,5 +22,7 @@
         public string? VacancyWorkExperience { get; set; }
         public string VacancyCity { get; set; }
         public string VacancyCompanyName { get; set; }
+
+        public bool IsClosed { get; set; }
     }
 }
