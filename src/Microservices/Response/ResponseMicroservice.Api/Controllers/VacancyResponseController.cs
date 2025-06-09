@@ -107,7 +107,8 @@ namespace ResponseMicroservice.Api.Controllers
                 InvitationDate = DateTime.UtcNow, InvitedCompanyId = vacancyResponse.VacancyCompanyId,
                 VacancyPosition = vacancyResponse.VacancyPosition, VacancySalaryFrom = vacancyResponse.VacancySalaryFrom,
                 VacancySalaryTo = vacancyResponse.VacancySalaryTo, VacancyWorkExperience = vacancyResponse.VacancyWorkExperience,
-                VacancyCompanyName = vacancyResponse.VacancyCompanyName, EmployeeDesiredSalary = vacancyResponse.EmployeeDesiredSalary
+                VacancyCompanyName = vacancyResponse.VacancyCompanyName, EmployeeDesiredSalary = vacancyResponse.EmployeeDesiredSalary,
+                IsClosed = false
             });
             await vacancyResponseService.SetVacancyResponseStatusAsync(vacancyResponseId, VacancyResponseStatusConstants.Accepted);
             return Ok();
