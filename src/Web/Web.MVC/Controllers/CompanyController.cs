@@ -11,8 +11,8 @@ using Web.MVC.DTOs.Company;
 using Web.MVC.DTOs.Vacancy;
 using Web.MVC.Filters.Authorization_filters.Company_filters;
 using Web.MVC.Models.ApiResponses.Company;
-using Web.MVC.Models.ApiResponses.Employee;
 using Web.MVC.Models.ApiResponses.Employer;
+using Web.MVC.Models.ApiResponses.Response;
 using Web.MVC.Models.ApiResponses.Vacancy;
 
 namespace Web.MVC.Controllers

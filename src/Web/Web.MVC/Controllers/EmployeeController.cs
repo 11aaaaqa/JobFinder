@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Web.MVC.DTOs.Employee;
 using Web.MVC.Models.ApiResponses;
 using Web.MVC.Models.ApiResponses.Bookmark;
-using Web.MVC.Models.ApiResponses.Employee;
+using Web.MVC.Models.ApiResponses.Response;
 using Web.MVC.Models.ApiResponses.Vacancy;
 
 namespace Web.MVC.Controllers

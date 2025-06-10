@@ -1,13 +1,14 @@
-﻿namespace Web.MVC.Models.ApiResponses.Employee
+﻿namespace Web.MVC.Models.ApiResponses.Response
 {
-    public class InterviewInvitationResponse
+    public class VacancyResponseResponse
     {
         public Guid Id { get; set; }
-        public Guid InvitedCompanyId { get; set; }
+        public Guid VacancyCompanyId { get; set; }
         public Guid EmployeeId { get; set; }
-        public DateTime InvitationDate { get; set; }
+        public string ResponseStatus { get; set; }
+        public DateTime ResponseDate { get; set; }
 
-        public Guid EmployeeResumeId { get; set; }
+        public Guid RespondedEmployeeResumeId { get; set; }
         public string EmployeeName { get; set; }
         public string EmployeeSurname { get; set; }
         public uint? EmployeeDesiredSalary { get; set; }
