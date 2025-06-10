@@ -92,5 +92,16 @@ namespace ResponseMicroservice.Api.Services.Interview_invitation_services
 
             return false;
         }
+
+        public async Task CloseInterviewAsync(Guid interviewInvitationId)
+        {
+            var interviewInvitation = await context.InterviewInvitations.SingleOrDefaultAsync(x => x.Id == interviewInvitationId);
+
+            if (interviewInvitation is null || interviewInvitation.IsClosed)
+                return;
+
+            interviewInvitation.IsClosed = true;
+            await context.SaveChangesAsync();
+        }
     }
 }
