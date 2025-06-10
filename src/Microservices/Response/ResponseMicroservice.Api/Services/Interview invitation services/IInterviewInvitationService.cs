@@ -12,5 +12,6 @@ namespace ResponseMicroservice.Api.Services.Interview_invitation_services
         Task<List<InterviewInvitation>> GetCompanyInterviewInvitationsByVacancyIdAsync(Guid vacancyId, DateTimeOrderByType orderByTimeType, int pageNumber);
         Task AddInvitationAsync(InterviewInvitation model);
         Task<bool> HasEmployeeInvitedToInterviewAsync(Guid employeeId, Guid vacancyId);
+        Task CloseInterviewAsync(Guid interviewInvitationId);
     }
 }
