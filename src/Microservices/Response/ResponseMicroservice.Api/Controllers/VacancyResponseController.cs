@@ -1,5 +1,6 @@
 ﻿using GeneralLibrary.Constants;
 using GeneralLibrary.Enums;
+using Hangfire;
 using Microsoft.AspNetCore.Mvc;
 using ResponseMicroservice.Api.DTOs;
 using ResponseMicroservice.Api.Models;
@@ -97,12 +98,13 @@ namespace ResponseMicroservice.Api.Controllers
             if (vacancyResponse is null)
                 return BadRequest();
 
+            Guid currentInterviewInvitationId = Guid.NewGuid();
             await interviewInvitationService.AddInvitationAsync(new InterviewInvitation
             {
                 EmployeeCity = vacancyResponse.EmployeeCity, EmployeeDateOfBirth = vacancyResponse.EmployeeDateOfBirth,
                 EmployeeId = vacancyResponse.EmployeeId, EmployeeName = vacancyResponse.EmployeeName,
                 EmployeeResumeId = vacancyResponse.RespondedEmployeeResumeId, EmployeeSurname = vacancyResponse.EmployeeSurname,
-                EmployeeWorkingExperience = vacancyResponse.EmployeeWorkingExperience, Id = Guid.NewGuid(),
+                EmployeeWorkingExperience = vacancyResponse.EmployeeWorkingExperience, Id = currentInterviewInvitationId,
                 VacancyCity = vacancyResponse.VacancyCity, VacancyId = vacancyResponse.VacancyId,
                 InvitationDate = DateTime.UtcNow, InvitedCompanyId = vacancyResponse.VacancyCompanyId,
                 VacancyPosition = vacancyResponse.VacancyPosition, VacancySalaryFrom = vacancyResponse.VacancySalaryFrom,
@@ -111,6 +113,9 @@ namespace ResponseMicroservice.Api.Controllers
                 IsClosed = false
             });
             await vacancyResponseService.SetVacancyResponseStatusAsync(vacancyResponseId, VacancyResponseStatusConstants.Accepted);
+
+            BackgroundJob.Schedule(() => interviewInvitationService.CloseInterviewAsync(currentInterviewInvitationId), TimeSpan.FromDays(50));
+
             return Ok();
         }
     }

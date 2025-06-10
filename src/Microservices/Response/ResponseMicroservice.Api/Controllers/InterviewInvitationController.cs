@@ -1,4 +1,5 @@
 ﻿using GeneralLibrary.Enums;
+using Hangfire;
 using Microsoft.AspNetCore.Mvc;
 using ResponseMicroservice.Api.DTOs;
 using ResponseMicroservice.Api.Models;
@@ -50,9 +51,10 @@ namespace ResponseMicroservice.Api.Controllers
         [Route("InviteToInterview")]
         public async Task<IActionResult> AddInterviewInvitationAsync([FromBody]AddInterviewInvitationDto model)
         {
+            Guid currentInterviewInvitationId = Guid.NewGuid();
             await interviewInvitationService.AddInvitationAsync(new InterviewInvitation
             {
-                Id = Guid.NewGuid(), InvitationDate = DateTime.UtcNow, EmployeeId = model.EmployeeId,
+                Id = currentInterviewInvitationId, InvitationDate = DateTime.UtcNow, EmployeeId = model.EmployeeId,
                 VacancyCity = model.VacancyCity, VacancyId = model.VacancyId, EmployeeDateOfBirth = model.EmployeeDateOfBirth,
                 VacancyPosition = model.VacancyPosition, EmployeeName = model.EmployeeName, EmployeeSurname = model.EmployeeSurname,
                 EmployeeWorkingExperience = model.EmployeeWorkingExperience, VacancySalaryFrom = model.VacancySalaryFrom,
@@ -60,6 +62,9 @@ namespace ResponseMicroservice.Api.Controllers
                 EmployeeDesiredSalary = model.EmployeeDesiredSalary, VacancyCompanyName = model.VacancyCompanyName, 
                 EmployeeResumeId = model.EmployeeResumeId, InvitedCompanyId = model.InvitedCompanyId, IsClosed = false
             });
+
+            BackgroundJob.Schedule(() => interviewInvitationService.CloseInterviewAsync(currentInterviewInvitationId), TimeSpan.FromDays(50));
+
             return Ok();
         }
 
