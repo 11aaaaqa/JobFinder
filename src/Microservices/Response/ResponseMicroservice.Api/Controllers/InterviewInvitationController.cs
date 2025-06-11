@@ -11,7 +11,7 @@ namespace ResponseMicroservice.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     public class InterviewInvitationController(IInterviewInvitationService interviewInvitationService,
-        ICheckForNextPageExistingService paginationService) : ControllerBase
+        ICheckForNextPageExistingService paginationService, IBackgroundJobClient backgroundJob) : ControllerBase
     {
         [HttpGet]
         [Route("GetInterviewInvitationsByCompanyId/{companyId}")]
@@ -65,7 +65,7 @@ namespace ResponseMicroservice.Api.Controllers
                 EmployeeResumeId = model.EmployeeResumeId, InvitedCompanyId = model.InvitedCompanyId, IsClosed = false
             });
 
-            BackgroundJob.Schedule(() => interviewInvitationService.CloseInterviewAsync(currentInterviewInvitationId), TimeSpan.FromDays(50));
+            backgroundJob.Schedule(() => interviewInvitationService.CloseInterviewAsync(currentInterviewInvitationId), TimeSpan.FromDays(50));
 
             return Ok();
         }
