@@ -11,10 +11,12 @@ namespace ResponseMicroservice.Api.Services.Interview_invitation_services
         public async Task<InterviewInvitation?> GetInterviewInvitationByIdAsync(Guid interviewInvitationId)
             => await context.InterviewInvitations.SingleOrDefaultAsync(x => x.Id == interviewInvitationId);
 
-        public async Task<List<InterviewInvitation>> GetInterviewInvitationsByCompanyIdAsync(Guid companyId, DateTimeOrderByType orderByTimeType, int pageNumber)
+        public async Task<List<InterviewInvitation>> GetInterviewInvitationsByCompanyIdAsync(Guid companyId, bool closedInterviews, DateTimeOrderByType orderByTimeType, int pageNumber)
         {
-            var interviewInvitations =
-                context.InterviewInvitations.Where(x => x.InvitedCompanyId == companyId).AsQueryable();
+            var interviewInvitations = context.InterviewInvitations
+                .Where(x => x.InvitedCompanyId == companyId)
+                .Where(x => x.IsClosed == closedInterviews)
+                .AsQueryable();
 
             switch (orderByTimeType)
             {
@@ -53,11 +55,13 @@ namespace ResponseMicroservice.Api.Services.Interview_invitation_services
                 .Take(PaginationConstants.InterviewInvitationPageSize).ToListAsync();
         }
 
-        public async Task<List<InterviewInvitation>> GetCompanyInterviewInvitationsByVacancyIdAsync(Guid vacancyId, DateTimeOrderByType orderByTimeType,
-            int pageNumber)
+        public async Task<List<InterviewInvitation>> GetCompanyInterviewInvitationsByVacancyIdAsync(Guid vacancyId, bool closedInterviews,
+            DateTimeOrderByType orderByTimeType, int pageNumber)
         {
-            var interviewInvitations =
-                context.InterviewInvitations.Where(x => x.VacancyId == vacancyId).AsQueryable();
+            var interviewInvitations = context.InterviewInvitations
+                .Where(x => x.VacancyId == vacancyId)
+                .Where(x => x.IsClosed == closedInterviews)
+                .AsQueryable();
 
             switch (orderByTimeType)
             {
