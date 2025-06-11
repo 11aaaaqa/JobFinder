@@ -63,11 +63,13 @@ namespace ResponseMicroservice.Api.Services.Pagination
             return await vacancyResponses.Skip(currentPageNumber * PaginationConstants.VacancyResponsePageSize).CountAsync() > 0;
         }
 
-        public async Task<bool> DoesNextInterviewInvitationsByCompanyIdPageExistAsync(Guid companyId, DateTimeOrderByType orderByTimeType,
+        public async Task<bool> DoesNextInterviewInvitationsByCompanyIdPageExistAsync(Guid companyId, bool closedInterviews, DateTimeOrderByType orderByTimeType,
             int currentPageNumber)
         {
-            var interviewInvitations =
-                context.InterviewInvitations.Where(x => x.InvitedCompanyId == companyId).AsQueryable();
+            var interviewInvitations = context.InterviewInvitations
+                .Where(x => x.InvitedCompanyId == companyId)
+                .Where(x => x.IsClosed == closedInterviews)
+                .AsQueryable();
 
             switch (orderByTimeType)
             {
@@ -104,11 +106,13 @@ namespace ResponseMicroservice.Api.Services.Pagination
             return await interviewInvitations.Skip(currentPageNumber * PaginationConstants.InterviewInvitationPageSize).CountAsync() > 0;
         }
 
-        public async Task<bool> DoesNextCompanyInterviewInvitationsByVacancyIdPageExistAsync(Guid vacancyId, DateTimeOrderByType orderByTimeType,
+        public async Task<bool> DoesNextCompanyInterviewInvitationsByVacancyIdPageExistAsync(Guid vacancyId, bool closedInterviews, DateTimeOrderByType orderByTimeType,
             int currentPageNumber)
         {
-            var interviewInvitations =
-                context.InterviewInvitations.Where(x => x.VacancyId == vacancyId).AsQueryable();
+            var interviewInvitations = context.InterviewInvitations
+                .Where(x => x.VacancyId == vacancyId)
+                .Where(x => x.IsClosed == closedInterviews)
+                .AsQueryable();
 
             switch (orderByTimeType)
             {
