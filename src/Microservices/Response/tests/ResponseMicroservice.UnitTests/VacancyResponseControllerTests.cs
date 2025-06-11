@@ -1,4 +1,5 @@
 ﻿using GeneralLibrary.Constants;
+using Hangfire;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using ResponseMicroservice.Api.Controllers;
@@ -18,7 +19,7 @@ namespace ResponseMicroservice.UnitTests
             var mock = new Mock<IVacancyResponseService>();
             var controller = new VacancyResponseController(mock.Object,
                 new Mock<ICheckForNextPageExistingService>().Object,
-                new Mock<IInterviewInvitationService>().Object);
+                new Mock<IInterviewInvitationService>().Object, new Mock<IBackgroundJobClient>().Object);
 
             var result = await controller.AddVacancyResponseAsync(new AddVacancyResponseDto
             {
@@ -39,7 +40,7 @@ namespace ResponseMicroservice.UnitTests
             mock.Setup(x => x.SetVacancyResponseStatusAsync(vacancyResponseId, VacancyResponseStatusConstants.Rejected));
             var controller = new VacancyResponseController(mock.Object,
                 new Mock<ICheckForNextPageExistingService>().Object,
-                new Mock<IInterviewInvitationService>().Object);
+                new Mock<IInterviewInvitationService>().Object, new Mock<IBackgroundJobClient>().Object);
 
             var result = await controller.RejectVacancyResponseAsync(vacancyResponseId);
 
@@ -55,7 +56,7 @@ namespace ResponseMicroservice.UnitTests
             mock.Setup(x => x.GetVacancyResponseByIdAsync(vacancyResponseId)).ReturnsAsync((VacancyResponse?)null);
             var controller = new VacancyResponseController(mock.Object,
                 new Mock<ICheckForNextPageExistingService>().Object,
-                new Mock<IInterviewInvitationService>().Object);
+                new Mock<IInterviewInvitationService>().Object, new Mock<IBackgroundJobClient>().Object);
 
             var result = await controller.AcceptVacancyResponseAsync(vacancyResponseId);
 
@@ -83,7 +84,7 @@ namespace ResponseMicroservice.UnitTests
                 x.SetVacancyResponseStatusAsync(vacancyResponseId, VacancyResponseStatusConstants.Accepted));
             var controller = new VacancyResponseController(vacancyResponseMock.Object,
                 new Mock<ICheckForNextPageExistingService>().Object,
-                interviewInvitationMock.Object);
+                interviewInvitationMock.Object, new Mock<IBackgroundJobClient>().Object);
 
             var result = await controller.AcceptVacancyResponseAsync(vacancyResponseId);
 
