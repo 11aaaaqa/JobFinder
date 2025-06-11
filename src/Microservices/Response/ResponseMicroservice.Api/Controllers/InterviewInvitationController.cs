@@ -72,5 +72,23 @@ namespace ResponseMicroservice.Api.Controllers
         [Route("HasEmployeeInvitedToInterview")]
         public async Task<IActionResult> HasEmployeeInvitedToInterviewAsync(Guid employeeId, Guid vacancyId)
             => Ok(await interviewInvitationService.HasEmployeeInvitedToInterviewAsync(employeeId, vacancyId));
+
+        [HttpGet]
+        [Route("CloseInterview/{interviewInvitationId}")]
+        public async Task<IActionResult> CloseInterviewAsync(Guid interviewInvitationId)
+        {
+            await interviewInvitationService.CloseInterviewAsync(interviewInvitationId);
+            return Ok();
+        }
+
+        [HttpGet]
+        [Route("GetInterviewInvitation/{interviewInvitationId}")]
+        public async Task<IActionResult> GetInterviewInvitationAsync(Guid interviewInvitationId)
+        {
+            var interviewInvitation = await interviewInvitationService.GetInterviewInvitationByIdAsync(interviewInvitationId);
+            if (interviewInvitation is null)
+                return NotFound();
+            return Ok(interviewInvitation);
+        }
     }
 }
