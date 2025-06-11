@@ -13,7 +13,8 @@ namespace ResponseMicroservice.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     public class VacancyResponseController(IVacancyResponseService vacancyResponseService,
-        ICheckForNextPageExistingService paginationService, IInterviewInvitationService interviewInvitationService) : ControllerBase
+        ICheckForNextPageExistingService paginationService, IInterviewInvitationService interviewInvitationService,
+        IBackgroundJobClient backgroundJob) : ControllerBase
     {
         [HttpGet]
         [Route("GetVacancyResponseById/{vacancyResponseId}")]
@@ -114,7 +115,7 @@ namespace ResponseMicroservice.Api.Controllers
             });
             await vacancyResponseService.SetVacancyResponseStatusAsync(vacancyResponseId, VacancyResponseStatusConstants.Accepted);
 
-            BackgroundJob.Schedule(() => interviewInvitationService.CloseInterviewAsync(currentInterviewInvitationId), TimeSpan.FromDays(50));
+            backgroundJob.Schedule(() => interviewInvitationService.CloseInterviewAsync(currentInterviewInvitationId), TimeSpan.FromDays(50));
 
             return Ok();
         }
