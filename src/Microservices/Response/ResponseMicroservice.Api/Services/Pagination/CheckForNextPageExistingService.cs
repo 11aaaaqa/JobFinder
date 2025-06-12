@@ -63,12 +63,12 @@ namespace ResponseMicroservice.Api.Services.Pagination
             return await vacancyResponses.Skip(currentPageNumber * PaginationConstants.VacancyResponsePageSize).CountAsync() > 0;
         }
 
-        public async Task<bool> DoesNextInterviewInvitationsByCompanyIdPageExistAsync(Guid companyId, bool closedInterviews, DateTimeOrderByType orderByTimeType,
+        public async Task<bool> DoesNextInterviewInvitationsByCompanyIdPageExistAsync(Guid companyId, DateTimeOrderByType orderByTimeType,
             int currentPageNumber)
         {
             var interviewInvitations = context.InterviewInvitations
                 .Where(x => x.InvitedCompanyId == companyId)
-                .Where(x => x.IsClosed == closedInterviews)
+                .Where(x => x.IsClosed == false)
                 .AsQueryable();
 
             switch (orderByTimeType)
@@ -87,8 +87,10 @@ namespace ResponseMicroservice.Api.Services.Pagination
         public async Task<bool> DoesNextInterviewInvitationsByEmployeeIdPageExistAsync(Guid employeeId, string? searchingQuery,
             DateTimeOrderByType orderByTimeType, int currentPageNumber)
         {
-            var interviewInvitations =
-                context.InterviewInvitations.Where(x => x.EmployeeId == employeeId).AsQueryable();
+            var interviewInvitations = context.InterviewInvitations
+                .Where(x => x.EmployeeId == employeeId)
+                .Where(x => x.IsClosed == false)
+                .AsQueryable();
 
             if (searchingQuery is not null)
                 interviewInvitations = interviewInvitations.Where(x => x.VacancyPosition.ToLower().Contains(searchingQuery.ToLower()));
@@ -106,12 +108,12 @@ namespace ResponseMicroservice.Api.Services.Pagination
             return await interviewInvitations.Skip(currentPageNumber * PaginationConstants.InterviewInvitationPageSize).CountAsync() > 0;
         }
 
-        public async Task<bool> DoesNextCompanyInterviewInvitationsByVacancyIdPageExistAsync(Guid vacancyId, bool closedInterviews, DateTimeOrderByType orderByTimeType,
+        public async Task<bool> DoesNextCompanyInterviewInvitationsByVacancyIdPageExistAsync(Guid vacancyId, DateTimeOrderByType orderByTimeType,
             int currentPageNumber)
         {
             var interviewInvitations = context.InterviewInvitations
                 .Where(x => x.VacancyId == vacancyId)
-                .Where(x => x.IsClosed == closedInterviews)
+                .Where(x => x.IsClosed == false)
                 .AsQueryable();
 
             switch (orderByTimeType)
