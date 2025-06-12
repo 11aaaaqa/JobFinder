@@ -15,15 +15,14 @@ namespace ResponseMicroservice.Api.Controllers
     {
         [HttpGet]
         [Route("GetInterviewInvitationsByCompanyId/{companyId}")]
-        public async Task<IActionResult> GetInterviewInvitationsByCompanyIdAsync(Guid companyId, bool closedInterviews, DateTimeOrderByType orderByTimeType,
-            int pageNumber)
-            => Ok(await interviewInvitationService.GetInterviewInvitationsByCompanyIdAsync(companyId, closedInterviews, orderByTimeType, pageNumber));
+        public async Task<IActionResult> GetInterviewInvitationsByCompanyIdAsync(Guid companyId, DateTimeOrderByType orderByTimeType, int pageNumber)
+            => Ok(await interviewInvitationService.GetInterviewInvitationsByCompanyIdAsync(companyId, orderByTimeType, pageNumber));
 
         [HttpGet]
         [Route("DoesNextInterviewInvitationsByCompanyIdPageExist/{companyId}")]
-        public async Task<IActionResult> DoesNextInterviewInvitationsByCompanyIdPageExistAsync(Guid companyId, bool closedInterviews,
-            DateTimeOrderByType orderByTimeType, int currentPageNumber)
-            => Ok(await paginationService.DoesNextInterviewInvitationsByCompanyIdPageExistAsync(companyId, closedInterviews, orderByTimeType, currentPageNumber));
+        public async Task<IActionResult> DoesNextInterviewInvitationsByCompanyIdPageExistAsync(Guid companyId, DateTimeOrderByType orderByTimeType,
+            int currentPageNumber)
+            => Ok(await paginationService.DoesNextInterviewInvitationsByCompanyIdPageExistAsync(companyId, orderByTimeType, currentPageNumber));
 
         [HttpGet]
         [Route("GetInterviewInvitationsByEmployeeId/{employeeId}")]
@@ -39,15 +38,14 @@ namespace ResponseMicroservice.Api.Controllers
 
         [HttpGet]
         [Route("GetCompanyInterviewInvitationsByVacancyId/{vacancyId}")]
-        public async Task<IActionResult> GetCompanyInterviewInvitationsByVacancyIdAsync(Guid vacancyId, bool closedInterviews,
-            DateTimeOrderByType orderByTimeType, int pageNumber)
-            => Ok(await interviewInvitationService.GetCompanyInterviewInvitationsByVacancyIdAsync(vacancyId, closedInterviews, orderByTimeType, pageNumber));
+        public async Task<IActionResult> GetCompanyInterviewInvitationsByVacancyIdAsync(Guid vacancyId, DateTimeOrderByType orderByTimeType, int pageNumber)
+            => Ok(await interviewInvitationService.GetCompanyInterviewInvitationsByVacancyIdAsync(vacancyId, orderByTimeType, pageNumber));
 
         [HttpGet]
         [Route("DoesNextCompanyInterviewInvitationsByVacancyIdPageExist/{vacancyId}")]
-        public async Task<IActionResult> DoesNextCompanyInterviewInvitationsByVacancyIdPageExistAsync(Guid vacancyId, bool closedInterviews,
-            DateTimeOrderByType orderByTimeType, int currentPageNumber)
-            => Ok(await paginationService.DoesNextCompanyInterviewInvitationsByVacancyIdPageExistAsync(vacancyId, closedInterviews, orderByTimeType, currentPageNumber));
+        public async Task<IActionResult> DoesNextCompanyInterviewInvitationsByVacancyIdPageExistAsync(Guid vacancyId, DateTimeOrderByType orderByTimeType,
+            int currentPageNumber)
+            => Ok(await paginationService.DoesNextCompanyInterviewInvitationsByVacancyIdPageExistAsync(vacancyId, orderByTimeType, currentPageNumber));
 
         [HttpPost]
         [Route("InviteToInterview")]
