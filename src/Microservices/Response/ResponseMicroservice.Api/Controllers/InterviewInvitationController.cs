@@ -82,7 +82,7 @@ namespace ResponseMicroservice.Api.Controllers
         }
 
         [HttpGet]
-        [Route("GetInterviewInvitation/{interviewInvitationId}")]
+        [Route("GetInterviewInvitationById/{interviewInvitationId}")]
         public async Task<IActionResult> GetInterviewInvitationAsync(Guid interviewInvitationId)
         {
             var interviewInvitation = await interviewInvitationService.GetInterviewInvitationByIdAsync(interviewInvitationId);
