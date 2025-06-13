@@ -85,18 +85,20 @@ namespace ResponseMicroservice.Api.Services.Interview_invitation_services
             await context.SaveChangesAsync();
         }
 
-        public async Task<bool> HasEmployeeInvitedToInterviewAsync(Guid employeeId, Guid vacancyId)
+        public async Task<InterviewInvitation?> GetInterviewInvitationAsync(Guid employeeId, Guid companyId)
         {
-            var interviewInvitations = await context.InterviewInvitations.Where(x => x.EmployeeId == employeeId)
-                .Where(x => x.VacancyId == vacancyId).ToListAsync();
+            var interviewInvitations = await context.InterviewInvitations
+                .Where(x => x.EmployeeId == employeeId)
+                .Where(x => x.InvitedCompanyId == companyId)
+                .ToListAsync();
 
             foreach (var interviewInvitation in interviewInvitations)
             {
                 if (!interviewInvitation.IsClosed)
-                    return true;
+                    return interviewInvitation;
             }
 
-            return false;
+            return null;
         }
 
         public async Task CloseInterviewAsync(Guid interviewInvitationId)
