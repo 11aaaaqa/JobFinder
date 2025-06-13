@@ -2,6 +2,11 @@
 {
     public class InterviewInvitationResponse
     {
+        public Guid Id { get; set; }
+        public Guid InvitedCompanyId { get; set; }
+        public Guid EmployeeId { get; set; }
+        public DateTime InvitationDate { get; set; }
+
         public Guid EmployeeResumeId { get; set; }
         public string EmployeeName { get; set; }
         public string EmployeeSurname { get; set; }
