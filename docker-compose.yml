@@ -148,6 +148,7 @@ services:
         condition: service_started
 
   response-microservice-api:
+    container_name: response-microservice-api
     image: ${DOCKER_REGISTRY-}responsemicroservice-api
     build:
       context: .
