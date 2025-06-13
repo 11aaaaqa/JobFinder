@@ -24,5 +24,6 @@
         public string VacancyCompanyName { get; set; }
 
         public bool IsClosed { get; set; }
+        public string? HangfireDelayedJobId { get; set; }
     }
 }
