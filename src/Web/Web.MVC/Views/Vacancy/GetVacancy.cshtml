@@ -121,6 +121,9 @@
                            asp-route-timeSort="Descending">
                             Отклики на вакансию
                         </a>
+
+                        <a class="vacancy-action-btn" asp-controller="Company" asp-action="GetInterviewInvitationsByVacancyId" 
+                           asp-route-vacancyId="@Model.Id">Приглашения</a>
                     }
                 </div>
                 @if (ViewBag.HasEmployeeRespondedToVacancy is not null && ViewBag.EmployeeGotInvitedToThisVacancy is not null
@@ -138,7 +141,7 @@
                     }
                 }
             }
-            @* кнопки откликнуться и написать сообщение *@
+            @* кнопка написать сообщение *@
         </div>
 
         <div class="vacancy-company-info">
