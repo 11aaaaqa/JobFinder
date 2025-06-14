@@ -109,6 +109,7 @@ namespace ResponseMicroservice.Api.Services.Interview_invitation_services
                 return;
 
             interviewInvitation.IsClosed = true;
+            interviewInvitation.HangfireDelayedJobId = null;
             await context.SaveChangesAsync();
         }
     }
