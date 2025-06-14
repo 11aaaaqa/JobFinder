@@ -1,5 +1,5 @@
 ﻿@model List<Web.MVC.Models.ApiResponses.Vacancy.VacancyResponse>
-
+<link rel="stylesheet" href="~/css/company/choose-vacancy-to-invite-to-interview.css"/>
 
 <h3>Выберите Вашу вакансию, которую хотите отправить работнику</h3>
 <input type="text" id="searchInput" placeholder="Поиск..."/>
@@ -10,7 +10,9 @@
         {
             <p>
                 <input type="radio" name="vacancyId" value="@vacancy.Id" required />
-                <a asp-controller="Vacancy" asp-action="GetVacancy" asp-route-vacancyId="@vacancy.Id"><strong>@vacancy.Position</strong></a>
+                <a class="vacancy-link" asp-controller="Vacancy" asp-action="GetVacancy" asp-route-vacancyId="@vacancy.Id">
+                    <strong>@vacancy.Position</strong>
+                </a>
             </p>
         }
         <input type="submit" value="Сохранить"/>
