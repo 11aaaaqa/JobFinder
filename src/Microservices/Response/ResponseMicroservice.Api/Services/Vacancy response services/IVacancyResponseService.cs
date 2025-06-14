@@ -13,5 +13,7 @@ namespace ResponseMicroservice.Api.Services.Vacancy_response_services
         Task SetVacancyResponseStatusAsync(Guid vacancyResponseId, string status);
         Task AddVacancyResponseAsync(VacancyResponse model);
         Task<bool> HasEmployeeRespondedToVacancyAsync(Guid employeeId, Guid vacancyId);
+        Task<List<VacancyResponse>> GetWaitingVacancyResponsesAsync(Guid employeeId, Guid companyId);
+        Task RemoveVacancyResponsesAsync(List<VacancyResponse>  vacancyResponses);
     }
 }
