@@ -765,9 +765,9 @@ namespace Web.MVC.Controllers
         }
 
         [Authorize]
-        [HttpPost]
+        [HttpGet]
         [Route("company/my-company/interview-invitations")]
-        public async Task<IActionResult> GetCompanyInterviewInvitations(DateTimeOrderByType timeSort, int index = 1)
+        public async Task<IActionResult> GetCompanyInterviewInvitations(DateTimeOrderByType timeSort = DateTimeOrderByType.Descending, int index = 1)
         {
             using HttpClient httpClient = httpClientFactory.CreateClient();
 
