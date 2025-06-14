@@ -767,8 +767,10 @@ namespace Web.MVC.Controllers
         [Authorize]
         [HttpGet]
         [Route("company/my-company/interview-invitations")]
-        public async Task<IActionResult> GetCompanyInterviewInvitations(DateTimeOrderByType timeSort = DateTimeOrderByType.Descending, int index = 1)
+        public async Task<IActionResult> GetCompanyInterviewInvitations(string? query, DateTimeOrderByType timeSort = DateTimeOrderByType.Descending,
+            int index = 1)
         {
+            var encodedQuery = HttpUtility.UrlEncode(query);
             using HttpClient httpClient = httpClientFactory.CreateClient();
 
             var employerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
@@ -776,18 +778,19 @@ namespace Web.MVC.Controllers
             var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
 
             var interviewInvitationsResponse = await httpClient.GetAsync(
-                $"{url}/api/InterviewInvitation/GetInterviewInvitationsByCompanyId/{employer.CompanyId}?orderByTimeType={timeSort}&pageNumber={index}");
+                $"{url}/api/InterviewInvitation/GetInterviewInvitationsByCompanyId/{employer.CompanyId}?searchingQuery={encodedQuery}&orderByTimeType={timeSort}&pageNumber={index}");
             interviewInvitationsResponse.EnsureSuccessStatusCode();
             var interviewInvitations = await interviewInvitationsResponse.Content.ReadFromJsonAsync<List<InterviewInvitationResponse>>();
 
             var doesNextPageExistResponse = await httpClient.GetAsync(
-                $"{url}/api/InterviewInvitation/DoesNextInterviewInvitationsByCompanyIdPageExist/{employer.CompanyId}?orderByTimeType={timeSort}&currentPageNumber={index}");
+                $"{url}/api/InterviewInvitation/DoesNextInterviewInvitationsByCompanyIdPageExist/{employer.CompanyId}?searchingQuery={encodedQuery}&orderByTimeType={timeSort}&currentPageNumber={index}");
             doesNextPageExistResponse.EnsureSuccessStatusCode();
             bool doesNextPageExist = await doesNextPageExistResponse.Content.ReadFromJsonAsync<bool>();
 
             ViewBag.CurrentPageNumber = index;
             ViewBag.DoesNextPageExist = doesNextPageExist;
             ViewBag.TimeSort = timeSort;
+            ViewBag.SearchingQuery = query;
 
             return View(interviewInvitations);
         }
@@ -904,6 +907,45 @@ namespace Web.MVC.Controllers
             closeInterviewResponse.EnsureSuccessStatusCode();
 
             return RedirectToAction("GetResume","Resume", new {resumeId = interviewInvitation.EmployeeResumeId});
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("vacancy/{vacancyId}/interview-invitations")]
+        public async Task<IActionResult> GetInterviewInvitationsByVacancyId(Guid vacancyId, string? query,
+            DateTimeOrderByType timeSort = DateTimeOrderByType.Descending, int index = 1)
+        {
+            var encodedQuery = HttpUtility.UrlEncode(query);
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+
+            var vacancyResponse = await httpClient.GetAsync($"{url}/api/Vacancy/GetVacancyById/{vacancyId}");
+            vacancyResponse.EnsureSuccessStatusCode();
+            var vacancy = await vacancyResponse.Content.ReadFromJsonAsync<VacancyResponse>();
+
+            var employerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
+            employerResponse.EnsureSuccessStatusCode();
+            var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
+
+            if (vacancy.CompanyId != employer.CompanyId)
+                return StatusCode((int)HttpStatusCode.Forbidden);
+
+            var interviewInvitationsResponse = await httpClient.GetAsync(
+                    $"{url}/api/InterviewInvitation/GetCompanyInterviewInvitationsByVacancyId/{vacancyId}?searchingQuery={encodedQuery}&orderByTimeType={timeSort}&pageNumber={index}");
+            interviewInvitationsResponse.EnsureSuccessStatusCode();
+            var interviewInvitations = await interviewInvitationsResponse.Content.ReadFromJsonAsync<List<InterviewInvitationResponse>>();
+
+            var doesNextPageExistResponse = await httpClient.GetAsync(
+                $"{url}/api/InterviewInvitation/DoesNextCompanyInterviewInvitationsByVacancyIdPageExist/{vacancyId}?searchingQuery={encodedQuery}&orderByTimeType={timeSort}&currentPageNumber={index}");
+            doesNextPageExistResponse.EnsureSuccessStatusCode();
+            bool doesNextPageExist = await doesNextPageExistResponse.Content.ReadFromJsonAsync<bool>();
+
+            ViewBag.DoesNextPageExist = doesNextPageExist;
+            ViewBag.SearchingQuery = query;
+            ViewBag.TimeSort = timeSort;
+            ViewBag.CurrentPageNumber = index;
+            ViewBag.VacancyId = vacancyId;
+
+            return View(interviewInvitations);
         }
     }
 }
