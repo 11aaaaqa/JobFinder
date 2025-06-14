@@ -84,6 +84,12 @@ namespace VacancyMicroservice.Api.Services
                 .Take(PaginationConstants.VacancyPageSize).ToListAsync();
         }
 
+        public async Task<List<Vacancy>> GetAllVacanciesByCompanyIdAsync(Guid companyId)
+        {
+            var vacancies = await context.Vacancies.Where(x => x.CompanyId == companyId).ToListAsync();
+            return vacancies;
+        }
+
         public async Task AddVacancyAsync(Vacancy vacancy)
         {
             context.Vacancies.Add(vacancy);
