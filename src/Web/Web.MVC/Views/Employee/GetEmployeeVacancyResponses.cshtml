@@ -21,7 +21,9 @@
     }
     else
     {
-        <a class="time-sort mr" asp-controller="Employee" asp-action="GetEmployeeVacancyResponses" asp-route-query="@ViewBag.SearchingQuery" asp-route-timeSort="Descending">Старые</a>
+        <a class="time-sort mr" asp-controller="Employee" asp-action="GetEmployeeVacancyResponses" asp-route-query="@ViewBag.SearchingQuery" asp-route-timeSort="Descending">
+            Новые
+        </a>
     }
     @if (ViewBag.TimeSort == DateTimeOrderByType.Ascending)
     {
