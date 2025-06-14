@@ -1,7 +1,8 @@
 ﻿@using GeneralLibrary.Enums
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model List<Web.MVC.Models.ApiResponses.Response.InterviewInvitationResponse>
 
-<link rel="stylesheet" href="~/css/company/get-interview-ivitations.css"/>
+<link rel="stylesheet" href="~/css/company/get-interview-ivitations.css" />
 
 <div>
     <form method="get">
@@ -13,17 +14,17 @@
 <div class="mt-3">
     @if (ViewBag.TimeSort == DateTimeOrderByType.Ascending)
     {
-        <a class="time-sort mr" asp-controller="Company" asp-action="GetCompanyInterviewInvitations" asp-route-query="@ViewBag.SearchingQuery"
-           asp-route-timeSort="Descending">Новые</a>
-        <a class="time-sort-active" asp-controller="Company" asp-action="GetCompanyInterviewInvitations" asp-route-query="@ViewBag.SearchingQuery"
-           asp-route-timeSort="Ascending">Старые</a>
+        <a class="time-sort mr" asp-controller="Company" asp-action="GetInterviewInvitationsByVacancyId" asp-route-query="@ViewBag.SearchingQuery"
+           asp-route-vacancyId="@ViewBag.VacancyId" asp-route-timeSort="Descending">Новые</a>
+        <a class="time-sort-active" asp-controller="Company" asp-action="GetInterviewInvitationsByVacancyId" asp-route-query="@ViewBag.SearchingQuery"
+           asp-route-vacancyId="@ViewBag.VacancyId" asp-route-timeSort="Ascending">Старые</a>
     }
     else
     {
-        <a class="time-sort-active mr" asp-controller="Company" asp-action="GetCompanyInterviewInvitations" asp-route-query="@ViewBag.SearchingQuery"
-           asp-route-timeSort="Descending">Новые</a>
-        <a class="time-sort" asp-controller="Company" asp-action="GetCompanyInterviewInvitations" asp-route-query="@ViewBag.SearchingQuery"
-           asp-route-timeSort="Ascending">Старые</a>
+        <a class="time-sort-active mr" asp-controller="Company" asp-action="GetInterviewInvitationsByVacancyId" asp-route-query="@ViewBag.SearchingQuery"
+           asp-route-vacancyId="@ViewBag.VacancyId" asp-route-timeSort="Descending">Новые</a>
+        <a class="time-sort" asp-controller="Company" asp-action="GetInterviewInvitationsByVacancyId" asp-route-query="@ViewBag.SearchingQuery"
+           asp-route-vacancyId="@ViewBag.VacancyId" asp-route-timeSort="Ascending">Старые</a>
     }
 </div>
 <div class="interview-invitations-block">
@@ -164,15 +165,15 @@
         {
             if (ViewBag.SearchingQuery is null)
             {
-                <a class="previous-button" asp-controller="Company" asp-action="GetCompanyInterviewInvitations" asp-route-index="@(ViewBag.CurrentPageNumber - 1)"
-                   asp-route-timeSort="@ViewBag.TimeSort">
+                <a class="previous-button" asp-controller="Company" asp-action="GetInterviewInvitationsByVacancyId" asp-route-index="@(ViewBag.CurrentPageNumber - 1)"
+                   asp-route-vacancyId="@ViewBag.VacancyId" asp-route-timeSort="@ViewBag.TimeSort">
                     Назад
                 </a>
             }
             else
             {
-                <a class="previous-button" asp-controller="Company" asp-action="GetCompanyInterviewInvitations" asp-route-index="@(ViewBag.CurrentPageNumber - 1)"
-                   asp-route-query="@ViewBag.SearchingQuery" asp-route-timeSort="@ViewBag.TimeSort">
+                <a class="previous-button" asp-controller="Company" asp-action="GetInterviewInvitationsByVacancyId" asp-route-index="@(ViewBag.CurrentPageNumber - 1)"
+                   asp-route-vacancyId="@ViewBag.VacancyId" asp-route-query="@ViewBag.SearchingQuery" asp-route-timeSort="@ViewBag.TimeSort">
                     Назад
                 </a>
             }
@@ -186,15 +187,15 @@
         {
             if (ViewBag.SearchingQuery is null)
             {
-                <a class="next-button" asp-controller="Company" asp-action="GetCompanyInterviewInvitations" asp-route-index="@(ViewBag.CurrentPageNumber + 1)"
-                   asp-route-timeSort="@ViewBag.TimeSort">
+                <a class="next-button" asp-controller="Company" asp-action="GetInterviewInvitationsByVacancyId" asp-route-index="@(ViewBag.CurrentPageNumber + 1)"
+                   asp-route-vacancyId="@ViewBag.VacancyId" asp-route-timeSort="@ViewBag.TimeSort">
                     Вперед
                 </a>
             }
             else
             {
-                <a class="next-button" asp-controller="Company" asp-action="GetCompanyInterviewInvitations" asp-route-index="@(ViewBag.CurrentPageNumber + 1)"
-                   asp-route-query="@ViewBag.SearchingQuery" asp-route-timeSort="@ViewBag.TimeSort">
+                <a class="next-button" asp-controller="Company" asp-action="GetInterviewInvitationsByVacancyId" asp-route-index="@(ViewBag.CurrentPageNumber + 1)"
+                   asp-route-vacancyId="@ViewBag.VacancyId" asp-route-query="@ViewBag.SearchingQuery" asp-route-timeSort="@ViewBag.TimeSort">
                     Вперед
                 </a>
             }
