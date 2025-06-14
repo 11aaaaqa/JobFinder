@@ -2,7 +2,7 @@
 @using GeneralLibrary.Enums
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @using Web.MVC.Constants.Vacancy
-@model List<Web.MVC.Models.ApiResponses.Employee.VacancyResponseResponse>
+@model List<Web.MVC.Models.ApiResponses.Response.VacancyResponseResponse>
 
 <link rel="stylesheet" href="~/css/Employee/get-employee-vacancy-responses.css"/>
 
@@ -21,7 +21,9 @@
     }
     else
     {
-        <a class="time-sort mr" asp-controller="Employee" asp-action="GetEmployeeVacancyResponses" asp-route-query="@ViewBag.SearchingQuery" asp-route-timeSort="Descending">Старые</a>
+        <a class="time-sort mr" asp-controller="Employee" asp-action="GetEmployeeVacancyResponses" asp-route-query="@ViewBag.SearchingQuery" asp-route-timeSort="Descending">
+            Новые
+        </a>
     }
     @if (ViewBag.TimeSort == DateTimeOrderByType.Ascending)
     {

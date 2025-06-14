@@ -1,10 +1,13 @@
-﻿using System.Text;
+﻿using System.Net;
+using System.Text;
 using System.Text.Json;
 using System.Web;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web.MVC.DTOs.Resume;
 using Web.MVC.Models.ApiResponses;
+using Web.MVC.Models.ApiResponses.Employer;
+using Web.MVC.Models.ApiResponses.Response;
 using Web.MVC.Models.ApiResponses.Resume;
 
 namespace Web.MVC.Controllers
@@ -103,20 +106,13 @@ namespace Web.MVC.Controllers
 
         [HttpGet]
         [Route("resume/{resumeId}")]
-        public async Task<IActionResult> GetResume(Guid resumeId)
+        public async Task<IActionResult> GetResume(Guid resumeId, Guid? vacancyResponseId, string? returnUrl)
         {
             using HttpClient httpClient = httpClientFactory.CreateClient();
 
             var resumeResponse = await httpClient.GetAsync($"{url}/api/Resume/GetResumeById/{resumeId}");
             resumeResponse.EnsureSuccessStatusCode();
             var resume = await resumeResponse.Content.ReadFromJsonAsync<ResumeResponse>();
-
-            var employeeResponse = await httpClient.GetAsync($"{url}/api/Employee/GetEmployeeByEmail?email={User.Identity.Name}");
-            if (employeeResponse.IsSuccessStatusCode)
-            {
-                var employee = await employeeResponse.Content.ReadFromJsonAsync<EmployeeResponse>();
-                ViewBag.IsCurrentUserOwner = resume.EmployeeId == employee.Id;
-            }
 
             if (resume.EmployeeExperience is not null)
             {
@@ -160,6 +156,45 @@ namespace Web.MVC.Controllers
                 }
             }
 
+            var employeeResponse = await httpClient.GetAsync($"{url}/api/Employee/GetEmployeeByEmail?email={User.Identity.Name}");
+            if (employeeResponse.IsSuccessStatusCode)
+            {
+                var employee = await employeeResponse.Content.ReadFromJsonAsync<EmployeeResponse>();
+                ViewBag.IsCurrentUserOwner = resume.EmployeeId == employee.Id;
+            }
+            else
+            {
+                var employerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
+                if (employerResponse.IsSuccessStatusCode)
+                {
+                    if (vacancyResponseId is not null)
+                    {
+                        var vacancyResponseResponse = await httpClient.GetAsync($"{url}/api/VacancyResponse/GetVacancyResponseById/{vacancyResponseId}");
+                        if (vacancyResponseResponse.IsSuccessStatusCode && returnUrl is not null)
+                        {
+                            ViewBag.VacancyResponseValid = true;
+                            ViewBag.ReturnUrl = returnUrl;
+                            ViewBag.VacancyResponseId = vacancyResponseId;
+                            return View(resume);
+                        }
+                    }
+
+                    var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
+                    var interviewInvitationResponse = await httpClient.GetAsync(
+                        $"{url}/api/InterviewInvitation/GetInterviewInvitation?employeeId={resume.EmployeeId}&companyId={employer.CompanyId}");
+                    if (interviewInvitationResponse.IsSuccessStatusCode)
+                    {
+                        var interviewInvitation = await interviewInvitationResponse.Content.ReadFromJsonAsync<InterviewInvitationResponse>();
+                        ViewBag.InterviewInvitationId = interviewInvitation.Id;
+                        ViewBag.EmployeeIsAlreadyInvitedToAnInterview = true;
+                    }
+                    else
+                    {
+                        ViewBag.EmployeeCanBeInvitedToInterview = true;
+                    }
+                }
+            }
+
             return View(resume);
         }
 
@@ -179,7 +214,7 @@ namespace Web.MVC.Controllers
             var resume = await resumeResponse.Content.ReadFromJsonAsync<ResumeResponse>();
 
             if (employee.Id != resume.EmployeeId)
-                return RedirectToAction("AccessForbidden", "Information");
+                return StatusCode((int)HttpStatusCode.Forbidden);
 
             var deleteResumeResponse = await httpClient.DeleteAsync($"{url}/api/Resume/DeleteResume/{resumeId}");
             deleteResumeResponse.EnsureSuccessStatusCode();
@@ -232,7 +267,7 @@ namespace Web.MVC.Controllers
                 var employee = await employeeResponse.Content.ReadFromJsonAsync<EmployeeResponse>();
 
                 if (employee.Id != model.EmployeeId)
-                    return RedirectToAction("AccessForbidden", "Information");
+                    return StatusCode((int)HttpStatusCode.Forbidden);
 
                 using StringContent jsonContent = new(JsonSerializer.Serialize(new
                 {

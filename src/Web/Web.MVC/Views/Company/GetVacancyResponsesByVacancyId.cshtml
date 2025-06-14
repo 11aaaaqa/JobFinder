@@ -1,6 +1,6 @@
 ﻿@using GeneralLibrary.Enums
 @using Microsoft.AspNetCore.Mvc.TagHelpers
-@model List<Web.MVC.Models.ApiResponses.Employee.VacancyResponseResponse>
+@model List<Web.MVC.Models.ApiResponses.Response.VacancyResponseResponse>
 
 <link rel="stylesheet" href="~/css/company/get-all-vacancy-responses.css"/>
 
@@ -27,134 +27,141 @@
     }
 </div>
 <div class="vacancy-responses-block">
-    @foreach (var vacancyResponse in Model)
+    @if (true)
     {
-        <div class="resume-block">
-            <a class="get-resume-link" asp-controller="Resume" asp-action="GetResume" asp-route-resumeId="@vacancyResponse.RespondedEmployeeResumeId">
-                @if (vacancyResponse.EmployeeDesiredSalary is not null)
-                {
-                    <h3 class="m-0">@vacancyResponse.EmployeeName @vacancyResponse.EmployeeSurname</h3>
-                    <h4 class="format-number mb-2">@vacancyResponse.EmployeeDesiredSalary ₽</h4>
-                }
-                else
-                {
-                    <h3>@vacancyResponse.EmployeeName @vacancyResponse.EmployeeSurname</h3>
-                }
-                @if (vacancyResponse.EmployeeDateOfBirth is not null)
-                {
-                    TimeSpan employeeAgeTimeSpan = DateTime.UtcNow - new DateTime(vacancyResponse.EmployeeDateOfBirth.Value.Year,
-                    vacancyResponse.EmployeeDateOfBirth.Value.Month, 1);
-                    int employeeAge = (int)employeeAgeTimeSpan.TotalDays / 365;
-                    int lastTwoDigitsYear = employeeAge % 100;
-                    int lastDigitYear = employeeAge % 10;
-
-                    string employeeAgeWord;
-                    if (lastTwoDigitsYear >= 11 && lastTwoDigitsYear <= 14)
+        string returnUrl = Context.Request.Path;
+        if (Context.Request.QueryString.HasValue)
+            returnUrl += Context.Request.QueryString;
+        @foreach (var vacancyResponse in Model)
+        {
+            <div class="resume-block">
+                <a class="get-resume-link" asp-controller="Resume" asp-action="GetResume" asp-route-resumeId="@vacancyResponse.RespondedEmployeeResumeId"
+                   asp-route-returnUrl="@returnUrl" asp-route-vacancyResponseId="@vacancyResponse.Id">
+                    @if (vacancyResponse.EmployeeDesiredSalary is not null)
                     {
-                        employeeAgeWord = "лет";
+                        <h3 class="m-0">@vacancyResponse.EmployeeName @vacancyResponse.EmployeeSurname</h3>
+                        <h4 class="format-number mb-2">@vacancyResponse.EmployeeDesiredSalary ₽</h4>
                     }
                     else
                     {
-                        switch (lastDigitYear)
+                        <h3>@vacancyResponse.EmployeeName @vacancyResponse.EmployeeSurname</h3>
+                    }
+                    @if (vacancyResponse.EmployeeDateOfBirth is not null)
+                    {
+                        TimeSpan employeeAgeTimeSpan = DateTime.UtcNow - new DateTime(vacancyResponse.EmployeeDateOfBirth.Value.Year,
+                        vacancyResponse.EmployeeDateOfBirth.Value.Month, 1);
+                        int employeeAge = (int)employeeAgeTimeSpan.TotalDays / 365;
+                        int lastTwoDigitsYear = employeeAge % 100;
+                        int lastDigitYear = employeeAge % 10;
+
+                        string employeeAgeWord;
+                        if (lastTwoDigitsYear >= 11 && lastTwoDigitsYear <= 14)
                         {
-                            case 1:
-                                employeeAgeWord = "год";
-                                break;
-                            case 2:
-                            case 3:
-                            case 4:
-                                employeeAgeWord = "года";
-                                break;
-                            default:
-                                employeeAgeWord = "лет";
-                                break;
+                            employeeAgeWord = "лет";
+                        }
+                        else
+                        {
+                            switch (lastDigitYear)
+                            {
+                                case 1:
+                                    employeeAgeWord = "год";
+                                    break;
+                                case 2:
+                                case 3:
+                                case 4:
+                                    employeeAgeWord = "года";
+                                    break;
+                                default:
+                                    employeeAgeWord = "лет";
+                                    break;
+                            }
+                        }
+                        <p>@employeeAge @employeeAgeWord</p>
+                    }
+
+                    @if (vacancyResponse.EmployeeCity is not null)
+                    {
+                        <p>@vacancyResponse.EmployeeCity</p>
+                    }
+
+                    @if (vacancyResponse.EmployeeWorkingExperience.TotalDays >= 30)
+                    {
+                        int totalExperienceMonths = (int)vacancyResponse.EmployeeWorkingExperience.TotalDays / 30;
+
+                        int experienceYears = totalExperienceMonths / 12;
+                        int experienceMonths = totalExperienceMonths - experienceYears * 12;
+                        string experienceYearWord;
+                        string experienceMonthWord;
+
+                        int lastTwoDigitsYear = experienceYears % 100;
+                        int lastDigitYear = experienceYears % 10;
+
+                        if (lastTwoDigitsYear >= 11 && lastTwoDigitsYear <= 14)
+                        {
+                            experienceYearWord = "лет";
+                        }
+                        else
+                        {
+                            switch (lastDigitYear)
+                            {
+                                case 1:
+                                    experienceYearWord = "год";
+                                    break;
+                                case 2:
+                                case 3:
+                                case 4:
+                                    experienceYearWord = "года";
+                                    break;
+                                default:
+                                    experienceYearWord = "лет";
+                                    break;
+                            }
+                        }
+
+                        int lastTwoDigitsMonth = experienceMonths % 100;
+                        int lastDigitMonth = experienceMonths % 10;
+                        if (lastTwoDigitsMonth >= 11 && lastTwoDigitsMonth <= 14)
+                        {
+                            experienceMonthWord = "месяцев";
+                        }
+                        else
+                        {
+                            switch (lastDigitMonth)
+                            {
+                                case 1:
+                                    experienceMonthWord = "месяц";
+                                    break;
+                                case 2:
+                                case 3:
+                                case 4:
+                                    experienceMonthWord = "месяца";
+                                    break;
+                                default:
+                                    experienceMonthWord = "месяцев";
+                                    break;
+                            }
+                        }
+
+                        @if (experienceYears == 0)
+                        {
+                            <p>Опыт работы: @experienceMonths @experienceMonthWord</p>
+                        }
+                        else if (experienceMonths == 0)
+                        {
+                            <p>Опыт работы: @experienceYears @experienceYearWord</p>
+                        }
+                        else
+                        {
+                            <p>Опыт работы: @experienceYears @experienceYearWord @experienceMonths @experienceMonthWord</p>
                         }
                     }
-                    <p>@employeeAge @employeeAgeWord</p>
-                }
-
-                @if (vacancyResponse.EmployeeCity is not null)
-                {
-                    <p>@vacancyResponse.EmployeeCity</p>
-                }
-
-                @if (vacancyResponse.EmployeeWorkingExperience.TotalDays >= 30)
-                {
-                    int totalExperienceMonths = (int)vacancyResponse.EmployeeWorkingExperience.TotalDays / 30;
-
-                    int experienceYears = totalExperienceMonths / 12;
-                    int experienceMonths = totalExperienceMonths - experienceYears * 12;
-                    string experienceYearWord;
-                    string experienceMonthWord;
-
-                    int lastTwoDigitsYear = experienceYears % 100;
-                    int lastDigitYear = experienceYears % 10;
-
-                    if (lastTwoDigitsYear >= 11 && lastTwoDigitsYear <= 14)
-                    {
-                        experienceYearWord = "лет";
-                    }
                     else
                     {
-                        switch (lastDigitYear)
-                        {
-                            case 1:
-                                experienceYearWord = "год";
-                                break;
-                            case 2:
-                            case 3:
-                            case 4:
-                                experienceYearWord = "года";
-                                break;
-                            default:
-                                experienceYearWord = "лет";
-                                break;
-                        }
+                        <p>Нет опыта работы</p>
                     }
-
-                    int lastTwoDigitsMonth = experienceMonths % 100;
-                    int lastDigitMonth = experienceMonths % 10;
-                    if (lastTwoDigitsMonth >= 11 && lastTwoDigitsMonth <= 14)
-                    {
-                        experienceMonthWord = "месяцев";
-                    }
-                    else
-                    {
-                        switch (lastDigitMonth)
-                        {
-                            case 1:
-                                experienceMonthWord = "месяц";
-                                break;
-                            case 2:
-                            case 3:
-                            case 4:
-                                experienceMonthWord = "месяца";
-                                break;
-                            default:
-                                experienceMonthWord = "месяцев";
-                                break;
-                        }
-                    }
-
-                    @if (experienceYears == 0)
-                    {
-                        <p>Опыт работы: @experienceMonths @experienceMonthWord</p>
-                    }
-                    else if (experienceMonths == 0)
-                    {
-                        <p>Опыт работы: @experienceYears @experienceYearWord</p>
-                    }
-                    else
-                    {
-                        <p>Опыт работы: @experienceYears @experienceYearWord @experienceMonths @experienceMonthWord</p>
-                    }
-                }
-                else
-                {
-                    <p>Нет опыта работы</p>
-                }
-            </a>
-        </div>
+                </a>
+            </div>
+        }
     }
 </div>
 <div class="pagination-link-container">

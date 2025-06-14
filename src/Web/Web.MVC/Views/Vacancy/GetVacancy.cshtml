@@ -123,7 +123,8 @@
                         </a>
                     }
                 </div>
-                @if (ViewBag.HasEmployeeRespondedToVacancy is not null)
+                @if (ViewBag.HasEmployeeRespondedToVacancy is not null && ViewBag.EmployeeGotInvitedToThisVacancy is not null
+                                                                       && ViewBag.EmployeeGotInvitedToThisVacancy == false)
                 {
                     @if (ViewBag.HasEmployeeRespondedToVacancy == true)
                     {
