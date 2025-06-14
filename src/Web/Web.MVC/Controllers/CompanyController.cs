@@ -767,8 +767,10 @@ namespace Web.MVC.Controllers
         [Authorize]
         [HttpGet]
         [Route("company/my-company/interview-invitations")]
-        public async Task<IActionResult> GetCompanyInterviewInvitations(DateTimeOrderByType timeSort = DateTimeOrderByType.Descending, int index = 1)
+        public async Task<IActionResult> GetCompanyInterviewInvitations(string? query, DateTimeOrderByType timeSort = DateTimeOrderByType.Descending,
+            int index = 1)
         {
+            var encodedQuery = HttpUtility.UrlEncode(query);
             using HttpClient httpClient = httpClientFactory.CreateClient();
 
             var employerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
@@ -776,18 +778,19 @@ namespace Web.MVC.Controllers
             var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
 
             var interviewInvitationsResponse = await httpClient.GetAsync(
-                $"{url}/api/InterviewInvitation/GetInterviewInvitationsByCompanyId/{employer.CompanyId}?orderByTimeType={timeSort}&pageNumber={index}");
+                $"{url}/api/InterviewInvitation/GetInterviewInvitationsByCompanyId/{employer.CompanyId}?searchingQuery={encodedQuery}&orderByTimeType={timeSort}&pageNumber={index}");
             interviewInvitationsResponse.EnsureSuccessStatusCode();
             var interviewInvitations = await interviewInvitationsResponse.Content.ReadFromJsonAsync<List<InterviewInvitationResponse>>();
 
             var doesNextPageExistResponse = await httpClient.GetAsync(
-                $"{url}/api/InterviewInvitation/DoesNextInterviewInvitationsByCompanyIdPageExist/{employer.CompanyId}?orderByTimeType={timeSort}&currentPageNumber={index}");
+                $"{url}/api/InterviewInvitation/DoesNextInterviewInvitationsByCompanyIdPageExist/{employer.CompanyId}?searchingQuery={encodedQuery}&orderByTimeType={timeSort}&currentPageNumber={index}");
             doesNextPageExistResponse.EnsureSuccessStatusCode();
             bool doesNextPageExist = await doesNextPageExistResponse.Content.ReadFromJsonAsync<bool>();
 
             ViewBag.CurrentPageNumber = index;
             ViewBag.DoesNextPageExist = doesNextPageExist;
             ViewBag.TimeSort = timeSort;
+            ViewBag.SearchingQuery = query;
 
             return View(interviewInvitations);
         }

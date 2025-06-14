@@ -11,12 +11,19 @@ namespace ResponseMicroservice.Api.Services.Interview_invitation_services
         public async Task<InterviewInvitation?> GetInterviewInvitationByIdAsync(Guid interviewInvitationId)
             => await context.InterviewInvitations.SingleOrDefaultAsync(x => x.Id == interviewInvitationId);
 
-        public async Task<List<InterviewInvitation>> GetInterviewInvitationsByCompanyIdAsync(Guid companyId, DateTimeOrderByType orderByTimeType, int pageNumber)
+        public async Task<List<InterviewInvitation>> GetInterviewInvitationsByCompanyIdAsync(Guid companyId, string? searchingQuery,
+            DateTimeOrderByType orderByTimeType, int pageNumber)
         {
             var interviewInvitations = context.InterviewInvitations
                 .Where(x => x.InvitedCompanyId == companyId)
                 .Where(x => x.IsClosed == false)
                 .AsQueryable();
+
+            if (searchingQuery is not null)
+                interviewInvitations = interviewInvitations.Where(x =>
+                    x.EmployeeName.ToLower().Contains(searchingQuery.ToLower()) |
+                    x.EmployeeSurname.ToLower().Contains(searchingQuery.ToLower()));
+            
 
             switch (orderByTimeType)
             {
@@ -57,13 +64,18 @@ namespace ResponseMicroservice.Api.Services.Interview_invitation_services
                 .Take(PaginationConstants.InterviewInvitationPageSize).ToListAsync();
         }
 
-        public async Task<List<InterviewInvitation>> GetCompanyInterviewInvitationsByVacancyIdAsync(Guid vacancyId,  DateTimeOrderByType orderByTimeType,
-            int pageNumber)
+        public async Task<List<InterviewInvitation>> GetCompanyInterviewInvitationsByVacancyIdAsync(Guid vacancyId, string? searchingQuery,
+            DateTimeOrderByType orderByTimeType, int pageNumber)
         {
             var interviewInvitations = context.InterviewInvitations
                 .Where(x => x.VacancyId == vacancyId)
                 .Where(x => x.IsClosed == false)
                 .AsQueryable();
+
+            if (searchingQuery is not null)
+                interviewInvitations = interviewInvitations.Where(x =>
+                    x.EmployeeName.ToLower().Contains(searchingQuery.ToLower()) |
+                    x.EmployeeSurname.ToLower().Contains(searchingQuery.ToLower()));
 
             switch (orderByTimeType)
             {
