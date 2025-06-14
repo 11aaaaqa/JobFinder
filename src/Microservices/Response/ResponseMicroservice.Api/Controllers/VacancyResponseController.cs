@@ -100,6 +100,8 @@ namespace ResponseMicroservice.Api.Controllers
                 return BadRequest();
 
             Guid currentInterviewInvitationId = Guid.NewGuid();
+            var jobId = backgroundJob.Schedule(() => interviewInvitationService.CloseInterviewAsync(currentInterviewInvitationId)
+                , TimeSpan.FromDays(50));
             await interviewInvitationService.AddInvitationAsync(new InterviewInvitation
             {
                 EmployeeCity = vacancyResponse.EmployeeCity, EmployeeDateOfBirth = vacancyResponse.EmployeeDateOfBirth,
@@ -111,11 +113,9 @@ namespace ResponseMicroservice.Api.Controllers
                 VacancyPosition = vacancyResponse.VacancyPosition, VacancySalaryFrom = vacancyResponse.VacancySalaryFrom,
                 VacancySalaryTo = vacancyResponse.VacancySalaryTo, VacancyWorkExperience = vacancyResponse.VacancyWorkExperience,
                 VacancyCompanyName = vacancyResponse.VacancyCompanyName, EmployeeDesiredSalary = vacancyResponse.EmployeeDesiredSalary,
-                IsClosed = false
+                IsClosed = false, HangfireDelayedJobId = jobId
             });
             await vacancyResponseService.SetVacancyResponseStatusAsync(vacancyResponseId, VacancyResponseStatusConstants.Accepted);
-
-            backgroundJob.Schedule(() => interviewInvitationService.CloseInterviewAsync(currentInterviewInvitationId), TimeSpan.FromDays(50));
 
             return Ok();
         }
