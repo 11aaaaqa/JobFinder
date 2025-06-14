@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web.MVC.DTOs.Resume;
 using Web.MVC.Models.ApiResponses;
+using Web.MVC.Models.ApiResponses.Employer;
+using Web.MVC.Models.ApiResponses.Response;
 using Web.MVC.Models.ApiResponses.Resume;
 
 namespace Web.MVC.Controllers
@@ -112,13 +114,6 @@ namespace Web.MVC.Controllers
             resumeResponse.EnsureSuccessStatusCode();
             var resume = await resumeResponse.Content.ReadFromJsonAsync<ResumeResponse>();
 
-            var employeeResponse = await httpClient.GetAsync($"{url}/api/Employee/GetEmployeeByEmail?email={User.Identity.Name}");
-            if (employeeResponse.IsSuccessStatusCode)
-            {
-                var employee = await employeeResponse.Content.ReadFromJsonAsync<EmployeeResponse>();
-                ViewBag.IsCurrentUserOwner = resume.EmployeeId == employee.Id;
-            }
-
             if (resume.EmployeeExperience is not null)
             {
                 resume.EmployeeExperience = resume.EmployeeExperience
@@ -161,14 +156,42 @@ namespace Web.MVC.Controllers
                 }
             }
 
-            if (vacancyResponseId is not null)
+            var employeeResponse = await httpClient.GetAsync($"{url}/api/Employee/GetEmployeeByEmail?email={User.Identity.Name}");
+            if (employeeResponse.IsSuccessStatusCode)
             {
-                var vacancyResponseResponse = await httpClient.GetAsync($"{url}/api/VacancyResponse/GetVacancyResponseById/{vacancyResponseId}");
-                if (vacancyResponseResponse.IsSuccessStatusCode && returnUrl is not null)
+                var employee = await employeeResponse.Content.ReadFromJsonAsync<EmployeeResponse>();
+                ViewBag.IsCurrentUserOwner = resume.EmployeeId == employee.Id;
+            }
+            else
+            {
+                var employerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
+                if (employerResponse.IsSuccessStatusCode)
                 {
-                    ViewBag.VacancyResponseValid = true;
-                    ViewBag.ReturnUrl = returnUrl;
-                    ViewBag.VacancyResponseId = vacancyResponseId;
+                    if (vacancyResponseId is not null)
+                    {
+                        var vacancyResponseResponse = await httpClient.GetAsync($"{url}/api/VacancyResponse/GetVacancyResponseById/{vacancyResponseId}");
+                        if (vacancyResponseResponse.IsSuccessStatusCode && returnUrl is not null)
+                        {
+                            ViewBag.VacancyResponseValid = true;
+                            ViewBag.ReturnUrl = returnUrl;
+                            ViewBag.VacancyResponseId = vacancyResponseId;
+                            return View(resume);
+                        }
+                    }
+
+                    var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
+                    var interviewInvitationResponse = await httpClient.GetAsync(
+                        $"{url}/api/InterviewInvitation/GetInterviewInvitation?employeeId={resume.EmployeeId}&companyId={employer.CompanyId}");
+                    if (interviewInvitationResponse.IsSuccessStatusCode)
+                    {
+                        var interviewInvitation = await interviewInvitationResponse.Content.ReadFromJsonAsync<InterviewInvitationResponse>();
+                        ViewBag.InterviewInvitationId = interviewInvitation.Id;
+                        ViewBag.EmployeeIsAlreadyInvitedToAnInterview = true;
+                    }
+                    else
+                    {
+                        ViewBag.EmployeeCanBeInvitedToInterview = true;
+                    }
                 }
             }
 
