@@ -17,11 +17,14 @@
     <a asp-controller="Employee" asp-action="UpdateEmployee">Профиль</a>
     <a asp-controller="Resume" asp-action="GetMyResumes">Мои резюме</a>
     <a asp-controller="Employee" asp-action="GetEmployeeVacancyResponses" asp-route-timeSort="Descending">Отклики</a>
+    <a asp-controller="Employee" asp-action="GetEmployeeInterviewInvitations">Приглашения</a>
+    <a asp-controller="Resume" asp-action="GetAllResumes">Все резюме</a>
 
     <h3>Employer</h3>
     <a asp-controller="Employer" asp-action="UpdateEmployer">Профиль</a>
     <a asp-controller="Company" asp-action="GetMyCompany">О компании</a>
     <a asp-controller="Company" asp-action="GetCompanyVacancyResponses" asp-route-timeSort="Descending">Отклики на вакансии</a>
+    <a asp-controller="Resume" asp-action="GetResumesWithActiveStatus">Резюме</a>
 }
 else
 {
