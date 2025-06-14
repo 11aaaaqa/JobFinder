@@ -1,0 +1,53 @@
+﻿.get-resume-link {
+    text-decoration: none;
+    color: black;
+}
+
+.get-resume-link:hover {
+    color: black;
+}
+
+.resume-block {
+    border: 1px solid #ccc;
+    border-radius: 13px;
+    padding: 13px;
+    margin: 5px 0;
+}
+
+.resume-block p {
+    margin: 0;
+}
+
+.time-sort {
+    text-decoration: none;
+    padding: 8px 40px;
+    color: white;
+    border-radius: 10px;
+    background-color: deepskyblue;
+    transition: background-color 0.3s;
+}
+
+.time-sort:hover {
+    background-color: dodgerblue;
+    cursor: pointer;
+}
+
+.time-sort-active {
+    text-decoration: none;
+    padding: 8px 40px;
+    color: white;
+    border-radius: 10px;
+    background-color: dodgerblue;
+}
+
+.time-sort-active:hover {
+    cursor: pointer;
+}
+
+.mr {
+    margin-right: 1px;
+}
+
+.interview-invitations-block {
+    margin-top: 9px;
+}

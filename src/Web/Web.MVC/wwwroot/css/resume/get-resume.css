@@ -84,6 +84,23 @@ p {
     cursor: pointer;
 }
 
+.remove-invitation-btn {
+    text-decoration: none;
+    color: black;
+    background-color: rgba(255, 0, 0, 0.3);
+    border: none;
+    border-radius: 7px;
+    padding: 5px 12px;
+    margin-right: 4px;
+    margin-bottom: 4px;
+    transition: background-color 0.3s;
+}
+
+.remove-invitation-btn:hover {
+    background-color: rgba(255, 0, 0, 0.6);
+    cursor: pointer;
+}
+
 .vacancy-response-actions-block {
     display: flex;
     flex-wrap: wrap;
