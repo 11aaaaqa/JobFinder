@@ -50,6 +50,11 @@ namespace VacancyMicroservice.Api.Controllers
         public async Task<IActionResult> GetVacanciesByCompanyIdAsync(Guid companyId, int pageNumber, string? searchingQuery)
             => Ok(await vacancyRepository.GetVacanciesByCompanyIdAsync(companyId, pageNumber, searchingQuery));
 
+        [HttpGet]
+        [Route("GetAllVacanciesByCompanyId/{companyId}")]
+        public async Task<IActionResult> GetAllVacanciesByCompanyIdAsync(Guid companyId)
+            => Ok(await vacancyRepository.GetAllVacanciesByCompanyIdAsync(companyId));
+
         [HttpPost]
         [Route("AddVacancy")]
         public async Task<IActionResult> AddVacancyAsync([FromBody] AddVacancyDto model)
