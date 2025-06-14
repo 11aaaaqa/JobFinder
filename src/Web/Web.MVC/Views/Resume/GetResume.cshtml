@@ -40,6 +40,24 @@
                 </form>
             </div>
         }
+        
+        @if (ViewBag.EmployeeCanBeInvitedToInterview is not null && ViewBag.EmployeeCanBeInvitedToInterview == true)
+        {
+            <div class="mt-2">
+                <a class="resume-action-btn mt-2" asp-controller="Company" asp-action="ChooseVacancyToInviteToInterview" asp-route-resumeId="@Model.Id">
+                    Пригласить на собеседование
+                </a>
+            </div>
+        }
+        
+        @if (ViewBag.EmployeeIsAlreadyInvitedToAnInterview is not null && ViewBag.EmployeeIsAlreadyInvitedToAnInterview == true)
+        {
+            <div class="mt-1">
+                <form method="post" asp-controller="Company" asp-action="CloseInterview" asp-route-interviewInvitationId="@ViewBag.InterviewInvitationId">
+                    <input class="remove-invitation-btn mt-2" type="submit" value="Удалить приглашение"/>
+                </form>
+            </div>
+        }
 
         @if (ViewBag.IsCurrentUserOwner == true)
         {
