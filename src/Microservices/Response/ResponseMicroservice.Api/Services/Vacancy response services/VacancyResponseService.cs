@@ -109,5 +109,21 @@ namespace ResponseMicroservice.Api.Services.Vacancy_response_services
 
             return false;
         }
+
+        public async Task<List<VacancyResponse>> GetWaitingVacancyResponsesAsync(Guid employeeId, Guid companyId)
+        {
+            var vacancyResponses = await context.VacancyResponses
+                .Where(x => x.EmployeeId == employeeId)
+                .Where(x => x.VacancyCompanyId == companyId)
+                .Where(x => x.ResponseStatus == VacancyResponseStatusConstants.Waiting)
+                .ToListAsync();
+            return vacancyResponses;
+        }
+
+        public async Task RemoveVacancyResponsesAsync(List<VacancyResponse> vacancyResponses)
+        {
+            context.VacancyResponses.RemoveRange(vacancyResponses);
+            await context.SaveChangesAsync();
+        }
     }
 }

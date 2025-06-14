@@ -2,6 +2,7 @@
 using System.Text;
 using System.Text.Json;
 using System.Web;
+using GeneralLibrary.Constants;
 using GeneralLibrary.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,8 +11,9 @@ using Web.MVC.DTOs.Company;
 using Web.MVC.DTOs.Vacancy;
 using Web.MVC.Filters.Authorization_filters.Company_filters;
 using Web.MVC.Models.ApiResponses.Company;
-using Web.MVC.Models.ApiResponses.Employee;
 using Web.MVC.Models.ApiResponses.Employer;
+using Web.MVC.Models.ApiResponses.Response;
+using Web.MVC.Models.ApiResponses.Resume;
 using Web.MVC.Models.ApiResponses.Vacancy;
 
 namespace Web.MVC.Controllers
@@ -713,6 +715,195 @@ namespace Web.MVC.Controllers
             ViewBag.VacancyId = vacancyId;
 
             return View(vacancyResponses);
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("vacancy-responses/{vacancyResponseId}/accept")]
+        public async Task<IActionResult> AcceptVacancyResponse(Guid vacancyResponseId)
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+
+            var vacancyResponseResponse = await httpClient.GetAsync($"{url}/api/VacancyResponse/GetVacancyResponseById/{vacancyResponseId}");
+            vacancyResponseResponse.EnsureSuccessStatusCode();
+            var vacancyResponse = await vacancyResponseResponse.Content.ReadFromJsonAsync<VacancyResponseResponse>();
+
+            var employerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
+            employerResponse.EnsureSuccessStatusCode();
+            var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
+
+            if (employer.CompanyId != vacancyResponse.VacancyCompanyId || vacancyResponse.ResponseStatus != VacancyResponseStatusConstants.Waiting)
+                return StatusCode((int)HttpStatusCode.Forbidden);
+
+            var acceptVacancyResponseResponse = await httpClient.GetAsync($"{url}/api/VacancyResponse/AcceptVacancyResponse/{vacancyResponseId}");
+            acceptVacancyResponseResponse.EnsureSuccessStatusCode();
+            return RedirectToAction("GetResume","Resume", new { resumeId = vacancyResponse.RespondedEmployeeResumeId});
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("vacancy-response/{vacancyResponseId}/reject")]
+        public async Task<IActionResult> RejectVacancyResponse(Guid vacancyResponseId, string returnUrl)
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+
+            var vacancyResponseResponse = await httpClient.GetAsync($"{url}/api/VacancyResponse/GetVacancyResponseById/{vacancyResponseId}");
+            vacancyResponseResponse.EnsureSuccessStatusCode();
+            var vacancyResponse = await vacancyResponseResponse.Content.ReadFromJsonAsync<VacancyResponseResponse>();
+
+            var employerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
+            employerResponse.EnsureSuccessStatusCode();
+            var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
+
+            if (employer.CompanyId != vacancyResponse.VacancyCompanyId || vacancyResponse.ResponseStatus != VacancyResponseStatusConstants.Waiting)
+                return StatusCode((int)HttpStatusCode.Forbidden);
+
+            var rejectVacancyResponseResponse = await httpClient.GetAsync($"{url}/api/VacancyResponse/RejectVacancyResponse/{vacancyResponseId}");
+            rejectVacancyResponseResponse.EnsureSuccessStatusCode();
+
+            return LocalRedirect(returnUrl);
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("company/my-company/interview-invitations")]
+        public async Task<IActionResult> GetCompanyInterviewInvitations(DateTimeOrderByType timeSort = DateTimeOrderByType.Descending, int index = 1)
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+
+            var employerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
+            employerResponse.EnsureSuccessStatusCode();
+            var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
+
+            var interviewInvitationsResponse = await httpClient.GetAsync(
+                $"{url}/api/InterviewInvitation/GetInterviewInvitationsByCompanyId/{employer.CompanyId}?orderByTimeType={timeSort}&pageNumber={index}");
+            interviewInvitationsResponse.EnsureSuccessStatusCode();
+            var interviewInvitations = await interviewInvitationsResponse.Content.ReadFromJsonAsync<List<InterviewInvitationResponse>>();
+
+            var doesNextPageExistResponse = await httpClient.GetAsync(
+                $"{url}/api/InterviewInvitation/DoesNextInterviewInvitationsByCompanyIdPageExist/{employer.CompanyId}?orderByTimeType={timeSort}&currentPageNumber={index}");
+            doesNextPageExistResponse.EnsureSuccessStatusCode();
+            bool doesNextPageExist = await doesNextPageExistResponse.Content.ReadFromJsonAsync<bool>();
+
+            ViewBag.CurrentPageNumber = index;
+            ViewBag.DoesNextPageExist = doesNextPageExist;
+            ViewBag.TimeSort = timeSort;
+
+            return View(interviewInvitations);
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("resumes/{resumeId}/invite-to-interview")]
+        public async Task<IActionResult> InviteEmployeeToInterview(Guid resumeId, Guid vacancyId)
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+
+            var employerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
+            employerResponse.EnsureSuccessStatusCode();
+            var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
+
+            var vacancyResponse = await httpClient.GetAsync($"{url}/api/Vacancy/GetVacancyById/{vacancyId}");
+            vacancyResponse.EnsureSuccessStatusCode();
+            var vacancy = await vacancyResponse.Content.ReadFromJsonAsync<VacancyResponse>();
+
+            if (vacancy.CompanyId != employer.CompanyId)
+                return StatusCode((int)HttpStatusCode.Forbidden);
+
+            var resumeResponse = await httpClient.GetAsync($"{url}/api/Resume/GetResumeById/{resumeId}");
+            resumeResponse.EnsureSuccessStatusCode();
+            var resume = await resumeResponse.Content.ReadFromJsonAsync<ResumeResponse>();
+
+            var interviewInvitationResponse = await httpClient.GetAsync(
+                $"{url}/api/InterviewInvitation/GetInterviewInvitation?employeeId={resume.EmployeeId}&companyId={vacancy.CompanyId}");
+            if (interviewInvitationResponse.IsSuccessStatusCode)
+                return View("InvitationToAnInterviewIsAlreadySent");
+
+            using StringContent jsonContent = new(JsonSerializer.Serialize(new
+            {
+                InvitedCompanyId = vacancy.CompanyId,
+                EmployeeId = resume.EmployeeId,
+                EmployeeResumeId = resumeId,
+                EmployeeName = resume.Name,
+                EmployeeSurname = resume.Surname,
+                EmployeeDesiredSalary = resume.DesiredSalary,
+                EmployeeDateOfBirth = resume.DateOfBirth,
+                EmployeeWorkingExperience = resume.WorkingExperience,
+                EmployeeCity = resume.City,
+                VacancyId = vacancyId,
+                VacancyPosition = vacancy.Position,
+                VacancySalaryFrom = vacancy.SalaryFrom,
+                VacancySalaryTo = vacancy.SalaryTo,
+                VacancyWorkExperience = vacancy.WorkExperience,
+                VacancyCity = vacancy.VacancyCity,
+                VacancyCompanyName = vacancy.CompanyName
+            }), Encoding.UTF8, "application/json");
+            var inviteEmployeeResponse = await httpClient.PostAsync($"{url}/api/InterviewInvitation/InviteToInterview", jsonContent);
+            inviteEmployeeResponse.EnsureSuccessStatusCode();
+
+            return RedirectToAction("GetResume", "Resume", new { resumeId });
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("resumes/{resumeId}/invite-to-interview/choose-vacancy")]
+        public async Task<IActionResult> ChooseVacancyToInviteToInterview(Guid resumeId)
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+
+            var employerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
+            employerResponse.EnsureSuccessStatusCode();
+            var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
+
+            var vacancyResponse = await httpClient.GetAsync($"{url}/api/Vacancy/GetAllVacanciesByCompanyId/{employer.CompanyId}");
+            vacancyResponse.EnsureSuccessStatusCode();
+            var vacancies = await vacancyResponse.Content.ReadFromJsonAsync<List<VacancyResponse>>();
+
+            if (vacancies.Count == 0)
+                return RedirectToAction("AddVacancy","Vacancy");
+
+            if (vacancies.Count == 1)
+                return RedirectToAction("InviteEmployeeToInterview", new { resumeId, vacancyId = vacancies[0].Id });
+
+            ViewBag.ResumeId = resumeId;
+            return View(vacancies);
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("resumes/{resumeId}/invite-to-interview/choose-vacancy")]
+        public IActionResult ChooseVacancyToInviteToInterview(Guid resumeId, Guid vacancyId)
+        {
+            return RedirectToAction("InviteEmployeeToInterview", new {resumeId, vacancyId});
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("interviews/{interviewInvitationId}/close")]
+        public async Task<IActionResult> CloseInterview(Guid interviewInvitationId)
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+
+            var employerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
+            employerResponse.EnsureSuccessStatusCode();
+            var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
+
+            var interviewInvitationResponse = await httpClient.GetAsync(
+                $"{url}/api/InterviewInvitation/GetInterviewInvitationById/{interviewInvitationId}");
+            interviewInvitationResponse.EnsureSuccessStatusCode();
+            var interviewInvitation = await interviewInvitationResponse.Content.ReadFromJsonAsync<InterviewInvitationResponse>();
+
+            var interviewVacancyResponse = await httpClient.GetAsync($"{url}/api/Vacancy/GetVacancyById/{interviewInvitation.VacancyId}");
+            interviewVacancyResponse.EnsureSuccessStatusCode();
+            var vacancy = await interviewVacancyResponse.Content.ReadFromJsonAsync<VacancyResponse>();
+
+            if (vacancy.CompanyId != employer.CompanyId)
+                return StatusCode((int) HttpStatusCode.Forbidden);
+
+            var closeInterviewResponse = await httpClient.GetAsync($"{url}/api/InterviewInvitation/CloseInterview/{interviewInvitationId}");
+            closeInterviewResponse.EnsureSuccessStatusCode();
+
+            return RedirectToAction("GetResume","Resume", new {resumeId = interviewInvitation.EmployeeResumeId});
         }
     }
 }

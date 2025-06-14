@@ -1,11 +1,9 @@
-﻿namespace ResponseMicroservice.Api.Models
+﻿namespace ResponseMicroservice.Api.DTOs
 {
-    public class InterviewInvitation
+    public class AddInterviewInvitationDto
     {
-        public Guid Id { get; set; }
         public Guid InvitedCompanyId { get; set; }
         public Guid EmployeeId { get; set; }
-        public DateTime InvitationDate { get; set; }
 
         public Guid EmployeeResumeId { get; set; }
         public string EmployeeName { get; set; }
@@ -22,8 +20,5 @@
         public string? VacancyWorkExperience { get; set; }
         public string VacancyCity { get; set; }
         public string VacancyCompanyName { get; set; }
-
-        public bool IsClosed { get; set; }
-        public string? HangfireDelayedJobId { get; set; }
     }
 }

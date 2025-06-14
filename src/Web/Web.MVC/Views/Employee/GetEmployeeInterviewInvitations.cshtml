@@ -1,0 +1,146 @@
+﻿@using GeneralLibrary.Constants
+@using GeneralLibrary.Enums
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Web.MVC.Constants.Vacancy
+@model List<Web.MVC.Models.ApiResponses.Response.InterviewInvitationResponse>
+
+<link rel="stylesheet" href="~/css/Employee/get-employee-vacancy-responses.css" />
+
+<div>
+    <form method="get">
+        <input type="text" name="query" placeholder="Введите профессию или должность" />
+        <input type="hidden" name="timeSort" value="@ViewBag.TimeSort" />
+        <input type="submit" value="Найти" />
+    </form>
+</div>
+<div class="mt-3">
+    @if (ViewBag.TimeSort == DateTimeOrderByType.Descending)
+    {
+        <a class="time-sort-active mr" asp-controller="Employee" asp-action="GetEmployeeInterviewInvitations" asp-route-query="@ViewBag.SearchingQuery"
+           asp-route-timeSort="Descending">Новые</a>
+    }
+    else
+    {
+        <a class="time-sort mr" asp-controller="Employee" asp-action="GetEmployeeInterviewInvitations" asp-route-query="@ViewBag.SearchingQuery" asp-route-timeSort="Descending">
+            Новые
+        </a>
+    }
+    @if (ViewBag.TimeSort == DateTimeOrderByType.Ascending)
+    {
+        <a class="time-sort-active" asp-controller="Employee" asp-action="GetEmployeeInterviewInvitations" asp-route-query="@ViewBag.SearchingQuery" asp-route-timeSort="Ascending">
+            Старые
+        </a>
+    }
+    else
+    {
+        <a class="time-sort" asp-controller="Employee" asp-action="GetEmployeeInterviewInvitations" asp-route-query="@ViewBag.SearchingQuery" asp-route-timeSort="Ascending">
+            Старые
+        </a>
+    }
+</div>
+<div class="vacancy-responses-block">
+    @foreach (var interviewInvitation in Model)
+    {
+        <a class="get-vacancy-link" asp-controller="Vacancy" asp-action="GetVacancy" asp-route-vacancyId="@interviewInvitation.VacancyId">
+            <div class="vacancy-block">
+                <h4>@interviewInvitation.VacancyPosition</h4>
+                <div class="vacancy-info mb-1">
+                    @if (interviewInvitation.VacancySalaryFrom is not null && interviewInvitation.VacancySalaryTo is not null)
+                    {
+                        @if (interviewInvitation.VacancySalaryTo == interviewInvitation.VacancySalaryFrom)
+                        {
+                            <p class="salary-p format-number">@interviewInvitation.VacancySalaryFrom ₽ за месяц</p>
+                        }
+                        else
+                        {
+                            <p class="salary-p format-number">@interviewInvitation.VacancySalaryFrom - @interviewInvitation.VacancySalaryTo ₽ за месяц</p>
+                        }
+                    }
+                    @if (interviewInvitation.VacancySalaryFrom is not null && interviewInvitation.VacancySalaryTo is null)
+                    {
+                        <p class="salary-p format-number">от @interviewInvitation.VacancySalaryFrom ₽ за месяц</p>
+                    }
+                    @if (interviewInvitation.VacancySalaryFrom is null && interviewInvitation.VacancySalaryTo is not null)
+                    {
+                        <p class="salary-p format-number">до @interviewInvitation.VacancySalaryTo ₽ за месяц</p>
+                    }
+
+                    <div class="vacancy-info-internal">
+                        @if (interviewInvitation.VacancyWorkExperience == WorkExperienceConstants.NoExperience)
+                        {
+                            <p class="experience-p">Без опыта</p>
+                        }
+                        @if (interviewInvitation.VacancyWorkExperience == WorkExperienceConstants.LessThanOneYear)
+                        {
+                            <p class="experience-p">Опыт менее года</p>
+                        }
+                        @if (interviewInvitation.VacancyWorkExperience == WorkExperienceConstants.FromOneToThreeYears)
+                        {
+                            <p class="experience-p">Опыт 1-3 года</p>
+                        }
+                        @if (interviewInvitation.VacancyWorkExperience == WorkExperienceConstants.FromThreeToSixYears)
+                        {
+                            <p class="experience-p">Опыт 3-6 лет</p>
+                        }
+                        @if (interviewInvitation.VacancyWorkExperience == WorkExperienceConstants.MoreThanSixYears)
+                        {
+                            <p class="experience-p">Опыт более 6 лет</p>
+                        }
+                    </div>
+                </div>
+                <p>@interviewInvitation.VacancyCity</p>
+                <p>@interviewInvitation.VacancyCompanyName</p>
+                <p class="mt-2"><span class="response-status-accepted">@VacancyResponseStatusConstants.Accepted</span></p>
+            </div>
+        </a>
+    }
+</div>
+<div class="pagination-link-container">
+    @if (Model.Count > 0)
+    {
+        @if (ViewBag.CurrentPageNumber - 1 > 0)
+        {
+            if (ViewBag.SearchingQuery is null)
+            {
+                <a class="previous-button" asp-controller="Employee" asp-action="GetEmployeeInterviewInvitations" asp-route-index="@(ViewBag.CurrentPageNumber - 1)"
+                   asp-route-timeSort="@ViewBag.TimeSort">
+                    Назад
+                </a>
+            }
+            else
+            {
+                <a class="previous-button" asp-controller="Employee" asp-action="GetEmployeeInterviewInvitations" asp-route-index="@(ViewBag.CurrentPageNumber - 1)"
+                   asp-route-query="@ViewBag.SearchingQuery" asp-route-timeSort="@ViewBag.TimeSort">
+                    Назад
+                </a>
+            }
+        }
+        else
+        {
+            <a class="previous-doesnt-exist-button">Назад</a>
+        }
+
+        @if (ViewBag.DoesNextPageExist)
+        {
+            if (ViewBag.SearchingQuery is null)
+            {
+                <a class="next-button" asp-controller="Employee" asp-action="GetEmployeeInterviewInvitations" asp-route-index="@(ViewBag.CurrentPageNumber + 1)"
+                   asp-route-timeSort="@ViewBag.TimeSort">
+                    Вперед
+                </a>
+            }
+            else
+            {
+                <a class="next-button" asp-controller="Employee" asp-action="GetEmployeeInterviewInvitations" asp-route-index="@(ViewBag.CurrentPageNumber + 1)"
+                   asp-route-query="@ViewBag.SearchingQuery" asp-route-timeSort="@ViewBag.TimeSort">
+                    Вперед
+                </a>
+            }
+        }
+        else
+        {
+            <a class="next-doesnt-exist-button">Вперед</a>
+        }
+    }
+</div>
+<script src="~/js/format-number-displaying.js"></script>

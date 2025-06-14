@@ -1,7 +1,7 @@
 ﻿using GeneralLibrary.Constants;
 using GeneralLibrary.Enums;
+using Hangfire;
 using Microsoft.AspNetCore.Mvc;
-using ResponseMicroservice.Api.Constants;
 using ResponseMicroservice.Api.DTOs;
 using ResponseMicroservice.Api.Models;
 using ResponseMicroservice.Api.Services.Interview_invitation_services;
@@ -13,8 +13,20 @@ namespace ResponseMicroservice.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     public class VacancyResponseController(IVacancyResponseService vacancyResponseService,
-        ICheckForNextPageExistingService paginationService, IInterviewInvitationService interviewInvitationService) : ControllerBase
+        ICheckForNextPageExistingService paginationService, IInterviewInvitationService interviewInvitationService,
+        IBackgroundJobClient backgroundJob) : ControllerBase
     {
+        [HttpGet]
+        [Route("GetVacancyResponseById/{vacancyResponseId}")]
+        public async Task<IActionResult> GetVacancyResponseById(Guid vacancyResponseId)
+        {
+            var vacancyResponse = await vacancyResponseService.GetVacancyResponseByIdAsync(vacancyResponseId);
+            if (vacancyResponse is null)
+                return NotFound();
+
+            return Ok(vacancyResponse);
+        }
+
         [HttpGet]
         [Route("GetVacancyResponsesByEmployeeId/{employeeId}")]
         public async Task<IActionResult> GetVacancyResponsesByEmployeeIdAsync(Guid employeeId, string? searchingQuery,
@@ -87,19 +99,24 @@ namespace ResponseMicroservice.Api.Controllers
             if (vacancyResponse is null)
                 return BadRequest();
 
+            Guid currentInterviewInvitationId = Guid.NewGuid();
+            var jobId = backgroundJob.Schedule(() => interviewInvitationService.CloseInterviewAsync(currentInterviewInvitationId)
+                , TimeSpan.FromDays(50));
             await interviewInvitationService.AddInvitationAsync(new InterviewInvitation
             {
                 EmployeeCity = vacancyResponse.EmployeeCity, EmployeeDateOfBirth = vacancyResponse.EmployeeDateOfBirth,
                 EmployeeId = vacancyResponse.EmployeeId, EmployeeName = vacancyResponse.EmployeeName,
                 EmployeeResumeId = vacancyResponse.RespondedEmployeeResumeId, EmployeeSurname = vacancyResponse.EmployeeSurname,
-                EmployeeWorkingExperience = vacancyResponse.EmployeeWorkingExperience, Id = Guid.NewGuid(),
+                EmployeeWorkingExperience = vacancyResponse.EmployeeWorkingExperience, Id = currentInterviewInvitationId,
                 VacancyCity = vacancyResponse.VacancyCity, VacancyId = vacancyResponse.VacancyId,
                 InvitationDate = DateTime.UtcNow, InvitedCompanyId = vacancyResponse.VacancyCompanyId,
                 VacancyPosition = vacancyResponse.VacancyPosition, VacancySalaryFrom = vacancyResponse.VacancySalaryFrom,
                 VacancySalaryTo = vacancyResponse.VacancySalaryTo, VacancyWorkExperience = vacancyResponse.VacancyWorkExperience,
-                VacancyCompanyName = vacancyResponse.VacancyCompanyName, EmployeeDesiredSalary = vacancyResponse.EmployeeDesiredSalary
+                VacancyCompanyName = vacancyResponse.VacancyCompanyName, EmployeeDesiredSalary = vacancyResponse.EmployeeDesiredSalary,
+                IsClosed = false, HangfireDelayedJobId = jobId
             });
             await vacancyResponseService.SetVacancyResponseStatusAsync(vacancyResponseId, VacancyResponseStatusConstants.Accepted);
+
             return Ok();
         }
     }

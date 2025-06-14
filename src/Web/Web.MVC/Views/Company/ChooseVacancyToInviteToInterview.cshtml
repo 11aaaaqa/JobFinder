@@ -1,0 +1,38 @@
+﻿@model List<Web.MVC.Models.ApiResponses.Vacancy.VacancyResponse>
+<link rel="stylesheet" href="~/css/company/choose-vacancy-to-invite-to-interview.css"/>
+
+<h3>Выберите Вашу вакансию, которую хотите отправить работнику</h3>
+<input type="text" id="searchInput" placeholder="Поиск..."/>
+<div id="choose-vacancy">
+    <form method="post">
+        <input type="hidden" name="resumeId" value="@ViewBag.ResumeId" />
+        @foreach (var vacancy in Model.OrderBy(x => x.Position))
+        {
+            <p>
+                <input type="radio" name="vacancyId" value="@vacancy.Id" required />
+                <a class="vacancy-link" asp-controller="Vacancy" asp-action="GetVacancy" asp-route-vacancyId="@vacancy.Id">
+                    <strong>@vacancy.Position</strong>
+                </a>
+            </p>
+        }
+        <input type="submit" value="Сохранить"/>
+    </form>
+</div>
+
+<script>
+    const searchInput = document.getElementById('searchInput');
+    const paragraphs = document.querySelectorAll('#choose-vacancy p');
+
+    searchInput.addEventListener('input', () => {
+        const query = searchInput.value.toLowerCase();
+
+        paragraphs.forEach(p => {
+            const text = p.textContent.toLowerCase();
+            if (text.includes(query)) {
+                p.style.display = '';
+            } else {
+                p.style.display = 'none';
+            }
+        });
+    });
+</script>

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Web.MVC.DTOs.Employee;
 using Web.MVC.Models.ApiResponses;
 using Web.MVC.Models.ApiResponses.Bookmark;
-using Web.MVC.Models.ApiResponses.Employee;
+using Web.MVC.Models.ApiResponses.Response;
 using Web.MVC.Models.ApiResponses.Vacancy;
 
 namespace Web.MVC.Controllers
@@ -134,6 +134,37 @@ namespace Web.MVC.Controllers
             ViewBag.TimeSort = timeSort;
 
             return View(vacancyResponses);
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("employee/interview-invitations")]
+        public async Task<IActionResult> GetEmployeeInterviewInvitations(string? query, DateTimeOrderByType timeSort = DateTimeOrderByType.Descending,
+            int index = 1)
+        {
+            var encodedQuery = HttpUtility.UrlEncode(query);
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+
+            var employeeResponse = await httpClient.GetAsync($"{url}/api/Employee/GetEmployeeByEmail?email={User.Identity.Name}");
+            employeeResponse.EnsureSuccessStatusCode();
+            var employee = await employeeResponse.Content.ReadFromJsonAsync<EmployeeResponse>();
+
+            var interviewInvitationsResponse = await httpClient.GetAsync(
+                $"{url}/api/InterviewInvitation/GetInterviewInvitationsByEmployeeId/{employee.Id}?searchingQuery={encodedQuery}&orderByTimeType={timeSort}&pageNumber={index}");
+            interviewInvitationsResponse.EnsureSuccessStatusCode();
+            var interviewInvitations = await interviewInvitationsResponse.Content.ReadFromJsonAsync<List<InterviewInvitationResponse>>();
+
+            var doesNextPageExistResponse = await httpClient.GetAsync(
+                $"{url}/api/InterviewInvitation/DoesNextInterviewInvitationsByEmployeeIdPageExist/{employee.Id}?searchingQuery={encodedQuery}&orderByTimeType={timeSort}&currentPageNumber={index}");
+            doesNextPageExistResponse.EnsureSuccessStatusCode();
+            bool doesNextPageExist = await doesNextPageExistResponse.Content.ReadFromJsonAsync<bool>();
+
+            ViewBag.CurrentPageNumber = index;
+            ViewBag.TimeSort = timeSort;
+            ViewBag.DoesNextPageExist = doesNextPageExist;
+            ViewBag.SearchingQuery = query;
+
+            return View(interviewInvitations);
         }
     }
 }

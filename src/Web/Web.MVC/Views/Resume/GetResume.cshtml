@@ -28,6 +28,37 @@
                 break;
         }
 
+        @if (ViewBag.VacancyResponseValid is not null && ViewBag.VacancyResponseValid == true)
+        {
+            <div class="vacancy-response-actions-block mt-2">
+                <form method="post" asp-controller="Company" asp-action="AcceptVacancyResponse" asp-route-vacancyResponseId="@ViewBag.VacancyResponseId">
+                    <input class="resume-action-btn" type="submit" value="Принять отклик" />
+                </form>
+                <form method="post" asp-controller="Company" asp-action="RejectVacancyResponse" asp-route-returnUrl="@ViewBag.ReturnUrl"
+                      asp-route-vacancyResponseId="@ViewBag.VacancyResponseId">
+                    <input class="resume-action-btn" type="submit" value="Отклонить отклик" />
+                </form>
+            </div>
+        }
+        
+        @if (ViewBag.EmployeeCanBeInvitedToInterview is not null && ViewBag.EmployeeCanBeInvitedToInterview == true)
+        {
+            <div class="mt-2">
+                <a class="resume-action-btn mt-2" asp-controller="Company" asp-action="ChooseVacancyToInviteToInterview" asp-route-resumeId="@Model.Id">
+                    Пригласить на собеседование
+                </a>
+            </div>
+        }
+        
+        @if (ViewBag.EmployeeIsAlreadyInvitedToAnInterview is not null && ViewBag.EmployeeIsAlreadyInvitedToAnInterview == true)
+        {
+            <div class="mt-1">
+                <form method="post" asp-controller="Company" asp-action="CloseInterview" asp-route-interviewInvitationId="@ViewBag.InterviewInvitationId">
+                    <input class="remove-invitation-btn mt-2" type="submit" value="Удалить приглашение"/>
+                </form>
+            </div>
+        }
+
         @if (ViewBag.IsCurrentUserOwner == true)
         {
             <div class="resume-actions-block">
