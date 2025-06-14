@@ -11,6 +11,7 @@ namespace VacancyMicroservice.Api.Services
         Task<List<Vacancy>> GetFilteredVacanciesAsync(GetFilteredVacanciesDto model, int pageNumber);
         Task<List<Vacancy>> SearchFilteredVacanciesAsync(GetFilteredVacanciesDto model, string searchingQuery, int pageNumber);
         Task<List<Vacancy>> GetVacanciesByCompanyIdAsync(Guid companyId, int pageNumber, string? searchingQuery);
+        Task<List<Vacancy>> GetAllVacanciesByCompanyIdAsync(Guid companyId);
         Task AddVacancyAsync(Vacancy vacancy);
         Task DeleteVacancyAsync(Guid vacancyId);
         Task UpdateVacancyAsync(UpdateVacancyDto model);
