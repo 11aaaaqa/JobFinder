@@ -5,13 +5,14 @@ using ResponseMicroservice.Api.DTOs;
 using ResponseMicroservice.Api.Models;
 using ResponseMicroservice.Api.Services.Interview_invitation_services;
 using ResponseMicroservice.Api.Services.Pagination;
+using ResponseMicroservice.Api.Services.Vacancy_response_services;
 
 namespace ResponseMicroservice.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class InterviewInvitationController(IInterviewInvitationService interviewInvitationService,
-        ICheckForNextPageExistingService paginationService, IBackgroundJobClient backgroundJob) : ControllerBase
+        ICheckForNextPageExistingService paginationService, IBackgroundJobClient backgroundJob, IVacancyResponseService vacancyResponseService) : ControllerBase
     {
         [HttpGet]
         [Route("GetInterviewInvitationsByCompanyId/{companyId}")]
@@ -52,6 +53,11 @@ namespace ResponseMicroservice.Api.Controllers
         public async Task<IActionResult> AddInterviewInvitationAsync([FromBody]AddInterviewInvitationDto model)
         {
             Guid currentInterviewInvitationId = Guid.NewGuid();
+
+            var jobId =
+                backgroundJob.Schedule(() => interviewInvitationService.CloseInterviewAsync(currentInterviewInvitationId),
+                    TimeSpan.FromDays(50));
+
             await interviewInvitationService.AddInvitationAsync(new InterviewInvitation
             {
                 Id = currentInterviewInvitationId, InvitationDate = DateTime.UtcNow, EmployeeId = model.EmployeeId,
@@ -60,10 +66,13 @@ namespace ResponseMicroservice.Api.Controllers
                 EmployeeWorkingExperience = model.EmployeeWorkingExperience, VacancySalaryFrom = model.VacancySalaryFrom,
                 VacancyWorkExperience = model.VacancyWorkExperience, EmployeeCity = model.EmployeeCity, VacancySalaryTo = model.VacancySalaryTo,
                 EmployeeDesiredSalary = model.EmployeeDesiredSalary, VacancyCompanyName = model.VacancyCompanyName, 
-                EmployeeResumeId = model.EmployeeResumeId, InvitedCompanyId = model.InvitedCompanyId, IsClosed = false
+                EmployeeResumeId = model.EmployeeResumeId, InvitedCompanyId = model.InvitedCompanyId, IsClosed = false, HangfireDelayedJobId = jobId
             });
 
-            backgroundJob.Schedule(() => interviewInvitationService.CloseInterviewAsync(currentInterviewInvitationId), TimeSpan.FromDays(50));
+            List<VacancyResponse> vacancyResponsesToDelete = 
+                await vacancyResponseService.GetWaitingVacancyResponsesAsync(model.EmployeeId, model.InvitedCompanyId);
+
+            await vacancyResponseService.RemoveVacancyResponsesAsync(vacancyResponsesToDelete);
 
             return Ok();
         }
@@ -82,7 +91,15 @@ namespace ResponseMicroservice.Api.Controllers
         [Route("CloseInterview/{interviewInvitationId}")]
         public async Task<IActionResult> CloseInterviewAsync(Guid interviewInvitationId)
         {
+            var interviewInvitation = await interviewInvitationService.GetInterviewInvitationByIdAsync(interviewInvitationId);
+            if (interviewInvitation == null)
+                return NotFound();
+
+            var hangfireDelayedJob = interviewInvitation.HangfireDelayedJobId;
             await interviewInvitationService.CloseInterviewAsync(interviewInvitationId);
+
+            backgroundJob.Delete(hangfireDelayedJob);
+
             return Ok();
         }
 
