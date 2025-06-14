@@ -10,7 +10,7 @@
         <a asp-controller="Company" asp-action="GetEmployersRequestedJoiningMyCompany">Запросы на присоединение</a>
         <a asp-controller="Company" asp-action="GetMyCompanyVacancies">Вакансии компании</a>
         <a asp-controller="Company" asp-action="GetCompanyVacancyResponses" asp-route-timeSort="Descending">Отклики</a>
-        <a asp-controller="Company" asp-action="GetCompanyInterviewInvitations" asp-route-timeSort="Descending"></a>
+        <a asp-controller="Company" asp-action="GetCompanyInterviewInvitations">Приглашения</a>
         <form method="post" asp-controller="Company" asp-action="LeaveFromCompany" asp-route-returnUrl="@returnUrl">
             <input type="submit" value="Выйти из компании" />
         </form>
