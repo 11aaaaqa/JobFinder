@@ -206,6 +206,11 @@ namespace Web.MVC.Controllers
                     $"{url}/api/VacancyResponse/HasEmployeeRespondedToVacancy?employeeId={employee.Id}&vacancyId={vacancyId}");
                 employeeRespondedToVacancyResponse.EnsureSuccessStatusCode();
                 bool hasEmployeeRespondedToVacancy = await employeeRespondedToVacancyResponse.Content.ReadFromJsonAsync<bool>();
+
+                var interviewInvitation = await httpClient.GetAsync(
+                    $"{url}/api/InterviewInvitation/GetInterviewInvitation?employeeId={employee.Id}&companyId={vacancy.CompanyId}");
+
+                ViewBag.EmployeeGotInvitedToThisVacancy = interviewInvitation.IsSuccessStatusCode;
                 ViewBag.HasEmployeeRespondedToVacancy = hasEmployeeRespondedToVacancy;
 
                 bool isVacancyInFavorites = await favoriteVacancyResponse.Content.ReadFromJsonAsync<bool>();
