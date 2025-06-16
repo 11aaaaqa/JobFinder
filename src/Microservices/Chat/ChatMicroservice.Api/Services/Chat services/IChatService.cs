@@ -7,5 +7,6 @@ namespace ChatMicroservice.Api.Services.Chat_services
         Task<List<Chat>> GetChatListByEmployeeIdAsync(Guid employeeId, int pageNumber);
         Task<List<Chat>> GetChatListByEmployerIdAsync(Guid employerId, int pageNumber);
         Task CreateChatAsync(Chat chat);
+        Task UpdateLastMessageSendingTimeAsync(Guid chatId);
     }
 }
