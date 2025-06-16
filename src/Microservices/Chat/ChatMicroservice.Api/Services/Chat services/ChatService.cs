@@ -7,6 +7,9 @@ namespace ChatMicroservice.Api.Services.Chat_services
 {
     public class ChatService(ApplicationDbContext context) : IChatService
     {
+        public async Task<Chat?> GetChatByIdAsync(Guid chatId)
+            => await context.Chats.SingleOrDefaultAsync(x => x.Id == chatId);
+
         public async Task<List<Chat>> GetChatListByEmployeeIdAsync(Guid employeeId, int pageNumber)
         {
             var chats = await context.Chats
