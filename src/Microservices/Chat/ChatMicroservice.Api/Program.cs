@@ -1,5 +1,5 @@
 using ChatMicroservice.Api.Database;
-using ChatMicroservice.Api.Services.Chat;
+using ChatMicroservice.Api.Services.Chat_services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
