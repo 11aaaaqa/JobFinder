@@ -10,26 +10,28 @@ namespace ChatMicroservice.Api.Services.Chat_services
         public async Task<Chat?> GetChatByIdAsync(Guid chatId)
             => await context.Chats.SingleOrDefaultAsync(x => x.Id == chatId);
 
-        public async Task<List<Chat>> GetChatListByEmployeeIdAsync(Guid employeeId, int pageNumber)
+        public async Task<List<Chat>> GetChatListByEmployeeIdAsync(Guid employeeId, string? searchingQuery, int pageNumber)
         {
-            var chats = await context.Chats
-                .Where(x => x.EmployeeId == employeeId)
-                .OrderBy(x => x.LastMessageSendingTime)
-                .Skip((pageNumber - 1) * PaginationConstants.ChatsPageSize)
+            var chats = context.Chats.Where(x => x.EmployeeId == employeeId).OrderBy(x => x.LastMessageSendingTime).AsQueryable();
+
+            if (searchingQuery is not null)
+                chats = chats.Where(x => x.EmployerFullName.ToLower().Contains(searchingQuery.ToLower()));
+
+            return await chats.Skip((pageNumber - 1) * PaginationConstants.ChatsPageSize)
                 .Take(PaginationConstants.ChatsPageSize)
-                .ToListAsync();
-            return chats;
+                .ToListAsync(); ;
         }
 
-        public async Task<List<Chat>> GetChatListByEmployerIdAsync(Guid employerId, int pageNumber)
+        public async Task<List<Chat>> GetChatListByEmployerIdAsync(Guid employerId, string? searchingQuery, int pageNumber)
         {
-            var chats = await context.Chats
-                .Where(x => x.EmployerId == employerId)
-                .OrderBy(x => x.LastMessageSendingTime)
-                .Skip((pageNumber - 1) * PaginationConstants.ChatsPageSize)
+            var chats = context.Chats.Where(x => x.EmployerId == employerId).OrderBy(x => x.LastMessageSendingTime).AsQueryable();
+
+            if (searchingQuery is not null)
+                chats = chats.Where(x => x.EmployeeFullName.ToLower().Contains(searchingQuery.ToLower()));
+
+            return await chats.Skip((pageNumber - 1) * PaginationConstants.ChatsPageSize)
                 .Take(PaginationConstants.ChatsPageSize)
-                .ToListAsync();
-            return chats;
+                .ToListAsync(); ;
         }
 
         public async Task CreateChatAsync(Chat chat)
