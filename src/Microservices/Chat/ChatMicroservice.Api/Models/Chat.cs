@@ -1,6 +1,6 @@
 ﻿namespace ChatMicroservice.Api.Models
 {
-    public class ChatModel
+    public class Chat
     {
         public Guid Id { get; set; }
 
