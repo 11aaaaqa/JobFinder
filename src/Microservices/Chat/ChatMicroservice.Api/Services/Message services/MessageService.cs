@@ -7,6 +7,9 @@ namespace ChatMicroservice.Api.Services.Message_services
 {
     public class MessageService(ApplicationDbContext context) : IMessageService
     {
+        public async Task<Message?> GetMessageByIdAsync(Guid messageId)
+            => await context.Messages.SingleOrDefaultAsync(x => x.Id == messageId);
+
         public async Task<List<Message>> GetLastMessagesByChatIdAsync(Guid chatId, int pageNumber)
         {
             var messages = await context.Messages

@@ -10,6 +10,16 @@ namespace ChatMicroservice.Api.Controllers
     public class ChatController(IChatService chatService) : ControllerBase
     {
         [HttpGet]
+        [Route("GetChatByChatId/{chatId}")]
+        public async Task<IActionResult> GetChatByChatIdAsync(Guid chatId)
+        {
+            var chat = await chatService.GetChatByIdAsync(chatId);
+            if (chat is null)
+                return NotFound();
+            return Ok(chat);
+        }
+
+        [HttpGet]
         [Route("GetChatListByEmployeeId/{employeeId}")]
         public async Task<IActionResult> GetChatListByEmployeeIdAsync(Guid employeeId, int pageNumber)
             => Ok(await chatService.GetChatListByEmployeeIdAsync(employeeId, pageNumber));
@@ -27,7 +37,7 @@ namespace ChatMicroservice.Api.Controllers
             {
                 EmployeeFullName = model.EmployeeFullName, EmployeeId = model.EmployeeId,
                 EmployerFullName = model.EmployerFullName, EmployerId = model.EmployerId,
-                Id = Guid.NewGuid(), LastMessageSendingTime = DateTime.UtcNow
+                Id = model.Id, LastMessageSendingTime = DateTime.UtcNow
             });
 
             return Ok();

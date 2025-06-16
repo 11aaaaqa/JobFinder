@@ -11,9 +11,22 @@ namespace ChatMicroservice.Api.Controllers
     public class MessageController(IMessageService messageService, IChatService chatService) : ControllerBase
     {
         [HttpGet]
+        [Route("GetMessageByMessageId/{messageId}")]
+        public async Task<IActionResult> GetMessageByMessageIdAsync(Guid messageId)
+        {
+            var message = await messageService.GetMessageByIdAsync(messageId);
+            if (message is null)
+                return NotFound();
+            return Ok(message);
+        }
+
+        [HttpGet]
         [Route("GetLastMessagesByChatId/{chatId}")]
         public async Task<IActionResult> GetLastMessagesByChatIdAsync(Guid chatId, int pageNumber)
-            => Ok(await messageService.GetLastMessagesByChatIdAsync(chatId, pageNumber));
+        {
+            var messages = await messageService.GetLastMessagesByChatIdAsync(chatId, pageNumber);
+            return Ok(new Queue<Message>(messages));
+        }
 
         [HttpPost]
         [Route("CreateMessage")]
