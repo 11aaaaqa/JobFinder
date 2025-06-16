@@ -2,6 +2,7 @@
 {
     public class CreateChatDto
     {
+        public Guid Id { get; set; }
         public Guid EmployeeId { get; set; }
         public string EmployeeFullName { get; set; }
 
