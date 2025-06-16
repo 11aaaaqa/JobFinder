@@ -21,13 +21,13 @@ namespace ChatMicroservice.Api.Controllers
 
         [HttpGet]
         [Route("GetChatListByEmployeeId/{employeeId}")]
-        public async Task<IActionResult> GetChatListByEmployeeIdAsync(Guid employeeId, int pageNumber)
-            => Ok(await chatService.GetChatListByEmployeeIdAsync(employeeId, pageNumber));
+        public async Task<IActionResult> GetChatListByEmployeeIdAsync(Guid employeeId, string? searchingQuery, int pageNumber)
+            => Ok(await chatService.GetChatListByEmployeeIdAsync(employeeId, searchingQuery, pageNumber));
 
         [HttpGet]
         [Route("GetChatListByEmployerId/{employerId}")]
-        public async Task<IActionResult> GetChatListByEmployerIdAsync(Guid employerId, int pageNumber)
-            => Ok(await chatService.GetChatListByEmployerIdAsync(employerId, pageNumber));
+        public async Task<IActionResult> GetChatListByEmployerIdAsync(Guid employerId, string? searchingQuery, int pageNumber)
+            => Ok(await chatService.GetChatListByEmployerIdAsync(employerId, searchingQuery, pageNumber));
 
         [HttpPost]
         [Route("CreateChat")]
