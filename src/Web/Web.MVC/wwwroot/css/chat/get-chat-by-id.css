@@ -99,6 +99,8 @@
     overflow: auto;
     line-height: 1.2;
     max-height: 150px;
+    resize: none;
+    outline: none;
 }
 
 .send-message-btn {
