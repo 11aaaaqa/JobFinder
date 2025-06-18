@@ -1,0 +1,153 @@
+﻿@using System.Text.Json
+@model Web.MVC.Models.View_models.GetChatByIdViewModel
+<link rel="stylesheet" href="~/css/chat/get-chat-by-id.css"/>
+<body>
+<div class="interlocutor-container">
+    <div class="interlocutor-info">
+        @if (Model.InterlocutorCompanyName != null)
+        {
+            <p>@Model.InterlocutorFullName<span class="name-company-space">•</span>@Model.InterlocutorCompanyName</p>
+        }
+        else
+        {
+            <p>@Model.InterlocutorFullName</p>
+        }
+    </div>
+</div>
+
+<div class="messagesList" id="messagesList"></div>
+
+<div class="input-area">
+    <textarea class="message-textarea" id="messageInput" placeholder="Введите сообщение" oninput="autoResize(this)" rows="1"></textarea>
+    <input class="send-message-btn" type="button" id="sendMessageBtn" value="Отправить"/>
+</div>
+</body>
+
+<script>
+    const connection = new signalR.HubConnectionBuilder().withUrl("/chat").build();
+    const chat = document.getElementById('messagesList');
+
+    function isAtBottom() {
+        return chat.scrollHeight - chat.scrollTop - chat.clientHeight < 1;
+    }
+
+    function scrollToBottom() {
+        chat.scrollTop = chat.scrollHeight;
+    }
+
+    document.getElementById('sendMessageBtn').disabled = true;
+
+    connection.on("Receive", function(message, user, sentAt) {
+        const userWasAtBottom = isAtBottom();
+
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('message-block');
+        messageDiv.classList.add('received-message');
+
+        const textDiv = document.createElement('div');
+        textDiv.textContent = message;
+        textDiv.classList.add('message-text');
+
+        const createdAtDiv = document.createElement('div');
+        sentAt = sentAt.replace('.', '-');
+        sentAt = sentAt.replace(' ', 'T') + 'Z';
+        createdAtDiv.textContent = new Date(sentAt).toLocaleString()();
+        createdAtDiv.classList.add('message-time');
+
+        messageDiv.appendChild(textDiv);
+        messageDiv.appendChild(createdAtDiv);
+
+        chat.appendChild(message);
+        if (userWasAtBottom) {
+            scrollToBottom();
+        }
+    });
+
+    connection.start().then(function() {
+        document.getElementById('sendMessageBtn').disabled = false;
+    }).catch(err => console.error(err.toString()));
+
+    document.getElementById('sendMessageBtn').addEventListener('click', () => {
+        const userWasAtBottom = isAtBottom();
+
+        const receiver = @Html.Raw(JsonSerializer.Serialize(Model.ReceiverEmail));
+        const message = document.getElementById('messageInput').value;
+        connection.invoke("Send", message, receiver, @Html.Raw(JsonSerializer.Serialize(Model.ChatId))).catch(err => console.error(err));
+
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('message-block');
+        messageDiv.classList.add('sent-message');
+
+        const textDiv = document.createElement('div');
+        textDiv.textContent = message;
+        textDiv.classList.add('message-text');
+
+        const createdAtDiv = document.createElement('div');
+        createdAtDiv.textContent = new Date().toLocaleString()();
+        createdAtDiv.classList.add('message-time');
+
+        messageDiv.appendChild(textDiv);
+        messageDiv.appendChild(createdAtDiv);
+
+        chat.appendChild(message);
+
+        message.value = '';
+        autoResize(message);
+
+        if (userWasAtBottom) {
+            scrollToBottom();
+        }
+    });
+</script>
+<script>
+    const currentId = @Html.Raw(JsonSerializer.Serialize(Model.CurrentId));
+    let currentPage = 1;
+    const chatId = @Html.Raw(JsonSerializer.Serialize(Model.ChatId));
+    const messagesContainer = document.getElementById('messagesList');
+
+    async function loadMessages() {
+        const response = await fetch(`/chat/${chatId}/get-messages/?pageNumber=${currentPage}`);
+        const messages = await response.json();
+        messages.forEach(message => {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message-block');
+
+            if (message.senderId === currentId) {
+                messageDiv.classList.add('sent-message');
+            } else {
+                messageDiv.classList.add('received-message');
+            }
+
+            const textDiv = document.createElement('div');
+            textDiv.textContent = message.text;
+            textDiv.classList.add('message-text');
+
+            const createdAtDiv = document.createElement('div');
+            let createdAt = message.createdAt.replace('.', '-');
+            createdAt = createdAt.replace(' ', 'T') + 'Z';
+            createdAtDiv.textContent = new Date(createdAt).toLocaleString();
+            createdAtDiv.classList.add('message-time');
+
+            messageDiv.appendChild(textDiv);
+            messageDiv.appendChild(createdAtDiv);
+
+            messagesContainer.insertBefore(messageDiv, messageDiv.firstChild);
+        });
+
+        if (currentPage === 1) {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        currentPage++;
+    }
+
+    messagesContainer.addEventListener('scroll', () => {
+        if (messagesContainer.scrollTop < 1) {
+            loadMessages();
+        }
+    });
+
+    loadMessages();
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
+<script src="~/js/textarea-resizing.js"></script>
