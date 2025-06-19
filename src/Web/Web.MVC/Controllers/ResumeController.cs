@@ -167,6 +167,8 @@ namespace Web.MVC.Controllers
                 var employerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
                 if (employerResponse.IsSuccessStatusCode)
                 {
+                    var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
+                    ViewBag.EmployerId = employer.Id;
                     if (vacancyResponseId is not null)
                     {
                         var vacancyResponseResponse = await httpClient.GetAsync($"{url}/api/VacancyResponse/GetVacancyResponseById/{vacancyResponseId}");
@@ -179,7 +181,6 @@ namespace Web.MVC.Controllers
                         }
                     }
 
-                    var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
                     var interviewInvitationResponse = await httpClient.GetAsync(
                         $"{url}/api/InterviewInvitation/GetInterviewInvitation?employeeId={resume.EmployeeId}&companyId={employer.CompanyId}");
                     if (interviewInvitationResponse.IsSuccessStatusCode)
