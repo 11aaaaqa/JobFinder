@@ -41,10 +41,17 @@
             </div>
         }
         
+        @if (ViewBag.EmployerId is not null)
+        {
+            <form method="post" asp-controller="Chat" asp-action="CreateChat" asp-route-employeeId="@Model.EmployeeId" asp-route-employerId="@ViewBag.EmployerId">
+                <input class="resume-action-btn mt-2" type="submit" value="Написать сообщение" />
+            </form>
+        }
+
         @if (ViewBag.EmployeeCanBeInvitedToInterview is not null && ViewBag.EmployeeCanBeInvitedToInterview == true)
         {
             <div class="mt-2">
-                <a class="resume-action-btn mt-2" asp-controller="Company" asp-action="ChooseVacancyToInviteToInterview" asp-route-resumeId="@Model.Id">
+                <a class="resume-action-btn" asp-controller="Company" asp-action="ChooseVacancyToInviteToInterview" asp-route-resumeId="@Model.Id">
                     Пригласить на собеседование
                 </a>
             </div>
@@ -54,7 +61,7 @@
         {
             <div class="mt-1">
                 <form method="post" asp-controller="Company" asp-action="CloseInterview" asp-route-interviewInvitationId="@ViewBag.InterviewInvitationId">
-                    <input class="remove-invitation-btn mt-2" type="submit" value="Удалить приглашение"/>
+                    <input class="remove-invitation-btn" type="submit" value="Удалить приглашение"/>
                 </form>
             </div>
         }
