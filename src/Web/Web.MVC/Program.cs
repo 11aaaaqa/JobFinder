@@ -2,7 +2,9 @@ using System.Net;
 using System.Text;
 using System.Web;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.Tokens;
+using Web.MVC.Chat_services;
 using Web.MVC.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,6 +28,9 @@ builder.Services.AddAuthentication(x =>
     };
 });
 
+builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
+
+builder.Services.AddSignalR();
 builder.Services.AddHttpClient();
 builder.Services.AddControllersWithViews();
 
@@ -73,6 +78,8 @@ app.UseStatusCodePages(context =>
 });
 
 app.MapStaticAssets();
+
+app.MapHub<ChatHub>("/chat");
 
 app.MapControllerRoute(
     name: "default",
