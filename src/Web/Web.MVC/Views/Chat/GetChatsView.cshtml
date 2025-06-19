@@ -1,0 +1,81 @@
+﻿@using System.Text.Json
+<link rel="stylesheet" href="~/css/chat/get-chats-view.css"/>
+
+<div class="search-block">
+    <input type="text" id="chatsSearchingInput" placeholder="Поиск по чатам"/>
+    <input type="button" id="chatsSearchingBtn" value="Найти" />
+</div>
+
+<div id="chats-container"></div>
+
+<script>
+    let currentPage = 1;
+    let currentQuery = '';
+    const chatsContainer = document.getElementById('chats-container');
+    const searchBtn = document.getElementById('chatsSearchingBtn');
+    const searchInput = document.getElementById('chatsSearchingInput');
+    const employeeId = @Html.Raw(JsonSerializer.Serialize(ViewBag.EmployeeId));
+    const employerId = @Html.Raw(JsonSerializer.Serialize(ViewBag.EmployerId));
+
+    async function loadChats(resetPage = false) {
+        let url = '';
+        const params = new URLSearchParams();
+
+        if (resetPage) {
+            currentPage = 1;
+        }
+
+        if (employeeId !== undefined && employeeId !== null) {
+            url = `/employee/chats`;
+            params.append('employeeId', employeeId);
+        } else {
+            url = `/employer/chats`;
+            params.append('employerId', employerId);
+        }
+
+        params.append('pageNumber', currentPage);
+        if (currentQuery.trim() !== '') {
+            params.append('query', currentQuery.trim());
+        }
+
+        const response = await fetch(`${url}?${params.toString()}`);
+        const chats = await response.json();
+        chats.forEach(chat => {
+            const chatDiv = document.createElement('div');
+            chatDiv.classList.add('chat-block');
+
+            const chatLink = document.createElement('a');
+            chatLink.href = `/chats/${chat.id}`;
+
+            const chatP = document.createElement('p');
+
+            chatP.textContent = chat.employeeFullName;
+            chatLink.appendChild(chatP);
+            chatDiv.appendChild(chatLink);
+
+            chatsContainer.appendChild(chatDiv);
+        });
+        
+        currentPage++;
+    }
+
+    searchBtn.addEventListener('click', () => {
+        currentQuery = searchInput.value;
+        loadChats(true);
+    });
+
+    searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            currentQuery = searchInput.value;
+            loadChats(true);
+        }
+    });
+
+    chatsContainer.addEventListener('scroll', () => {
+        if (chatsContainer.scrollTop <= 0) {
+            loadChats();
+        }
+    });
+
+    loadChats();
+</script>
