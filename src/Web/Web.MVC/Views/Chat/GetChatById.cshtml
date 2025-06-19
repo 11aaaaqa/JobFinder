@@ -23,7 +23,9 @@
 </div>
 </body>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
 <script>
+    const currentUserEmail = @Html.Raw(JsonSerializer.Serialize(Model.CurrentEmail));
     const connection = new signalR.HubConnectionBuilder().withUrl("/chat").build();
     const chat = document.getElementById('messagesList');
 
@@ -37,29 +39,29 @@
 
     document.getElementById('sendMessageBtn').disabled = true;
 
-    connection.on("Receive", function(message, user, sentAt) {
-        const userWasAtBottom = isAtBottom();
+    connection.on("Receive", function(message, fromEmail, sentAt) {
+        if (currentUserEmail !== fromEmail) {
+            const userWasAtBottom = isAtBottom();
 
-        const messageDiv = document.createElement('div');
-        messageDiv.classList.add('message-block');
-        messageDiv.classList.add('received-message');
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message-block');
+            messageDiv.classList.add('received-message');
 
-        const textDiv = document.createElement('div');
-        textDiv.textContent = message;
-        textDiv.classList.add('message-text');
+            const textDiv = document.createElement('div');
+            textDiv.textContent = message;
+            textDiv.classList.add('message-text');
 
-        const createdAtDiv = document.createElement('div');
-        sentAt = sentAt.replace('.', '-');
-        sentAt = sentAt.replace(' ', 'T') + 'Z';
-        createdAtDiv.textContent = new Date(sentAt).toLocaleString()();
-        createdAtDiv.classList.add('message-time');
+            const createdAtDiv = document.createElement('div');
+            createdAtDiv.textContent = new Date(sentAt).toLocaleString();
+            createdAtDiv.classList.add('message-time');
 
-        messageDiv.appendChild(textDiv);
-        messageDiv.appendChild(createdAtDiv);
+            messageDiv.appendChild(textDiv);
+            messageDiv.appendChild(createdAtDiv);
 
-        chat.appendChild(message);
-        if (userWasAtBottom) {
-            scrollToBottom();
+            chat.appendChild(messageDiv);
+            if (userWasAtBottom) {
+                scrollToBottom();
+            }
         }
     });
 
@@ -67,7 +69,7 @@
         document.getElementById('sendMessageBtn').disabled = false;
     }).catch(err => console.error(err.toString()));
 
-    document.getElementById('sendMessageBtn').addEventListener('click', () => {
+    function sendMessage() {
         const userWasAtBottom = isAtBottom();
 
         const receiver = @Html.Raw(JsonSerializer.Serialize(Model.ReceiverEmail));
@@ -83,19 +85,27 @@
         textDiv.classList.add('message-text');
 
         const createdAtDiv = document.createElement('div');
-        createdAtDiv.textContent = new Date().toLocaleString()();
+        createdAtDiv.textContent = new Date().toLocaleString();
         createdAtDiv.classList.add('message-time');
 
         messageDiv.appendChild(textDiv);
         messageDiv.appendChild(createdAtDiv);
 
-        chat.appendChild(message);
+        chat.appendChild(messageDiv);
 
-        message.value = '';
-        autoResize(message);
+        document.getElementById('messageInput').preventDefault();
+        autoResize(document.getElementById('messageInput'));
 
         if (userWasAtBottom) {
             scrollToBottom();
+        }
+    }
+
+    document.getElementById('sendMessageBtn').addEventListener('click', sendMessage);
+
+    document.getElementById('messageInput').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            sendMessage();
         }
     });
 </script>
@@ -123,15 +133,13 @@
             textDiv.classList.add('message-text');
 
             const createdAtDiv = document.createElement('div');
-            let createdAt = message.createdAt.replace('.', '-');
-            createdAt = createdAt.replace(' ', 'T') + 'Z';
-            createdAtDiv.textContent = new Date(createdAt).toLocaleString();
+            createdAtDiv.textContent = new Date(message.createdAt).toLocaleString();
             createdAtDiv.classList.add('message-time');
 
             messageDiv.appendChild(textDiv);
             messageDiv.appendChild(createdAtDiv);
 
-            messagesContainer.insertBefore(messageDiv, messageDiv.firstChild);
+            messagesContainer.insertBefore(messageDiv, messagesContainer.firstChild);
         });
 
         if (currentPage === 1) {
@@ -142,12 +150,11 @@
     }
 
     messagesContainer.addEventListener('scroll', () => {
-        if (messagesContainer.scrollTop < 1) {
+        if (messagesContainer.scrollTop <= 0) {
             loadMessages();
         }
     });
 
     loadMessages();
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
 <script src="~/js/textarea-resizing.js"></script>
