@@ -121,6 +121,7 @@
     const messagesContainer = document.getElementById('messagesList');
 
     async function loadMessages() {
+        let scrollHeightBeforeLoading = messagesContainer.scrollHeight;
         const response = await fetch(`/chat/${chatId}/get-messages/?pageNumber=${currentPage}`);
         const messages = await response.json();
         messages.forEach(message => {
@@ -149,6 +150,8 @@
 
         if (currentPage === 1) {
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        } else {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight - scrollHeightBeforeLoading;
         }
 
         currentPage++;
