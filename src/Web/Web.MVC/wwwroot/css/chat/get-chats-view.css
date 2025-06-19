@@ -1,0 +1,24 @@
+﻿.search-block {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.chat-block {
+    padding: 13px;
+    border: 1px solid #ccc;
+    border-radius: 13px;
+    margin: 5px 0;
+}
+
+.chat-block a {
+    text-decoration: none;
+    color: black;
+}
+
+.chat-block a:hover {
+    cursor: pointer;
+}
+
+.chat-block p {
+    margin: 0;
+}
