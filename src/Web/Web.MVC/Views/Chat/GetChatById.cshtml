@@ -1,27 +1,28 @@
 ﻿@using System.Text.Json
 @model Web.MVC.Models.View_models.GetChatByIdViewModel
 <link rel="stylesheet" href="~/css/chat/get-chat-by-id.css"/>
-<body>
-<div class="interlocutor-container">
-    <div class="interlocutor-info">
-        @if (Model.InterlocutorCompanyName != null)
-        {
-            <p>@Model.InterlocutorFullName<span class="name-company-space">•</span>@Model.InterlocutorCompanyName</p>
-        }
-        else
-        {
-            <p>@Model.InterlocutorFullName</p>
-        }
+
+<div class="page-container">
+    <div class="interlocutor-container">
+        <div class="interlocutor-info">
+            @if (Model.InterlocutorCompanyName != null)
+            {
+                <p>@Model.InterlocutorFullName<span class="name-company-space">•</span>@Model.InterlocutorCompanyName</p>
+            }
+            else
+            {
+                <p>@Model.InterlocutorFullName</p>
+            }
+        </div>
+    </div>
+
+    <div class="messagesList" id="messagesList"></div>
+
+    <div class="input-area">
+        <textarea class="message-textarea" id="messageInput" placeholder="Введите сообщение" oninput="autoResize(this)" rows="1"></textarea>
+        <input class="send-message-btn" type="button" id="sendMessageBtn" value="Отправить"/>
     </div>
 </div>
-
-<div class="messagesList" id="messagesList"></div>
-
-<div class="input-area">
-    <textarea class="message-textarea" id="messageInput" placeholder="Введите сообщение" oninput="autoResize(this)" rows="1"></textarea>
-    <input class="send-message-btn" type="button" id="sendMessageBtn" value="Отправить"/>
-</div>
-</body>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
 <script>
