@@ -1,4 +1,4 @@
-﻿.body {
+﻿body {
     margin: 0;
     padding: 20px;
     display: flex;
@@ -11,10 +11,9 @@
     width: 620px;
     margin: 0 auto;
     background-color: #fff;
-    padding: 10px;
+    padding: 10px 0;
     border-radius: 8px;
     display: flex;
-    flex-direction: column;
     height: 70vh;
     overflow-y: auto;
     overflow-wrap: break-word;
@@ -79,7 +78,8 @@
 }
 
 .interlocutor-info p {
-    margin-top: 5px;
+    margin-top: 0;
+    margin-bottom: 10px;
     text-align: center;
 }
 
@@ -90,22 +90,22 @@
 
 .message-textarea {
     flex: 1;
+    min-height: 40px;
     width: 500px;
     padding: 10px;
     border-radius: 4px;
     border: 1px solid #ccc;
     font-size: 14px;
-    resize: vertical;
-    overflow: auto;
+    resize: none;
+    overflow: hidden;
     line-height: 1.2;
     max-height: 150px;
-    resize: none;
     outline: none;
 }
 
 .send-message-btn {
     width: 100px;
-    height: 59px;
+    height: 40px;
     padding: 10px 15px;
     margin-left: 10px;
     border: none;

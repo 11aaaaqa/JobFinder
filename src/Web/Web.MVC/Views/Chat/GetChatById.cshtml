@@ -70,6 +70,8 @@
     }).catch(err => console.error(err.toString()));
 
     function sendMessage() {
+        if (document.getElementById('messageInput').value.trim() === '') return;
+
         const userWasAtBottom = isAtBottom();
 
         const receiver = @Html.Raw(JsonSerializer.Serialize(Model.ReceiverEmail));
@@ -93,7 +95,7 @@
 
         chat.appendChild(messageDiv);
 
-        document.getElementById('messageInput').preventDefault();
+        document.getElementById('messageInput').value = '';
         autoResize(document.getElementById('messageInput'));
 
         if (userWasAtBottom) {
@@ -104,9 +106,11 @@
     document.getElementById('sendMessageBtn').addEventListener('click', sendMessage);
 
     document.getElementById('messageInput').addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
+        if (e.key === 'Enter' && !e.shiftKey && document.getElementById('messageInput').value.trim() !== '') {
+            e.preventDefault();
             sendMessage();
         }
+        autoResize(document.getElementById('messageInput'));
     });
 </script>
 <script>
