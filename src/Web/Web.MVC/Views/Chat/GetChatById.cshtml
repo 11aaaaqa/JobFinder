@@ -165,4 +165,16 @@
 
     loadMessages();
 </script>
-<script src="~/js/textarea-resizing.js"></script>
+<script>
+    function autoResize(textarea) {
+        let userWasAtBottom = isAtBottom();
+
+        textarea.style.height = 'auto';
+        textarea.style.height = textarea.scrollHeight + 'px';
+
+        if(userWasAtBottom === true) {
+            scrollToBottom();
+        }
+    }
+    
+</script>
