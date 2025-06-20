@@ -1,4 +1,5 @@
 ﻿@using System.Text.Json
+@model Web.MVC.Models.View_models.GetChatsViewModel
 <link rel="stylesheet" href="~/css/chat/get-chats-view.css"/>
 
 <div class="search-block">
@@ -14,8 +15,8 @@
     const chatsContainer = document.getElementById('chats-container');
     const searchBtn = document.getElementById('chatsSearchingBtn');
     const searchInput = document.getElementById('chatsSearchingInput');
-    const employeeId = @Html.Raw(JsonSerializer.Serialize(ViewBag.EmployeeId));
-    const employerId = @Html.Raw(JsonSerializer.Serialize(ViewBag.EmployerId));
+    const employeeId = @Html.Raw(JsonSerializer.Serialize(Model.EmployeeId));
+    const employerId = @Html.Raw(JsonSerializer.Serialize(Model.EmployerId));
 
     async function loadChats(resetPage = false) {
         let url = '';
@@ -49,7 +50,12 @@
 
             const chatP = document.createElement('p');
 
-            chatP.textContent = chat.employeeFullName;
+            if (employeeId === null) {
+                chatP.textContent = chat.employeeFullName;
+            } else {
+                chatP.textContent = chat.employerFullName;
+            }
+
             chatLink.appendChild(chatP);
             chatDiv.appendChild(chatLink);
 
