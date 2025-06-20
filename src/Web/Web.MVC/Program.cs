@@ -74,6 +74,16 @@ app.UseStatusCodePages(context =>
         response.Redirect("/not-found");
     }
 
+    if (response.StatusCode == (int)HttpStatusCode.InternalServerError)
+    {
+        response.Redirect("/server-error");
+    }
+
+    if (response.StatusCode == (int)HttpStatusCode.BadRequest)
+    {
+        response.Redirect("/bad-request");
+    }
+
     return Task.CompletedTask;
 });
 
