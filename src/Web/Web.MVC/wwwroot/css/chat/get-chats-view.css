@@ -1,4 +1,8 @@
-﻿.search-block {
+﻿.chats-page-container {
+    margin: 0 25%;
+}
+
+.search-block {
     display: flex;
     margin-bottom: 10px;
 }
@@ -21,4 +25,34 @@
 
 .chat-block p {
     margin: 0;
+}
+
+@media (max-width: 1200px) {
+    .chats-page-container {
+        margin: 0 20%;
+    }
+}
+
+@media (max-width: 992px) {
+    .chats-page-container {
+        margin: 0 10%;
+    }
+}
+
+@media (max-width: 768px) {
+    .chats-page-container {
+        margin: 0 5%;
+    }
+}
+
+@media (max-width: 600px) {
+    .chats-page-container {
+        margin: 0;
+    }
+}
+
+@media (max-width: 520px) {
+    .chats-page-container {
+        margin: 0;
+    }
 }
