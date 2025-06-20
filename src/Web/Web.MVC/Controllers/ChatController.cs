@@ -176,6 +176,28 @@ namespace Web.MVC.Controllers
             employerResponse.EnsureSuccessStatusCode();
             var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
 
+            var accountType = User.FindFirst(ClaimTypeConstants.AccountTypeClaimName).Value;
+            if (accountType == AccountTypeConstants.Employee)
+            {
+                if (User.Identity.Name != employee.Email)
+                    return StatusCode((int)HttpStatusCode.Forbidden);
+            }
+            else
+            {
+                if (User.Identity.Name != employer.Email)
+                    return StatusCode((int)HttpStatusCode.Forbidden);
+            }
+
+            var chatResponse = await httpClient.GetAsync($"{url}/api/Chat/GetChat?employeeId={employeeId}&employerId={employerId}");
+            if (chatResponse.IsSuccessStatusCode)
+            {
+                var chat = await chatResponse.Content.ReadFromJsonAsync<ChatResponse>();
+                return RedirectToAction("GetChatById", new { chatId = chat.Id });
+            }
+
+            if (chatResponse.StatusCode != HttpStatusCode.NotFound)
+                return StatusCode((int)HttpStatusCode.InternalServerError);
+
             Guid chatId = Guid.NewGuid();
             using StringContent jsonContent = new(JsonSerializer.Serialize(new
             {
