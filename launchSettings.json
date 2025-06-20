@@ -13,7 +13,8 @@
         "vacancymicroservice.api": "StartDebugging",
         "resumemicroservice.api": "StartDebugging",
         "bookmarkmicroservice.api": "StartDebugging",
-        "responsemicroservice.api": "StartDebugging"
+        "responsemicroservice.api": "StartDebugging",
+        "chatmicroservice.api": "StartDebugging"
       }
     }
   }

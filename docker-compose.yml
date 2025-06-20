@@ -165,6 +165,36 @@ services:
       kafka:
         condition: service_started
 
+  chat-microservice-api:
+    container_name: chat-microservice-api
+    image: ${DOCKER_REGISTRY-}chat-microservice-api
+    build:
+      context: .
+      dockerfile: src/Microservices/Chat/ChatMicroservice.Api/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - 21732:8080
+    depends_on:
+      postgres-chat:
+        condition: service_started
+      gateway-api:
+        condition: service_started
+      kafka:
+        condition: service_started
+
+  postgres-chat:
+    container_name: postgres-chat
+    image: postgres:latest
+    expose:
+      - 5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: JobFinderChatMicroservice
+    volumes: 
+      - postgres-chat-data:/var/lib/postgresql/data
+
   postgres-response:
     container_name: postgres-response
     image: postgres:latest
@@ -318,3 +348,4 @@ volumes:
   postgres-bookmark-data: {}
   postgres-response-data: {}
   postgres-hangfire-data: {}
+  postgres-chat-data: {}

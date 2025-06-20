@@ -1,0 +1,91 @@
+﻿@using System.Text.Json
+@model Web.MVC.Models.View_models.GetChatsViewModel
+<link rel="stylesheet" href="~/css/chat/get-chats-view.css"/>
+
+<div class="chats-page-container">
+    <div class="search-block">
+        <input type="text" id="chatsSearchingInput" placeholder="Поиск по чатам"/>
+        <input type="button" id="chatsSearchingBtn" value="Найти" />
+    </div>
+
+    <div id="chats-container"></div>
+</div>
+
+<script>
+    let currentPage = 1;
+    let currentQuery = '';
+    const chatsContainer = document.getElementById('chats-container');
+    const searchBtn = document.getElementById('chatsSearchingBtn');
+    const searchInput = document.getElementById('chatsSearchingInput');
+    const employeeId = @Html.Raw(JsonSerializer.Serialize(Model.EmployeeId));
+    const employerId = @Html.Raw(JsonSerializer.Serialize(Model.EmployerId));
+
+    async function loadChats(resetPage = false) {
+        let url = '';
+        const params = new URLSearchParams();
+
+        if (resetPage) {
+            currentPage = 1;
+        }
+
+        if (employeeId !== undefined && employeeId !== null) {
+            url = `/employee/chats`;
+            params.append('employeeId', employeeId);
+        } else {
+            url = `/employer/chats`;
+            params.append('employerId', employerId);
+        }
+
+        params.append('pageNumber', currentPage);
+        if (currentQuery.trim() !== '') {
+            params.append('query', currentQuery.trim());
+        }
+
+        const response = await fetch(`${url}?${params.toString()}`);
+        const chats = await response.json();
+        chats.forEach(chat => {
+            const chatDiv = document.createElement('div');
+            chatDiv.classList.add('chat-block');
+
+            const chatLink = document.createElement('a');
+            chatLink.href = `/chats/${chat.id}`;
+
+            const chatP = document.createElement('p');
+
+            if (employeeId === null) {
+                chatP.textContent = chat.employeeFullName;
+            } else {
+                chatP.textContent = chat.employerFullName;
+            }
+
+            chatLink.appendChild(chatP);
+            chatDiv.appendChild(chatLink);
+
+            chatsContainer.appendChild(chatDiv);
+        });
+        
+        currentPage++;
+    }
+
+    searchBtn.addEventListener('click', () => {
+        document.getElementById('chats-container').innerHTML = '';
+        currentQuery = searchInput.value;
+        loadChats(true);
+    });
+
+    searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            document.getElementById('chats-container').innerHTML = '';
+            currentQuery = searchInput.value;
+            loadChats(true);
+        }
+    });
+
+    window.addEventListener('scroll', () => {
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+            loadChats();
+        }
+    });
+
+    loadChats();
+</script>
