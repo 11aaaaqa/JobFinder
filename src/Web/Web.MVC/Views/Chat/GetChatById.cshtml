@@ -1,0 +1,180 @@
+﻿@using System.Text.Json
+@model Web.MVC.Models.View_models.GetChatByIdViewModel
+<link rel="stylesheet" href="~/css/chat/get-chat-by-id.css"/>
+
+<div class="page-container">
+    <div class="interlocutor-container">
+        <div class="interlocutor-info">
+            @if (Model.InterlocutorCompanyName != null)
+            {
+                <p>@Model.InterlocutorFullName<span class="name-company-space">•</span>@Model.InterlocutorCompanyName</p>
+            }
+            else
+            {
+                <p>@Model.InterlocutorFullName</p>
+            }
+        </div>
+    </div>
+
+    <div class="messagesList" id="messagesList"></div>
+
+    <div class="input-area">
+        <textarea class="message-textarea" id="messageInput" placeholder="Введите сообщение" oninput="autoResize(this)" rows="1" maxlength="2000"></textarea>
+        <input class="send-message-btn" type="button" id="sendMessageBtn" value="Отправить"/>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
+<script>
+    const currentUserEmail = @Html.Raw(JsonSerializer.Serialize(Model.CurrentEmail));
+    const connection = new signalR.HubConnectionBuilder().withUrl("/chat").build();
+    const chat = document.getElementById('messagesList');
+
+    function isAtBottom() {
+        return chat.scrollHeight - chat.scrollTop - chat.clientHeight < 1;
+    }
+
+    function scrollToBottom() {
+        chat.scrollTop = chat.scrollHeight;
+    }
+
+    document.getElementById('sendMessageBtn').disabled = true;
+
+    connection.on("Receive", function(message, fromEmail, sentAt) {
+        if (currentUserEmail !== fromEmail) {
+            const userWasAtBottom = isAtBottom();
+
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message-block');
+            messageDiv.classList.add('received-message');
+
+            const textDiv = document.createElement('div');
+            textDiv.textContent = message;
+            textDiv.classList.add('message-text');
+
+            const createdAtDiv = document.createElement('div');
+            createdAtDiv.textContent = new Date(sentAt).toLocaleString();
+            createdAtDiv.classList.add('message-time');
+
+            messageDiv.appendChild(textDiv);
+            messageDiv.appendChild(createdAtDiv);
+
+            chat.appendChild(messageDiv);
+            if (userWasAtBottom) {
+                scrollToBottom();
+            }
+        }
+    });
+
+    connection.start().then(function() {
+        document.getElementById('sendMessageBtn').disabled = false;
+    }).catch(err => console.error(err.toString()));
+
+    function sendMessage() {
+        if (document.getElementById('messageInput').value.trim() === '') return;
+
+        const userWasAtBottom = isAtBottom();
+
+        const receiver = @Html.Raw(JsonSerializer.Serialize(Model.ReceiverEmail));
+        const message = document.getElementById('messageInput').value;
+        connection.invoke("Send", message, receiver, @Html.Raw(JsonSerializer.Serialize(Model.ChatId))).catch(err => console.error(err));
+
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('message-block');
+        messageDiv.classList.add('sent-message');
+
+        const textDiv = document.createElement('div');
+        textDiv.textContent = message;
+        textDiv.classList.add('message-text');
+
+        const createdAtDiv = document.createElement('div');
+        createdAtDiv.textContent = new Date().toLocaleString();
+        createdAtDiv.classList.add('message-time');
+
+        messageDiv.appendChild(textDiv);
+        messageDiv.appendChild(createdAtDiv);
+
+        chat.appendChild(messageDiv);
+
+        document.getElementById('messageInput').value = '';
+        autoResize(document.getElementById('messageInput'));
+
+        if (userWasAtBottom) {
+            scrollToBottom();
+        }
+    }
+
+    document.getElementById('sendMessageBtn').addEventListener('click', sendMessage);
+
+    document.getElementById('messageInput').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey && document.getElementById('messageInput').value.trim() !== '') {
+            e.preventDefault();
+            sendMessage();
+        }
+        autoResize(document.getElementById('messageInput'));
+    });
+</script>
+<script>
+    const currentId = @Html.Raw(JsonSerializer.Serialize(Model.CurrentId));
+    let currentPage = 1;
+    const chatId = @Html.Raw(JsonSerializer.Serialize(Model.ChatId));
+    const messagesContainer = document.getElementById('messagesList');
+
+    async function loadMessages() {
+        let scrollHeightBeforeLoading = messagesContainer.scrollHeight;
+        const response = await fetch(`/chat/${chatId}/get-messages/?pageNumber=${currentPage}`);
+        const messages = await response.json();
+        messages.forEach(message => {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message-block');
+
+            if (message.senderId === currentId) {
+                messageDiv.classList.add('sent-message');
+            } else {
+                messageDiv.classList.add('received-message');
+            }
+
+            const textDiv = document.createElement('div');
+            textDiv.textContent = message.text;
+            textDiv.classList.add('message-text');
+
+            const createdAtDiv = document.createElement('div');
+            createdAtDiv.textContent = new Date(message.createdAt).toLocaleString();
+            createdAtDiv.classList.add('message-time');
+
+            messageDiv.appendChild(textDiv);
+            messageDiv.appendChild(createdAtDiv);
+
+            messagesContainer.insertBefore(messageDiv, messagesContainer.firstChild);
+        });
+
+        if (currentPage === 1) {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        } else {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight - scrollHeightBeforeLoading;
+        }
+
+        currentPage++;
+    }
+
+    messagesContainer.addEventListener('scroll', () => {
+        if (messagesContainer.scrollTop <= 0) {
+            loadMessages();
+        }
+    });
+
+    loadMessages();
+</script>
+<script>
+    function autoResize(textarea) {
+        let userWasAtBottom = isAtBottom();
+
+        textarea.style.height = 'auto';
+        textarea.style.height = textarea.scrollHeight + 'px';
+
+        if(userWasAtBottom === true) {
+            scrollToBottom();
+        }
+    }
+    
+</script>

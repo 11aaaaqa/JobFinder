@@ -5,6 +5,7 @@ using AccountMicroservice.Api.Kafka;
 using AccountMicroservice.Api.Models;
 using AccountMicroservice.Api.Services;
 using Confluent.Kafka;
+using GeneralLibrary.Constants;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MimeKit;
@@ -85,7 +86,8 @@ namespace AccountMicroservice.Api.Controllers
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(ClaimTypes.Email, user.Email)
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypeConstants.AccountTypeClaimName, user.AccountType)
             };
 
             foreach (var role in await userManager.GetRolesAsync(user))
@@ -112,7 +114,8 @@ namespace AccountMicroservice.Api.Controllers
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(ClaimTypes.Email, user.Email)
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypeConstants.AccountTypeClaimName, user.AccountType)
             };
             foreach (var role in await userManager.GetRolesAsync(user))
             {
