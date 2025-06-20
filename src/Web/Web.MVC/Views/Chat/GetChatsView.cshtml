@@ -21,7 +21,6 @@
     const employerId = @Html.Raw(JsonSerializer.Serialize(Model.EmployerId));
 
     async function loadChats(resetPage = false) {
-        document.getElementById('chats-container').innerHTML = '';
         let url = '';
         const params = new URLSearchParams();
 
@@ -69,19 +68,21 @@
     }
 
     searchBtn.addEventListener('click', () => {
+        document.getElementById('chats-container').innerHTML = '';
         currentQuery = searchInput.value;
         loadChats(true);
     });
 
     searchInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
+            document.getElementById('chats-container').innerHTML = '';
             currentQuery = searchInput.value;
             loadChats(true);
         }
     });
 
-    chatsContainer.addEventListener('scroll', () => {
-        if (chatsContainer.scrollTop <= 0) {
+    window.addEventListener('scroll', () => {
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
             loadChats();
         }
     });
