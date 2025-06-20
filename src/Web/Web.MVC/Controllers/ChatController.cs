@@ -30,24 +30,24 @@ namespace Web.MVC.Controllers
         {
             using HttpClient httpClient = httpClientFactory.CreateClient();
             var accountType = User.FindFirst(ClaimTypeConstants.AccountTypeClaimName).Value;
-
+            var model = new GetChatsViewModel();
             switch (accountType)
             {
                 case AccountTypeConstants.Employee:
                     var employeeResponse = await httpClient.GetAsync($"{url}/api/Employee/GetEmployeeByEmail?email={User.Identity.Name}");
                     employeeResponse.EnsureSuccessStatusCode();
                     var employee = await employeeResponse.Content.ReadFromJsonAsync<EmployerResponse>();
-                    ViewBag.EmployeeId = employee.Id;
+                    model.EmployeeId = employee.Id;
                     break;
                 case AccountTypeConstants.Employer:
                     var employerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
                     employerResponse.EnsureSuccessStatusCode();
                     var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
-                    ViewBag.EmployerId = employer.Id;
+                    model.EmployerId = employer.Id;
                     break;
             }
 
-            return View();
+            return View(model);
         }
 
         [Authorize]
