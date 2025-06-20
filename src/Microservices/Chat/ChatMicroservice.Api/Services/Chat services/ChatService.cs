@@ -12,24 +12,26 @@ namespace ChatMicroservice.Api.Services.Chat_services
 
         public async Task<List<Chat>> GetChatListByEmployeeIdAsync(Guid employeeId, string? searchingQuery, int pageNumber)
         {
-            var chats = context.Chats.Where(x => x.EmployeeId == employeeId).OrderBy(x => x.LastMessageSendingTime).AsQueryable();
+            var chats = context.Chats.Where(x => x.EmployeeId == employeeId).AsQueryable();
 
             if (searchingQuery is not null)
                 chats = chats.Where(x => x.EmployerFullName.ToLower().Contains(searchingQuery.ToLower()));
 
-            return await chats.Skip((pageNumber - 1) * PaginationConstants.ChatsPageSize)
+            return await chats.OrderByDescending(x => x.LastMessageSendingTime)
+                .Skip((pageNumber - 1) * PaginationConstants.ChatsPageSize)
                 .Take(PaginationConstants.ChatsPageSize)
                 .ToListAsync(); ;
         }
 
         public async Task<List<Chat>> GetChatListByEmployerIdAsync(Guid employerId, string? searchingQuery, int pageNumber)
         {
-            var chats = context.Chats.Where(x => x.EmployerId == employerId).OrderBy(x => x.LastMessageSendingTime).AsQueryable();
+            var chats = context.Chats.Where(x => x.EmployerId == employerId).AsQueryable();
 
             if (searchingQuery is not null)
                 chats = chats.Where(x => x.EmployeeFullName.ToLower().Contains(searchingQuery.ToLower()));
 
-            return await chats.Skip((pageNumber - 1) * PaginationConstants.ChatsPageSize)
+            return await chats.OrderByDescending(x => x.LastMessageSendingTime)
+                .Skip((pageNumber - 1) * PaginationConstants.ChatsPageSize)
                 .Take(PaginationConstants.ChatsPageSize)
                 .ToListAsync(); ;
         }
