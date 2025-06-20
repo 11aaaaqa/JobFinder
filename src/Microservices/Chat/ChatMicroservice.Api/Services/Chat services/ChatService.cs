@@ -49,5 +49,12 @@ namespace ChatMicroservice.Api.Services.Chat_services
             chat.LastMessageSendingTime = DateTime.UtcNow;
             await context.SaveChangesAsync();
         }
+
+        public async Task<Chat?> GetChatAsync(Guid employeeId, Guid employerId)
+        {
+            var chat = await context.Chats.Where(x => x.EmployeeId == employeeId)
+                .SingleOrDefaultAsync(x => x.EmployerId == employerId);
+            return chat;
+        }
     }
 }

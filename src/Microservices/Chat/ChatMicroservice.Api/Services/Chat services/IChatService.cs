@@ -9,5 +9,6 @@ namespace ChatMicroservice.Api.Services.Chat_services
         Task<List<Chat>> GetChatListByEmployerIdAsync(Guid employerId, string? searchingQuery, int pageNumber);
         Task CreateChatAsync(Chat chat);
         Task UpdateLastMessageSendingTimeAsync(Guid chatId);
+        Task<Chat?> GetChatAsync(Guid employeeId, Guid employerId);
     }
 }

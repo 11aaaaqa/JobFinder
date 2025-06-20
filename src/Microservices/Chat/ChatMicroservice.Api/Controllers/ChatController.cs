@@ -42,5 +42,17 @@ namespace ChatMicroservice.Api.Controllers
 
             return Ok();
         }
+
+        [HttpGet]
+        [Route("GetChat")]
+        public async Task<IActionResult> GetChatAsync([FromQuery] Guid employeeId, [FromQuery] Guid employerId)
+        {
+            var chat = await chatService.GetChatAsync(employeeId, employerId);
+
+            if (chat == null)
+                return NotFound();
+
+            return Ok(chat);
+        }
     }
 }
