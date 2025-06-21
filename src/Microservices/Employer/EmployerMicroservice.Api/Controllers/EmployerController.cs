@@ -1,4 +1,7 @@
-﻿using EmployerMicroservice.Api.DTOs;
+﻿using System.Text.Json;
+using Confluent.Kafka;
+using EmployerMicroservice.Api.DTOs;
+using EmployerMicroservice.Api.Kafka.Producer;
 using EmployerMicroservice.Api.Services;
 using EmployerMicroservice.Api.Services.Company_permissions_services;
 using EmployerMicroservice.Api.Services.Pagination;
@@ -10,7 +13,7 @@ namespace EmployerMicroservice.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     public class EmployerController(IEmployerRepository employerRepository, IPaginationService paginationService,
-        ISearchingService searchingService, IEmployerPermissionsService employerPermissionsService) : ControllerBase
+        ISearchingService searchingService, IEmployerPermissionsService employerPermissionsService, IKafkaProducer kafkaProducer) : ControllerBase
     {
         [HttpGet]
         [Route("GetEmployerById/{id}")]
@@ -38,6 +41,16 @@ namespace EmployerMicroservice.Api.Controllers
         {
             var succeeded = await employerRepository.UpdateEmployerAsync(model);
             if(!succeeded) return BadRequest();
+
+            await kafkaProducer.ProduceAsync("employer-updated-topic", new Message<Null, string>
+            {
+                Value = JsonSerializer.Serialize(new
+                {
+                    EmployerId = model.Id,
+                    NewName = model.Name,
+                    NewSurname = model.Surname
+                })
+            });
 
             return Ok();
         }
