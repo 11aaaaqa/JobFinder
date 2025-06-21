@@ -1,5 +1,6 @@
 using EmployerMicroservice.Api.Database;
 using EmployerMicroservice.Api.Kafka.Consumers;
+using EmployerMicroservice.Api.Kafka.Producer;
 using EmployerMicroservice.Api.Services;
 using EmployerMicroservice.Api.Services.Company_permissions_services;
 using EmployerMicroservice.Api.Services.Pagination;
@@ -15,6 +16,8 @@ builder.Services.AddTransient<IEmployerPermissionsService, EmployerPermissionsSe
 builder.Services.AddTransient<ISearchingService, SearchingService> ();
 builder.Services.AddTransient<IPaginationService, PaginationService>();
 builder.Services.AddTransient<IEmployerRepository, EmployerRepository>();
+
+builder.Services.AddScoped<IKafkaProducer, KafkaProducer>();
 
 builder.Services.AddHostedService<CompanyDeletedKafkaConsumer>();
 builder.Services.AddHostedService<UserRegisteredKafkaConsumer>();

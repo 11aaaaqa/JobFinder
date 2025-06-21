@@ -18,6 +18,25 @@ namespace EmployerMicroservice.Api.Kafka.Consumers
                 BootstrapServers = configuration["Kafka:BootstrapServers"],
                 AutoOffsetReset = AutoOffsetReset.Earliest
             };
+            using var adminClient = new AdminClientBuilder(config).Build();
+            var metadata = adminClient.GetMetadata(TimeSpan.FromSeconds(10));
+            bool topicExists = metadata.Topics.Exists(x => x.Topic == topicName);
+            if (!topicExists)
+            {
+                try
+                {
+                    await adminClient.CreateTopicsAsync(new List<TopicSpecification> { new ()
+                    {
+                        Name = topicName, NumPartitions = 1, ReplicationFactor = 1
+                    }});
+                }
+                catch (Exception exc)
+                {
+                    if (!exc.Message.ToLower().Contains("already exists"))
+                        throw;
+                }
+            }
+
             using var consumer = new ConsumerBuilder<Null, string>(config).Build();
             consumer.Subscribe(topicName);
 
@@ -26,49 +45,7 @@ namespace EmployerMicroservice.Api.Kafka.Consumers
 
             while (!stoppingToken.IsCancellationRequested)
             {
-                using var adminClient = new AdminClientBuilder(config).Build();
-                var metadata = adminClient.GetMetadata(TimeSpan.FromSeconds(10));
-                bool topicExists = metadata.Topics.Exists(x => x.Topic == topicName);
-                if (!topicExists)
-                {
-                    try
-                    {
-                        await adminClient.CreateTopicsAsync(new List<TopicSpecification> { new TopicSpecification
-                        {
-                            Name = topicName, NumPartitions = 1, ReplicationFactor = 1
-                        }});
-                    }
-                    catch (Exception exc)
-                    {
-                        if (!exc.Message.ToLower().Contains("already exists"))
-                            throw;
-                    }
-                }
-
-                ConsumeResult<Null, string> consumeResult;
-                try
-                {
-                    consumeResult = consumer.Consume(stoppingToken);
-                }
-                catch (Exception e)
-                {
-                    if (!e.Message.ToLower().Contains("unknown topic"))
-                        throw;
-                    try
-                    {
-                        await adminClient.CreateTopicsAsync(new List<TopicSpecification> { new TopicSpecification
-                        {
-                            Name = topicName, NumPartitions = 1, ReplicationFactor = 1
-                        }});
-                    }
-                    catch (Exception exc)
-                    {
-                        if (!exc.Message.ToLower().Contains("already exists"))
-                            throw;
-                    }
-                    continue;
-                }
-
+                var consumeResult = consumer.Consume(stoppingToken);
                 var account = JsonSerializer.Deserialize<UserRegisteredConsumerModel>(consumeResult.Message.Value);
                 if (account.AccountType == AccountTypeConstants.Employer)
                 {

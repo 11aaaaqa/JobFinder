@@ -1,25 +1,25 @@
-﻿using Confluent.Kafka.Admin;
+﻿using ChatMicroservice.Api.Constants;
+using ChatMicroservice.Api.Database;
 using Confluent.Kafka;
+using Confluent.Kafka.Admin;
 using System.Text.Json;
+using ChatMicroservice.Api.Kafka.Consumer_models;
 using Microsoft.EntityFrameworkCore;
-using ResponseMicroservice.Api.Constants;
-using ResponseMicroservice.Api.Database;
-using ResponseMicroservice.Api.Kafka.Consumer_models;
 
-namespace ResponseMicroservice.Api.Kafka.Consumers
+namespace ChatMicroservice.Api.Kafka.Consumers
 {
-    public class ResumeDeletedKafkaConsumer(IConfiguration configuration, IServiceScopeFactory scopeFactory) : BackgroundService
+    public class EmployerUpdatedKafkaConsumer(IConfiguration configuration, IServiceScopeFactory scopeFactory) : BackgroundService
     {
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            const string topicName = "resume-deleted-topic";
-
+            const string topicName = "employer-updated-topic";
             var config = new ConsumerConfig
             {
                 GroupId = KafkaConstants.GroupId,
                 BootstrapServers = configuration["Kafka:BootstrapServers"],
                 AutoOffsetReset = AutoOffsetReset.Earliest
             };
+
             using var adminClient = new AdminClientBuilder(config).Build();
             var metadata = adminClient.GetMetadata(TimeSpan.FromSeconds(10));
             bool topicExists = metadata.Topics.Exists(x => x.Topic == topicName);
@@ -48,10 +48,17 @@ namespace ResponseMicroservice.Api.Kafka.Consumers
             while (!stoppingToken.IsCancellationRequested)
             {
                 var consumeResult = consumer.Consume(stoppingToken);
-                var model = JsonSerializer.Deserialize<ResumeDeletedKafkaModel>(consumeResult.Message.Value);
-                var vacancyResponsesToDelete = await context.VacancyResponses
-                    .Where(x => x.RespondedEmployeeResumeId == model.ResumeId).ToListAsync(CancellationToken.None);
-                context.VacancyResponses.RemoveRange(vacancyResponsesToDelete);
+                var model = JsonSerializer.Deserialize<EmployerUpdatedConsumerModel>(consumeResult.Message.Value);
+
+                var chatsToUpdate = await context.Chats
+                    .Where(x => x.EmployerId == model.EmployerId)
+                    .ToListAsync(CancellationToken.None);
+
+                foreach (var chat in chatsToUpdate)
+                {
+                    chat.EmployerFullName = model.NewName + " " + model.NewSurname;
+                }
+
                 await context.SaveChangesAsync(CancellationToken.None);
             }
 
