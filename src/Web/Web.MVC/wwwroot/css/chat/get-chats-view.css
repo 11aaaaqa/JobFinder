@@ -14,12 +14,12 @@
     margin: 5px 0;
 }
 
-.chat-block a {
+.get-chat-link {
     text-decoration: none;
     color: black;
 }
 
-.chat-block a:hover {
+.get-chat-link:hover {
     cursor: pointer;
 }
 
