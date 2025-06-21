@@ -1,4 +1,5 @@
 using ChatMicroservice.Api.Database;
+using ChatMicroservice.Api.Kafka.Consumers;
 using ChatMicroservice.Api.Services.Chat_services;
 using ChatMicroservice.Api.Services.Message_services;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(x
 
 builder.Services.AddTransient<IChatService, ChatService>();
 builder.Services.AddTransient<IMessageService, MessageService>();
+
+builder.Services.AddHostedService<EmployeeUpdatedKafkaConsumer>();
+builder.Services.AddHostedService<EmployerUpdatedKafkaConsumer>();
 
 builder.Services.AddControllers();
 
