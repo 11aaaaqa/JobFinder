@@ -1,4 +1,20 @@
-﻿.education-container {
+﻿.readonly-input {
+    border: 1.8px solid #ccc;
+    color: #999;
+    background-color: #eee;
+    padding: 11px;
+    width: 35%;
+    outline: none;
+    border-radius: 5px;
+    cursor: not-allowed;
+    transition: border-color 0.1s, box-shadow 0.1s;
+}
+
+.disabled-radio {
+    cursor: not-allowed;
+}
+
+.education-container {
     margin-left: 2%;
 }
 
