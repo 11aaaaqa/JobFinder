@@ -1,5 +1,6 @@
 ﻿using EmployerMicroservice.Api.Controllers;
 using EmployerMicroservice.Api.DTOs;
+using EmployerMicroservice.Api.Kafka.Producer;
 using EmployerMicroservice.Api.Models;
 using EmployerMicroservice.Api.Services;
 using EmployerMicroservice.Api.Services.Company_permissions_services;
@@ -20,7 +21,8 @@ namespace EmployerMicroservice.UnitTests
             mock.Setup(x => x.GetEmployerByIdAsync(employerId))
                 .ReturnsAsync(new Employer { Id = employerId });
             var controller = new EmployerController(mock.Object, new Mock<IPaginationService>().Object,
-                new Mock<ISearchingService>().Object, new Mock<IEmployerPermissionsService>().Object);
+                new Mock<ISearchingService>().Object, new Mock<IEmployerPermissionsService>().Object,
+                new Mock<IKafkaProducer>().Object);
 
             var result = await controller.GetEmployerByIdAsync(employerId);
 
@@ -39,7 +41,8 @@ namespace EmployerMicroservice.UnitTests
             mock.Setup(x => x.GetEmployerByIdAsync(employerId))
                 .ReturnsAsync((Employer?) null);
             var controller = new EmployerController(mock.Object, new Mock<IPaginationService>().Object,
-                new Mock<ISearchingService>().Object, new Mock<IEmployerPermissionsService>().Object);
+                new Mock<ISearchingService>().Object, new Mock<IEmployerPermissionsService>().Object,
+                new Mock<IKafkaProducer>().Object);
 
             var result = await controller.GetEmployerByIdAsync(employerId);
 
@@ -55,7 +58,8 @@ namespace EmployerMicroservice.UnitTests
             mock.Setup(x => x.GetEmployerByEmailAsync(email))
                 .ReturnsAsync(new Employer { Email = email});
             var controller = new EmployerController(mock.Object, new Mock<IPaginationService>().Object,
-                new Mock<ISearchingService>().Object, new Mock<IEmployerPermissionsService>().Object);
+                new Mock<ISearchingService>().Object, new Mock<IEmployerPermissionsService>().Object,
+                new Mock<IKafkaProducer>().Object);
 
             var result = await controller.GetEmployerByEmailAsync(email);
 
@@ -74,7 +78,8 @@ namespace EmployerMicroservice.UnitTests
             mock.Setup(x => x.GetEmployerByEmailAsync(email))
                 .ReturnsAsync((Employer?)null);
             var controller = new EmployerController(mock.Object, new Mock<IPaginationService>().Object,
-                new Mock<ISearchingService>().Object, new Mock<IEmployerPermissionsService>().Object);
+                new Mock<ISearchingService>().Object, new Mock<IEmployerPermissionsService>().Object,
+                new Mock<IKafkaProducer>().Object);
 
             var result = await controller.GetEmployerByEmailAsync(email);
 
@@ -89,7 +94,8 @@ namespace EmployerMicroservice.UnitTests
             var mock = new Mock<IEmployerRepository>();
             mock.Setup(x => x.UpdateEmployerAsync(model)).ReturnsAsync(true);
             var controller = new EmployerController(mock.Object, new Mock<IPaginationService>().Object,
-                new Mock<ISearchingService>().Object, new Mock<IEmployerPermissionsService>().Object);
+                new Mock<ISearchingService>().Object, new Mock<IEmployerPermissionsService>().Object,
+                new Mock<IKafkaProducer>().Object);
 
             var result = await controller.UpdateEmployerAsync(model);
 
@@ -104,7 +110,8 @@ namespace EmployerMicroservice.UnitTests
             var mock = new Mock<IEmployerRepository>();
             mock.Setup(x => x.UpdateEmployerAsync(model)).ReturnsAsync(false);
             var controller = new EmployerController(mock.Object, new Mock<IPaginationService>().Object,
-                new Mock<ISearchingService>().Object, new Mock<IEmployerPermissionsService>().Object);
+                new Mock<ISearchingService>().Object, new Mock<IEmployerPermissionsService>().Object,
+                new Mock<IKafkaProducer>().Object);
 
             var result = await controller.UpdateEmployerAsync(model);
 
