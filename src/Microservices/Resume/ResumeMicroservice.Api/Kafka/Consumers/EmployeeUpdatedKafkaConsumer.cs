@@ -24,10 +24,18 @@ namespace ResumeMicroservice.Api.Kafka.Consumers
             bool topicExists = metadata.Topics.Exists(x => x.Topic == topicName);
             if (!topicExists)
             {
-                await adminClient.CreateTopicsAsync(new List<TopicSpecification>
+                try
                 {
-                    new() { Name = topicName, NumPartitions = 1, ReplicationFactor = 1 }
-                });
+                    await adminClient.CreateTopicsAsync(new List<TopicSpecification> { new ()
+                    {
+                        Name = topicName, NumPartitions = 1, ReplicationFactor = 1
+                    }});
+                }
+                catch (Exception exc)
+                {
+                    if (!exc.Message.ToLower().Contains("already exists"))
+                        throw;
+                }
             }
 
             using var consumer = new ConsumerBuilder<Null, string>(config).Build();
