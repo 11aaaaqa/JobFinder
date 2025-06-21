@@ -42,29 +42,30 @@
     <div class="mb-2">
         <h3>Информация о Вас</h3>
         <div class="mb-1">
-            <input class="input-text" asp-for="Name" placeholder="Имя" />
+            <input class="readonly-input" asp-for="Name" placeholder="Имя" readonly />
         </div>
         <div class="mb-1">
-            <input class="input-text" asp-for="Surname" placeholder="Фамилия" />
+            <input class="readonly-input" asp-for="Surname" placeholder="Фамилия" readonly />
         </div>
         <div class="mb-1">
-            <input class="input-text" asp-for="Patronymic" placeholder="Отчество" />
+            <input class="readonly-input" asp-for="Patronymic" placeholder="Отчество" readonly />
         </div>
         <div>
-            <input class="input-text" asp-for="DateOfBirth" placeholder="Дата рождения" />
+            <input class="readonly-input" asp-for="DateOfBirth" placeholder="Дата рождения" readonly />
         </div>
     </div>
 
     <div>
         <h3>Ваш пол</h3>
         <p>
-            <input type="radio" name="Gender" value="@GenderConstants.Male" checked="@(Model.Gender == GenderConstants.Male)" />
+            <input class="disabled-radio" type="radio" name="Gender" value="@GenderConstants.Male" checked="@(Model.Gender == GenderConstants.Male)" disabled />
             @GenderConstants.Male
         </p>
         <p>
-            <input type="radio" name="Gender" value="@GenderConstants.Female" checked="@(Model.Gender == GenderConstants.Female)" />
+            <input class="disabled-radio" type="radio" name="Gender" value="@GenderConstants.Female" checked="@(Model.Gender == GenderConstants.Female)" disabled />
             @GenderConstants.Female
         </p>
+        <input type="hidden" asp-for="Gender"/>
     </div>
 
     <div>

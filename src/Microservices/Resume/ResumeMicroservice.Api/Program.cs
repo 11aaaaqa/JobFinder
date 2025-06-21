@@ -16,6 +16,7 @@ builder.Services.AddTransient<IResumeRepository, ResumeRepository>();
 builder.Services.AddTransient<ICheckForNextPageExistingService, CheckForNextPageExistingService>();
 
 builder.Services.AddHostedService<EmployeeStatusUpdatedKafkaConsumer>();
+builder.Services.AddHostedService<EmployeeUpdatedKafkaConsumer>();
 
 builder.Services.AddControllers();
 

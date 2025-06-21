@@ -49,6 +49,7 @@
 
             const chatLink = document.createElement('a');
             chatLink.href = `/chats/${chat.id}`;
+            chatLink.classList.add('get-chat-link');
 
             const chatP = document.createElement('p');
 
@@ -58,10 +59,10 @@
                 chatP.textContent = chat.employerFullName;
             }
 
-            chatLink.appendChild(chatP);
-            chatDiv.appendChild(chatLink);
+            chatDiv.appendChild(chatP);
+            chatLink.appendChild(chatDiv);
 
-            chatsContainer.appendChild(chatDiv);
+            chatsContainer.appendChild(chatLink);
         });
         
         currentPage++;

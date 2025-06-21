@@ -39,6 +39,19 @@ namespace EmployeeMicroservice.Api.Controllers
             if (employee is null) return BadRequest();
 
             await employeeRepository.UpdateEmployeeAsync(model);
+            await kafkaProducer.ProduceAsync("employee-updated-topic", new Message<Null, string>
+            {
+                Value = JsonSerializer.Serialize(new
+                {
+                    EmployeeId = model.Id,
+                    NewName = model.Name,
+                    NewSurname = model.Surname,
+                    NewPatronymic = model.Patronymic,
+                    NewGender = model.Gender,
+                    NewDateOfBirth = model.DateOfBirth
+                })
+            });
+
             return Ok();
         }
 

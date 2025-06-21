@@ -1,19 +1,18 @@
-﻿using Confluent.Kafka.Admin;
+﻿using System.Text.Json;
 using Confluent.Kafka;
-using System.Text.Json;
+using Confluent.Kafka.Admin;
 using Microsoft.EntityFrameworkCore;
-using ResponseMicroservice.Api.Constants;
-using ResponseMicroservice.Api.Database;
-using ResponseMicroservice.Api.Kafka.Consumer_models;
+using ResumeMicroservice.Api.Constants;
+using ResumeMicroservice.Api.Database;
+using ResumeMicroservice.Api.Kafka.Consumer_models;
 
-namespace ResponseMicroservice.Api.Kafka.Consumers
+namespace ResumeMicroservice.Api.Kafka.Consumers
 {
-    public class ResumeDeletedKafkaConsumer(IConfiguration configuration, IServiceScopeFactory scopeFactory) : BackgroundService
+    public class EmployeeUpdatedKafkaConsumer(IConfiguration configuration, IServiceScopeFactory scopeFactory) : BackgroundService
     {
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            const string topicName = "resume-deleted-topic";
-
+            const string topicName = "employee-updated-topic";
             var config = new ConsumerConfig
             {
                 GroupId = KafkaConstants.GroupId,
@@ -41,20 +40,29 @@ namespace ResponseMicroservice.Api.Kafka.Consumers
 
             using var consumer = new ConsumerBuilder<Null, string>(config).Build();
             consumer.Subscribe(topicName);
-
+            
             using var scope = scopeFactory.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
             while (!stoppingToken.IsCancellationRequested)
             {
                 var consumeResult = consumer.Consume(stoppingToken);
-                var model = JsonSerializer.Deserialize<ResumeDeletedKafkaModel>(consumeResult.Message.Value);
-                var vacancyResponsesToDelete = await context.VacancyResponses
-                    .Where(x => x.RespondedEmployeeResumeId == model.ResumeId).ToListAsync(CancellationToken.None);
-                context.VacancyResponses.RemoveRange(vacancyResponsesToDelete);
+                var model = JsonSerializer.Deserialize<EmployeeUpdatedConsumerModel>(consumeResult.Message.Value);
+
+                var resumesToUpdate = await context.Resumes
+                    .Where(x => x.EmployeeId == model.EmployeeId)
+                    .ToListAsync(CancellationToken.None);
+
+                foreach (var resume in resumesToUpdate)
+                {
+                    resume.Name = model.NewName;
+                    resume.Surname = model.NewSurname;
+                    resume.Patronymic = model.NewPatronymic;
+                    resume.Gender = model.NewGender;
+                    resume.DateOfBirth = model.NewDateOfBirth;
+                }
                 await context.SaveChangesAsync(CancellationToken.None);
             }
-
             consumer.Close();
         }
     }
