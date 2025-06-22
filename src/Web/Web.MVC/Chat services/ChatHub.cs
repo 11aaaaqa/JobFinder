@@ -24,7 +24,7 @@ namespace Web.MVC.Chat_services
         {
             string from = Context.User.FindFirst(ClaimTypes.Email).Value;
             await Clients.Users(to, from).SendAsync("Receive", message, from, DateTime.UtcNow);
-
+            
             using HttpClient httpClient = httpClientFactory.CreateClient();
 
             var accountType = Context.User.FindFirst(ClaimTypeConstants.AccountTypeClaimName).Value;
