@@ -50,6 +50,14 @@
     margin-bottom: 5px;
 }
 
+.message-text.receive-message a {
+    color: black;
+}
+
+.message-text.send-message a {
+    color: white;
+}
+
 .message-time {
     font-size: 12px;
     align-self: flex-end;
