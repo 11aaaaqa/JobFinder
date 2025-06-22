@@ -40,30 +40,28 @@
 
     document.getElementById('sendMessageBtn').disabled = true;
 
-    connection.on("Receive", function(message, fromEmail, sentAt) {
-        if (currentUserEmail !== fromEmail) {
-            const userWasAtBottom = isAtBottom();
+    connection.on("Receive", function(message, sentAt) {
+        const userWasAtBottom = isAtBottom();
 
-            const messageDiv = document.createElement('div');
-            messageDiv.classList.add('message-block');
-            messageDiv.classList.add('received-message');
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('message-block');
+        messageDiv.classList.add('received-message');
 
-            const textDiv = document.createElement('div');
-            textDiv.innerHTML = message;
-            textDiv.classList.add('message-text');
-            textDiv.classList.add('receive-message');
+        const textDiv = document.createElement('div');
+        textDiv.innerHTML = message;
+        textDiv.classList.add('message-text');
+        textDiv.classList.add('receive-message');
 
-            const createdAtDiv = document.createElement('div');
-            createdAtDiv.textContent = new Date(sentAt).toLocaleString();
-            createdAtDiv.classList.add('message-time');
+        const createdAtDiv = document.createElement('div');
+        createdAtDiv.textContent = new Date(sentAt).toLocaleString();
+        createdAtDiv.classList.add('message-time');
 
-            messageDiv.appendChild(textDiv);
-            messageDiv.appendChild(createdAtDiv);
+        messageDiv.appendChild(textDiv);
+        messageDiv.appendChild(createdAtDiv);
 
-            chat.appendChild(messageDiv);
-            if (userWasAtBottom) {
-                scrollToBottom();
-            }
+        chat.appendChild(messageDiv);
+        if (userWasAtBottom) {
+            scrollToBottom();
         }
     });
 
