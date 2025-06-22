@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using System.Web;
@@ -6,10 +7,14 @@ using GeneralLibrary.Constants;
 using GeneralLibrary.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using Web.MVC.Chat_services;
 using Web.MVC.Constants.Permissions_constants;
 using Web.MVC.DTOs.Company;
 using Web.MVC.DTOs.Vacancy;
 using Web.MVC.Filters.Authorization_filters.Company_filters;
+using Web.MVC.Models.ApiResponses;
+using Web.MVC.Models.ApiResponses.Chat;
 using Web.MVC.Models.ApiResponses.Company;
 using Web.MVC.Models.ApiResponses.Employer;
 using Web.MVC.Models.ApiResponses.Response;
@@ -22,9 +27,11 @@ namespace Web.MVC.Controllers
     {
         private readonly IHttpClientFactory httpClientFactory;
         private readonly string url;
-        public CompanyController(IHttpClientFactory httpClientFactory, IConfiguration configuration)
+        private readonly IHubContext<ChatHub> chatHub;
+        public CompanyController(IHttpClientFactory httpClientFactory, IConfiguration configuration, IHubContext<ChatHub> chatHub)
         {
             this.httpClientFactory = httpClientFactory;
+            this.chatHub = chatHub;
             url = $"{configuration["Url:Protocol"]}://{configuration["Url:Domain"]}";
         }
 
@@ -737,7 +744,39 @@ namespace Web.MVC.Controllers
 
             var acceptVacancyResponseResponse = await httpClient.GetAsync($"{url}/api/VacancyResponse/AcceptVacancyResponse/{vacancyResponseId}");
             acceptVacancyResponseResponse.EnsureSuccessStatusCode();
-            return RedirectToAction("GetResume","Resume", new { resumeId = vacancyResponse.RespondedEmployeeResumeId});
+
+            var employeeResponse = await httpClient.GetAsync($"{url}/api/Employee/GetEmployeeById/{vacancyResponse.EmployeeId}");
+            employeeResponse.EnsureSuccessStatusCode();
+            var employee = await employeeResponse.Content.ReadFromJsonAsync<EmployeeResponse>();
+            var chatResponse = await httpClient.GetAsync($"{url}/api/Chat/GetChat?employerId={employer.Id}&employeeId={vacancyResponse.EmployeeId}");
+            if (chatResponse.IsSuccessStatusCode)
+            {
+                var chat = await chatResponse.Content.ReadFromJsonAsync<ChatResponse>();
+
+                await SendJobInvitationMessageAsync(chat.Id, employee.Email, vacancyResponse.Id, vacancyResponse.VacancyPosition);
+
+                return RedirectToAction("GetChatById", "Chat", new { chatId = chat.Id });
+            }
+            if (chatResponse.StatusCode == HttpStatusCode.NotFound)
+            {
+                Guid chatId = Guid.NewGuid();
+                using StringContent chatJsonContent = new(JsonSerializer.Serialize(new
+                {
+                    Id = chatId,
+                    EmployerId = employer.Id,
+                    EmployerFullName = employer.Name + " " + employer.Surname,
+                    EmployeeId = employee.Id,
+                    EmployeeFullName = employee.Name + " " + employee.Surname
+                }), Encoding.UTF8, "application/json");
+                var createChatResponse = await httpClient.PostAsync($"{url}/api/Chat/CreateChat", chatJsonContent);
+                createChatResponse.EnsureSuccessStatusCode();
+
+                await SendJobInvitationMessageAsync(chatId, employee.Email, vacancyResponse.VacancyId, vacancyResponse.VacancyPosition);
+
+                return RedirectToAction("GetChatById", "Chat", new { chatId });
+            }
+
+            return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
         [Authorize]
@@ -844,7 +883,38 @@ namespace Web.MVC.Controllers
             var inviteEmployeeResponse = await httpClient.PostAsync($"{url}/api/InterviewInvitation/InviteToInterview", jsonContent);
             inviteEmployeeResponse.EnsureSuccessStatusCode();
 
-            return RedirectToAction("GetResume", "Resume", new { resumeId });
+            var employeeResponse = await httpClient.GetAsync($"{url}/api/Employee/GetEmployeeById/{resume.EmployeeId}");
+            employeeResponse.EnsureSuccessStatusCode();
+            var employee = await employeeResponse.Content.ReadFromJsonAsync<EmployeeResponse>();
+            var chatResponse = await httpClient.GetAsync($"{url}/api/Chat/GetChat?employerId={employer.Id}&employeeId={resume.EmployeeId}");
+            if (chatResponse.IsSuccessStatusCode)
+            {
+                var chat = await chatResponse.Content.ReadFromJsonAsync<ChatResponse>();
+
+                await SendJobInvitationMessageAsync(chat.Id, employee.Email, vacancy.Id, vacancy.Position);
+
+                return RedirectToAction("GetChatById", "Chat", new{ chatId = chat.Id});
+            }
+            if (chatResponse.StatusCode == HttpStatusCode.NotFound)
+            {
+                Guid chatId = Guid.NewGuid();
+                using StringContent chatJsonContent = new(JsonSerializer.Serialize(new
+                {
+                    Id = chatId,
+                    EmployerId = employer.Id,
+                    EmployerFullName = employer.Name + " " + employer.Surname,
+                    EmployeeId = employee.Id,
+                    EmployeeFullName = employee.Name + " " + employee.Surname
+                }), Encoding.UTF8, "application/json");
+                var createChatResponse = await httpClient.PostAsync($"{url}/api/Chat/CreateChat", chatJsonContent);
+                createChatResponse.EnsureSuccessStatusCode();
+
+                await SendJobInvitationMessageAsync(chatId, employee.Email, vacancy.Id, vacancy.Position);
+
+                return RedirectToAction("GetChatById", "Chat", new { chatId });
+            }
+
+            return StatusCode((int)HttpStatusCode.InternalServerError);
         }
 
         [Authorize]
@@ -944,8 +1014,45 @@ namespace Web.MVC.Controllers
             ViewBag.TimeSort = timeSort;
             ViewBag.CurrentPageNumber = index;
             ViewBag.VacancyId = vacancyId;
-
+            
             return View(interviewInvitations);
+        }
+
+        private async Task SendJobInvitationMessageAsync(Guid chatId, string receiverEmail, Guid jobVacancyId, string jobVacancyPosition)
+        {
+            string message = $"Приглашаем Вас на собеседование на позицию <a href=\"/vacancy/{jobVacancyId}\">{jobVacancyPosition}</a>";
+            string from = User.FindFirst(ClaimTypes.Email).Value;
+            await chatHub.Clients.Users(receiverEmail, from).SendAsync("Receive", message, from, DateTime.UtcNow);
+
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+
+            var accountType = User.FindFirst(ClaimTypeConstants.AccountTypeClaimName).Value;
+            Guid senderId;
+            if (accountType == AccountTypeConstants.Employee)
+            {
+                var employeeResponse = await httpClient.GetAsync(
+                    $"{url}/api/Employee/GetEmployeeByEmail?email={User.Identity.Name}");
+                employeeResponse.EnsureSuccessStatusCode();
+                var employee = await employeeResponse.Content.ReadFromJsonAsync<EmployeeResponse>();
+                senderId = employee.Id;
+            }
+            else
+            {
+                var employerResponse = await httpClient.GetAsync(
+                    $"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
+                employerResponse.EnsureSuccessStatusCode();
+                var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
+                senderId = employer.Id;
+            }
+
+            using StringContent jsonContent = new(JsonSerializer.Serialize(new
+            {
+                ChatId = chatId,
+                SenderId = senderId,
+                Text = message
+            }), Encoding.UTF8, "application/json");
+            var addMessageResponse = await httpClient.PostAsync($"{url}/api/Message/CreateMessage", jsonContent);
+            addMessageResponse.EnsureSuccessStatusCode();
         }
     }
 }
