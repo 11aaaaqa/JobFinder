@@ -49,8 +49,9 @@
             messageDiv.classList.add('received-message');
 
             const textDiv = document.createElement('div');
-            textDiv.textContent = message;
+            textDiv.innerHTML = message;
             textDiv.classList.add('message-text');
+            textDiv.classList.add('receive-message');
 
             const createdAtDiv = document.createElement('div');
             createdAtDiv.textContent = new Date(sentAt).toLocaleString();
@@ -84,8 +85,9 @@
         messageDiv.classList.add('sent-message');
 
         const textDiv = document.createElement('div');
-        textDiv.textContent = message;
+        textDiv.innerHTML = message;
         textDiv.classList.add('message-text');
+        textDiv.classList.add('send-message');
 
         const createdAtDiv = document.createElement('div');
         createdAtDiv.textContent = new Date().toLocaleString();
@@ -128,15 +130,17 @@
             const messageDiv = document.createElement('div');
             messageDiv.classList.add('message-block');
 
+            const textDiv = document.createElement('div');
+            textDiv.innerHTML = message.text;
+            textDiv.classList.add('message-text');
+
             if (message.senderId === currentId) {
                 messageDiv.classList.add('sent-message');
+                textDiv.classList.add('send-message');
             } else {
                 messageDiv.classList.add('received-message');
+                textDiv.classList.add('receive-message');
             }
-
-            const textDiv = document.createElement('div');
-            textDiv.textContent = message.text;
-            textDiv.classList.add('message-text');
 
             const createdAtDiv = document.createElement('div');
             createdAtDiv.textContent = new Date(message.createdAt).toLocaleString();
