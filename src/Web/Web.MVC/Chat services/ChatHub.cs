@@ -22,8 +22,7 @@ namespace Web.MVC.Chat_services
 
         public async Task Send(string message, string to, Guid chatId)
         {
-            string from = Context.User.FindFirst(ClaimTypes.Email).Value;
-            await Clients.Users(to, from).SendAsync("Receive", message, from, DateTime.UtcNow);
+            await Clients.User(to).SendAsync("Receive", message, DateTime.UtcNow);
             
             using HttpClient httpClient = httpClientFactory.CreateClient();
 
