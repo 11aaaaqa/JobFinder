@@ -1,6 +1,7 @@
 ﻿@using Web.MVC.Constants.Vacancy
 @model List<Web.MVC.Models.ApiResponses.Vacancy.VacancyResponse>
 
+<link rel="stylesheet" href="~/css/next-previous-page-button.css" />
 <link rel="stylesheet" href="~/css/vacancy/get-all-vacancies.css"/>
 
 <div class="filter-searching-block">
@@ -112,7 +113,7 @@
     </a>
 }
 
-<div>
+<div class="pagination-link-container">
     @if (Model.Count > 0)
     {
         @if (ViewBag.CurrentPageNumber - 1 > 0)
@@ -121,7 +122,7 @@
             {
                 if (ViewBag.FilterModel is not null)
                 {
-                    <a id="pagination-link-prev" class="" asp-controller="Vacancy" asp-action="GetAllVacancies" asp-route-index="@(ViewBag.CurrentPageNumber - 1)"
+                    <a id="pagination-link-prev" class="previous-button" asp-controller="Vacancy" asp-action="GetAllVacancies" asp-route-index="@(ViewBag.CurrentPageNumber - 1)"
                        asp-route-Position="@ViewBag.FilterModel.Position" asp-route-SalaryFrom="@ViewBag.FilterModel.SalaryFrom"
                        asp-route-WorkExperience="@ViewBag.FilterModel.WorkExperience" asp-route-EmploymentType="@ViewBag.FilterModel.EmploymentType"
                        asp-route-RemoteWork="@ViewBag.FilterModel.RemoteWork">
@@ -130,7 +131,7 @@
                 }
                 else
                 {
-                    <a class="" asp-controller="Vacancy" asp-action="GetAllVacancies" asp-route-index="@(ViewBag.CurrentPageNumber - 1)">
+                    <a class="previous-button" asp-controller="Vacancy" asp-action="GetAllVacancies" asp-route-index="@(ViewBag.CurrentPageNumber - 1)">
                         Назад
                     </a>
                 }
@@ -139,7 +140,7 @@
             {
                 if (ViewBag.FilterModel is not null)
                 {
-                    <a id="pagination-link-prev" class="" asp-controller="Vacancy" asp-action="GetAllVacancies" asp-route-index="@(ViewBag.CurrentPageNumber - 1)"
+                    <a id="pagination-link-prev" class="previous-button" asp-controller="Vacancy" asp-action="GetAllVacancies" asp-route-index="@(ViewBag.CurrentPageNumber - 1)"
                        asp-route-query="@ViewBag.SearchingQuery"
                        asp-route-Position="@ViewBag.FilterModel.Position" asp-route-SalaryFrom="@ViewBag.FilterModel.SalaryFrom"
                        asp-route-WorkExperience="@ViewBag.FilterModel.WorkExperience" asp-route-EmploymentType="@ViewBag.FilterModel.EmploymentType"
@@ -149,7 +150,7 @@
                 }
                 else
                 {
-                    <a class="" asp-controller="Vacancy" asp-action="GetAllVacancies" asp-route-index="@(ViewBag.CurrentPageNumber - 1)"
+                    <a class="previous-button" asp-controller="Vacancy" asp-action="GetAllVacancies" asp-route-index="@(ViewBag.CurrentPageNumber - 1)"
                        asp-route-query="@ViewBag.SearchingQuery">
                         Назад
                     </a>
@@ -158,7 +159,7 @@
         }
         else
         {
-            <a class="">Назад</a>
+            <a class="previous-doesnt-exist-button">Назад</a>
         }
 
         @if (ViewBag.DoesNextPageExist)
@@ -167,7 +168,7 @@
             {
                 if (ViewBag.FilterModel is not null)
                 {
-                    <a id="pagination-link-next" class="" asp-controller="Vacancy" asp-action="GetAllVacancies" asp-route-index="@(ViewBag.CurrentPageNumber + 1)"
+                    <a id="pagination-link-next" class="next-button" asp-controller="Vacancy" asp-action="GetAllVacancies" asp-route-index="@(ViewBag.CurrentPageNumber + 1)"
                        asp-route-Position="@ViewBag.FilterModel.Position" asp-route-SalaryFrom="@ViewBag.FilterModel.SalaryFrom"
                        asp-route-WorkExperience="@ViewBag.FilterModel.WorkExperience" asp-route-EmploymentType="@ViewBag.FilterModel.EmploymentType"
                        asp-route-RemoteWork="@ViewBag.FilterModel.RemoteWork">
@@ -176,7 +177,7 @@
                 }
                 else
                 {
-                    <a class="" asp-controller="Vacancy" asp-action="GetAllVacancies" asp-route-index="@(ViewBag.CurrentPageNumber + 1)">
+                    <a class="next-button" asp-controller="Vacancy" asp-action="GetAllVacancies" asp-route-index="@(ViewBag.CurrentPageNumber + 1)">
                         Вперед
                     </a>
                 }
@@ -185,7 +186,7 @@
             {
                 if (ViewBag.FilterModel is not null)
                 {
-                    <a id="pagination-link-next" class="" asp-controller="Vacancy" asp-action="GetAllVacancies" asp-route-index="@(ViewBag.CurrentPageNumber + 1)"
+                    <a id="pagination-link-next" class="next-button" asp-controller="Vacancy" asp-action="GetAllVacancies" asp-route-index="@(ViewBag.CurrentPageNumber + 1)"
                        asp-route-query="@ViewBag.SearchingQuery"
                        asp-route-Position="@ViewBag.FilterModel.Position" asp-route-SalaryFrom="@ViewBag.FilterModel.SalaryFrom"
                        asp-route-WorkExperience="@ViewBag.FilterModel.WorkExperience" asp-route-EmploymentType="@ViewBag.FilterModel.EmploymentType"
@@ -195,7 +196,7 @@
                 }
                 else
                 {
-                    <a class="" asp-controller="Vacancy" asp-action="GetAllVacancies" asp-route-index="@(ViewBag.CurrentPageNumber + 1)"
+                    <a class="next-button" asp-controller="Vacancy" asp-action="GetAllVacancies" asp-route-index="@(ViewBag.CurrentPageNumber + 1)"
                        asp-route-query="@ViewBag.SearchingQuery">
                         Вперед
                     </a>
@@ -204,7 +205,7 @@
         }
         else
         {
-            <a class="">Вперед</a>
+            <a class="next-doesnt-exist-button">Вперед</a>
         }
     }
 </div>
