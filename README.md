@@ -12,8 +12,8 @@
 ![image](https://github.com/user-attachments/assets/d6527a60-4351-4c9a-affc-4b0359bcc62b)
 ![image](https://github.com/user-attachments/assets/3930f5cd-9e6d-408b-8b42-2fdf2d9fdd64)
 ![image](https://github.com/user-attachments/assets/064d0da8-65a8-442e-83bc-8eb016c116ab)
-![image](https://github.com/user-attachments/assets/94d44558-9615-4df4-bf85-80555282626a)
 ![image](https://github.com/user-attachments/assets/9ca21ad9-40dd-4f69-becb-08ba7ee72af9)
+![image](https://github.com/user-attachments/assets/b7ada3dc-024b-447e-b0e5-30784d7ee807)
 ![image](https://github.com/user-attachments/assets/23fbc1b9-fee8-4a1c-8e7c-cce052b8237c)
 
 Работник может создавать, редактировать резюме, обновлять общую для всех своих резюме информацию
@@ -40,7 +40,7 @@
 Мониторинг своих откликов и их статусов:
 ![image](https://github.com/user-attachments/assets/9e5acacf-b0eb-4956-8d63-c2f4fde8d0b2)
 
-Работодатель может просматривать отклики на все вакансии, сортировать их, проводить в них поиск, а также может просматривать списки откликов по отдельной вакансии.
+Работодатель может просматривать отклики на все вакансии, сортировать их, проводить в них поиск, а также просматривать списки откликов по отдельной вакансии.
 После принятия отклика, создаётся чат работника и работодателя
 ![image](https://github.com/user-attachments/assets/24f3e519-b803-4f94-b608-294253d1da2e)
 Если работодатель без отклика работника решит пригласить его на собеседование, то также создастся и автоматически отправится шаблонное сообщение. Если же чат уже существует, то отправка будет осуществлена в него
