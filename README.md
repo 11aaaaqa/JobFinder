@@ -15,7 +15,7 @@
 ![image](https://github.com/user-attachments/assets/9ca21ad9-40dd-4f69-becb-08ba7ee72af9)
 ![image](https://github.com/user-attachments/assets/b7ada3dc-024b-447e-b0e5-30784d7ee807)
 ![image](https://github.com/user-attachments/assets/23fbc1b9-fee8-4a1c-8e7c-cce052b8237c)
-<br/><br/><br/><br/>
+<br/><br/>
 Работник может создавать, редактировать резюме, обновлять общую для всех своих резюме информацию
 ![image](https://github.com/user-attachments/assets/3b971cbc-e605-457c-81e8-09b22931ba65)
 ![image](https://github.com/user-attachments/assets/9cd656fb-acef-4099-97ad-e2d20cee8647)
