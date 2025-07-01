@@ -12,6 +12,7 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["src/Microservices/Chat/ChatMicroservice.Api/ChatMicroservice.Api.csproj", "src/Microservices/Chat/ChatMicroservice.Api/"]
+COPY ["src/BuildingBlocks/GeneralLibrary/GeneralLibrary.csproj", "src/BuildingBlocks/GeneralLibrary/"]
 RUN dotnet restore "./src/Microservices/Chat/ChatMicroservice.Api/ChatMicroservice.Api.csproj"
 COPY . .
 WORKDIR "/src/src/Microservices/Chat/ChatMicroservice.Api"
