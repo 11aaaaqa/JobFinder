@@ -52,11 +52,26 @@
             chatLink.classList.add('get-chat-link');
 
             const chatP = document.createElement('p');
+            chatP.classList.add('interlocutor-fullname');
 
             if (employeeId === null) {
                 chatP.textContent = chat.employeeFullName;
+
+                if (chat.employerUnreadMessagesCount > 0) {
+                    const chatUnreadMessagesCountP = document.createElement('p');
+                    chatUnreadMessagesCountP.classList.add('unread-messages-count');
+                    chatUnreadMessagesCountP.textContent = chat.employerUnreadMessagesCount.toString();
+                    chatDiv.appendChild(chatUnreadMessagesCountP);
+                }
             } else {
                 chatP.textContent = chat.employerFullName;
+
+                if (chat.employeeUnreadMessagesCount > 0) {
+                    const chatUnreadMessagesCountP = document.createElement('p');
+                    chatUnreadMessagesCountP.classList.add('unread-messages-count');
+                    chatUnreadMessagesCountP.textContent = chat.employeeUnreadMessagesCount.toString();
+                    chatDiv.appendChild(chatUnreadMessagesCountP);
+                }
             }
 
             chatDiv.appendChild(chatP);
