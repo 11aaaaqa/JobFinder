@@ -8,5 +8,6 @@
         public string ReceiverEmail { get; set; }
         public string InterlocutorFullName { get; set; }
         public string? InterlocutorCompanyName { get; set; }
+        public int UnreadMessagesCount { get; set; }
     }
 }
