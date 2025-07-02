@@ -54,5 +54,10 @@ namespace ChatMicroservice.Api.Controllers
 
             return Ok(chat);
         }
+
+        [HttpGet]
+        [Route("GetMessagesCountByChat/{chatId}")]
+        public async Task<IActionResult> GetMessagesCountByChatAsync(Guid chatId)
+            => Ok(await chatService.GetMessagesCountByChatAsync(chatId));
     }
 }
