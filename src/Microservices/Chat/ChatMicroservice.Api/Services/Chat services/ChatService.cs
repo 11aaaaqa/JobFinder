@@ -1,6 +1,7 @@
 ﻿using ChatMicroservice.Api.Constants;
 using ChatMicroservice.Api.Database;
 using ChatMicroservice.Api.Models;
+using GeneralLibrary.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace ChatMicroservice.Api.Services.Chat_services
@@ -57,6 +58,51 @@ namespace ChatMicroservice.Api.Services.Chat_services
             var chat = await context.Chats.Where(x => x.EmployeeId == employeeId)
                 .SingleOrDefaultAsync(x => x.EmployerId == employerId);
             return chat;
+        }
+
+        public async Task IncreaseUnreadMessagesCountByOneAsync(Guid chatId, AccountTypeEnum accountType)
+        {
+            var chat = await context.Chats.SingleOrDefaultAsync(x => x.Id == chatId);
+            if(chat == null) return;
+
+            switch (accountType)
+            {
+                case AccountTypeEnum.Employee:
+                    chat.EmployeeUnreadMessagesCount += 1;
+                    break;
+                case AccountTypeEnum.Employer:
+                    chat.EmployerUnreadMessagesCount += 1;
+                    break;
+            }
+
+            await context.SaveChangesAsync();
+        }
+
+        public async Task DecreaseUnreadMessagesCountAsync(Guid chatId, int count, AccountTypeEnum accountType)
+        {
+            var chat = await context.Chats.SingleOrDefaultAsync(x => x.Id == chatId);
+            if (chat == null) return;
+
+            switch (accountType)
+            {
+                case AccountTypeEnum.Employee:
+                    if (chat.EmployeeUnreadMessagesCount < count)
+                        throw new ArgumentException("Decrease count cannot be greater than the chat unread count");
+                    chat.EmployeeUnreadMessagesCount -= count;
+                    break;
+                case AccountTypeEnum.Employer:
+                    if (chat.EmployerUnreadMessagesCount < count)
+                        throw new ArgumentException("Decrease count cannot be greater than the chat unread count");
+                    chat.EmployerUnreadMessagesCount -= count;
+                    break;
+            }
+
+            await context.SaveChangesAsync();
+        }
+
+        public async Task<int> GetMessagesCountByChatAsync(Guid chatId)
+        {
+            return await context.Messages.Where(x => x.ChatId == chatId).CountAsync();
         }
     }
 }
