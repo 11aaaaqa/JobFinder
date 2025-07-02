@@ -26,6 +26,17 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
 <script>
+    const currentId = @Html.Raw(JsonSerializer.Serialize(Model.CurrentId));
+    const chatId = @Html.Raw(JsonSerializer.Serialize(Model.ChatId));
+    let allChatMessagesCount;
+    async function getChatMessagesCount(){
+        const chatMessagesCountResponse = await fetch(`/chat/${chatId}/messages-count`);
+        const chatMessagesCountJson = await chatMessagesCountResponse.json();
+        allChatMessagesCount = chatMessagesCountJson.chatMessagesCount;
+    }
+    getChatMessagesCount();
+
+    let remainingUnreadMessagesCount = parseInt(@Html.Raw(JsonSerializer.Serialize(Model.UnreadMessagesCount)));
     const currentUserEmail = @Html.Raw(JsonSerializer.Serialize(Model.CurrentEmail));
     const connection = new signalR.HubConnectionBuilder().withUrl("/chat").build();
     const chat = document.getElementById('messagesList');
@@ -40,7 +51,12 @@
 
     document.getElementById('sendMessageBtn').disabled = true;
 
-    connection.on("Receive", function(message, sentAt) {
+    connection.on("Receive", async function(messageId, message, sentAt) {
+        if (remainingUnreadMessagesCount > 0) {
+            remainingUnreadMessagesCount++;
+            return;
+        }
+
         const userWasAtBottom = isAtBottom();
 
         const messageDiv = document.createElement('div');
@@ -63,11 +79,41 @@
         if (userWasAtBottom) {
             scrollToBottom();
         }
+        await fetch(`/message/${messageId}/mark-as-read`);
     });
 
     connection.start().then(function() {
         document.getElementById('sendMessageBtn').disabled = false;
     }).catch(err => console.error(err.toString()));
+
+    let messageCollectionIndex = 1;
+    const messagesToDisplay = {};
+    const intervalId = setInterval(() => {
+        if (remainingUnreadMessagesCount === 0) {
+            clearInterval(intervalId);
+            document.getElementById('messageInput').value = '';
+
+            Object.values(messagesToDisplay).forEach(value => {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message-block');
+                messageDiv.classList.add('sent-message');
+
+                const textDiv = document.createElement('div');
+                textDiv.innerHTML = value.message;
+                textDiv.classList.add('message-text');
+                textDiv.classList.add('send-message');
+
+                const createdAtDiv = document.createElement('div');
+                createdAtDiv.textContent = value.sendingTime;
+                createdAtDiv.classList.add('message-time');
+
+                messageDiv.appendChild(textDiv);
+                messageDiv.appendChild(createdAtDiv);
+
+                chat.appendChild(messageDiv);
+            });
+        }
+    }, 100);
 
     function sendMessage() {
         if (document.getElementById('messageInput').value.trim() === '') return;
@@ -77,6 +123,12 @@
         const receiver = @Html.Raw(JsonSerializer.Serialize(Model.ReceiverEmail));
         const message = document.getElementById('messageInput').value;
         connection.invoke("Send", message, receiver, @Html.Raw(JsonSerializer.Serialize(Model.ChatId))).catch(err => console.error(err));
+
+        if (remainingUnreadMessagesCount > 0) {
+            messagesToDisplay[messageCollectionIndex] = { message: message, sendingTime: new Date().toLocaleString() }
+            messageCollectionIndex++;
+            return;
+        }
 
         const messageDiv = document.createElement('div');
         messageDiv.classList.add('message-block');
@@ -114,59 +166,221 @@
         autoResize(document.getElementById('messageInput'));
     });
 </script>
-<script>
-    const currentId = @Html.Raw(JsonSerializer.Serialize(Model.CurrentId));
-    let currentPage = 1;
-    const chatId = @Html.Raw(JsonSerializer.Serialize(Model.ChatId));
-    const messagesContainer = document.getElementById('messagesList');
+@if (Model.UnreadMessagesCount > 0)
+{
+    <script>
+        let currentPage = 1;
+        const messagesContainer = document.getElementById('messagesList');
 
-    async function loadMessages() {
-        let scrollHeightBeforeLoading = messagesContainer.scrollHeight;
-        const response = await fetch(`/chat/${chatId}/get-messages/?pageNumber=${currentPage}`);
-        const messages = await response.json();
-        messages.forEach(message => {
-            const messageDiv = document.createElement('div');
-            messageDiv.classList.add('message-block');
+        async function initialLoadMessages() {
+            const lastReadMessagesResponse = await fetch(`/chat/${chatId}/messages/last-read?pageNumber=${currentPage}`);
+            const lastReadMessages = await lastReadMessagesResponse.json();
+            lastReadMessages.forEach(message => {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message-block');
 
-            const textDiv = document.createElement('div');
-            textDiv.innerHTML = message.text;
-            textDiv.classList.add('message-text');
+                const textDiv = document.createElement('div');
+                textDiv.innerHTML = message.text;
+                textDiv.classList.add('message-text');
 
-            if (message.senderId === currentId) {
-                messageDiv.classList.add('sent-message');
-                textDiv.classList.add('send-message');
-            } else {
-                messageDiv.classList.add('received-message');
-                textDiv.classList.add('receive-message');
+                if (message.senderId === currentId) {
+                    messageDiv.classList.add('sent-message');
+                    textDiv.classList.add('send-message');
+                } else {
+                    messageDiv.classList.add('received-message');
+                    textDiv.classList.add('receive-message');
+                }
+
+                const createdAtDiv = document.createElement('div');
+                createdAtDiv.textContent = new Date(message.createdAt).toLocaleString();
+                createdAtDiv.classList.add('message-time');
+
+                messageDiv.appendChild(textDiv);
+                messageDiv.appendChild(createdAtDiv);
+
+                messagesContainer.append(messageDiv);
+            });
+
+            const unreadMessagesInfoDiv = document.createElement('div');
+            if(allChatMessagesCount !== remainingUnreadMessagesCount){
+                unreadMessagesInfoDiv.classList.add('unread-messages-info');
+                const unreadMessagesInfoP = document.createElement('p');
+                unreadMessagesInfoP.textContent = 'Непрочитанные сообщения';
+                unreadMessagesInfoDiv.appendChild(unreadMessagesInfoP);
+                messagesContainer.appendChild(unreadMessagesInfoDiv);
             }
 
-            const createdAtDiv = document.createElement('div');
-            createdAtDiv.textContent = new Date(message.createdAt).toLocaleString();
-            createdAtDiv.classList.add('message-time');
+            const automaticScrollNeeded = allChatMessagesCount !== remainingUnreadMessagesCount;
 
-            messageDiv.appendChild(textDiv);
-            messageDiv.appendChild(createdAtDiv);
+            let scrollHeightBeforeLoadingUnreadMessages = messagesContainer.scrollHeight;
 
-            messagesContainer.insertBefore(messageDiv, messagesContainer.firstChild);
+            const unreadMessagesResponse = await fetch(`/chat/${chatId}/messages/first-unread`);
+            const unreadMessages = await unreadMessagesResponse.json();
+            unreadMessages.forEach(message => {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message-block');
+
+                const textDiv = document.createElement('div');
+                textDiv.innerHTML = message.text;
+                textDiv.classList.add('message-text');
+
+                if (message.senderId === currentId) {
+                    messageDiv.classList.add('sent-message');
+                    textDiv.classList.add('send-message');
+                } else {
+                    messageDiv.classList.add('received-message');
+                    textDiv.classList.add('receive-message');
+                }
+
+                const createdAtDiv = document.createElement('div');
+                createdAtDiv.textContent = new Date(message.createdAt).toLocaleString();
+                createdAtDiv.classList.add('message-time');
+
+                messageDiv.appendChild(textDiv);
+                messageDiv.appendChild(createdAtDiv);
+
+                messagesContainer.appendChild(messageDiv);
+                remainingUnreadMessagesCount--;
+            });
+
+            if (automaticScrollNeeded === true) {
+                messagesContainer.scrollTop = scrollHeightBeforeLoadingUnreadMessages + unreadMessagesInfoDiv.scrollHeight - 150;
+            }
+            currentPage++;
+        }
+
+        async function loadReadMessages() {
+            let scrollHeightBeforeLoading = messagesContainer.scrollHeight;
+            const response = await fetch(`/chat/${chatId}/messages/last-read?pageNumber=${currentPage}`);
+            const messages = await response.json();
+            messages.forEach(message => {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message-block');
+
+                const textDiv = document.createElement('div');
+                textDiv.innerHTML = message.text;
+                textDiv.classList.add('message-text');
+
+                if (message.senderId === currentId) {
+                    messageDiv.classList.add('sent-message');
+                    textDiv.classList.add('send-message');
+                } else {
+                    messageDiv.classList.add('received-message');
+                    textDiv.classList.add('receive-message');
+                }
+
+                const createdAtDiv = document.createElement('div');
+                createdAtDiv.textContent = new Date(message.createdAt).toLocaleString();
+                createdAtDiv.classList.add('message-time');
+
+                messageDiv.appendChild(textDiv);
+                messageDiv.appendChild(createdAtDiv);
+
+                messagesContainer.insertBefore(messageDiv, messagesContainer.firstChild);
+            });
+
+            messagesContainer.scrollTop = messagesContainer.scrollHeight - scrollHeightBeforeLoading;
+
+            currentPage++;
+        }
+
+        async function loadUnreadMessages() {
+            const response = await fetch(`/chat/${chatId}/messages/first-unread`);
+            const messages = await response.json();
+            messages.forEach(message => {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message-block');
+
+                const textDiv = document.createElement('div');
+                textDiv.innerHTML = message.text;
+                textDiv.classList.add('message-text');
+
+                if (message.senderId === currentId) {
+                    messageDiv.classList.add('sent-message');
+                    textDiv.classList.add('send-message');
+                } else {
+                    messageDiv.classList.add('received-message');
+                    textDiv.classList.add('receive-message');
+                }
+
+                const createdAtDiv = document.createElement('div');
+                createdAtDiv.textContent = new Date(message.createdAt).toLocaleString();
+                createdAtDiv.classList.add('message-time');
+
+                messageDiv.appendChild(textDiv);
+                messageDiv.appendChild(createdAtDiv);
+
+                messagesContainer.appendChild(messageDiv);
+                remainingUnreadMessagesCount--;
+            });
+        }
+
+        messagesContainer.addEventListener('scroll', async () => {
+            if (messagesContainer.scrollTop <= 0) {
+                await loadReadMessages();
+            }
+            if (messagesContainer.scrollHeight - messagesContainer.scrollTop === messagesContainer.clientHeight && remainingUnreadMessagesCount > 0) {
+                await loadUnreadMessages();
+            }
         });
 
-        if (currentPage === 1) {
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        } else {
-            messagesContainer.scrollTop = messagesContainer.scrollHeight - scrollHeightBeforeLoading;
+        initialLoadMessages();
+    </script>
+}
+else
+{
+    <script>
+        let currentPage = 1;
+        const messagesContainer = document.getElementById('messagesList');
+
+        async function loadMessages() {
+            let scrollHeightBeforeLoading = messagesContainer.scrollHeight;
+            const response = await fetch(`/chat/${chatId}/get-messages?pageNumber=${currentPage}`);
+            const messages = await response.json();
+            messages.forEach(message => {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message-block');
+
+                const textDiv = document.createElement('div');
+                textDiv.innerHTML = message.text;
+                textDiv.classList.add('message-text');
+
+                if (message.senderId === currentId) {
+                    messageDiv.classList.add('sent-message');
+                    textDiv.classList.add('send-message');
+                } else {
+                    messageDiv.classList.add('received-message');
+                    textDiv.classList.add('receive-message');
+                }
+
+                const createdAtDiv = document.createElement('div');
+                createdAtDiv.textContent = new Date(message.createdAt).toLocaleString();
+                createdAtDiv.classList.add('message-time');
+
+                messageDiv.appendChild(textDiv);
+                messageDiv.appendChild(createdAtDiv);
+
+                messagesContainer.insertBefore(messageDiv, messagesContainer.firstChild);
+            });
+
+            if (currentPage === 1) {
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            } else {
+                messagesContainer.scrollTop = messagesContainer.scrollHeight - scrollHeightBeforeLoading;
+            }
+
+            currentPage++;
         }
 
-        currentPage++;
-    }
+        messagesContainer.addEventListener('scroll', async () => {
+            if (messagesContainer.scrollTop <= 0) {
+                await loadMessages();
+            }
+        });
 
-    messagesContainer.addEventListener('scroll', () => {
-        if (messagesContainer.scrollTop <= 0) {
-            loadMessages();
-        }
-    });
-
-    loadMessages();
-</script>
+        loadMessages();
+    </script>
+}
 <script>
     function autoResize(textarea) {
         let userWasAtBottom = isAtBottom();
