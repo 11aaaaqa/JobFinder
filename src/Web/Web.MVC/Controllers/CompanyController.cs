@@ -1047,6 +1047,7 @@ namespace Web.MVC.Controllers
 
             using StringContent jsonContent = new(JsonSerializer.Serialize(new
             {
+                Id = Guid.NewGuid(),
                 ChatId = chatId,
                 SenderId = senderId,
                 Text = message
