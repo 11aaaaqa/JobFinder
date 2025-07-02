@@ -1,4 +1,6 @@
-﻿namespace ChatMicroservice.Api.Models
+﻿using System.Text.Json.Serialization;
+
+namespace ChatMicroservice.Api.Models
 {
     public class Chat
     {
@@ -13,6 +15,7 @@
         public int EmployerUnreadMessagesCount { get; set; } = 0;
         public DateTime LastMessageSendingTime { get; set; }
 
+        [JsonIgnore]
         public List<Message> Messages { get; set; } = new();
     }
 }
