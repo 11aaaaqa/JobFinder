@@ -175,7 +175,7 @@
         async function initialLoadMessages() {
             const lastReadMessagesResponse = await fetch(`/chat/${chatId}/messages/last-read?pageNumber=${currentPage}`);
             const lastReadMessages = await lastReadMessagesResponse.json();
-            lastReadMessages.forEach(message => {
+            lastReadMessages.reverse().forEach(message => {
                 const messageDiv = document.createElement('div');
                 messageDiv.classList.add('message-block');
 
