@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.Json;
 using System.Web;
 using GeneralLibrary.Constants;
+using GeneralLibrary.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web.MVC.Models.ApiResponses;
@@ -50,7 +51,6 @@ namespace Web.MVC.Controllers
             return View(model);
         }
 
-        [Authorize]
         [Route("employer/chats")]
         public async Task<IActionResult> GetJsonEmployerChats(Guid employerId, string? query, int pageNumber)
         {
@@ -70,7 +70,6 @@ namespace Web.MVC.Controllers
             return new JsonResult(chats);
         }
 
-        [Authorize]
         [Route("employee/chats")]
         public async Task<IActionResult> GetJsonEmployeeChats(Guid employeeId, string? query, int pageNumber)
         {
@@ -125,6 +124,7 @@ namespace Web.MVC.Controllers
                     employerCompanyResponse.EnsureSuccessStatusCode();
                     var company = await employerCompanyResponse.Content.ReadFromJsonAsync<CompanyResponse>();
                     model.InterlocutorCompanyName = company.CompanyName;
+                    model.UnreadMessagesCount = chat.EmployeeUnreadMessagesCount;
                     break;
                 case AccountTypeConstants.Employer:
                     var employerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
@@ -139,6 +139,7 @@ namespace Web.MVC.Controllers
                     var receiverEmployee = await receiverEmployeeResponse.Content.ReadFromJsonAsync<EmployeeResponse>();
                     model.ReceiverEmail = receiverEmployee.Email;
                     model.InterlocutorFullName = receiverEmployee.Name + " " + receiverEmployee.Surname;
+                    model.UnreadMessagesCount = chat.EmployerUnreadMessagesCount;
                     break;
             }
 
@@ -148,7 +149,6 @@ namespace Web.MVC.Controllers
             return View(model);
         }
 
-        [Authorize]
         [Route("chat/{chatId}/get-messages")]
         public async Task<IActionResult> GetJsonChatMessages(Guid chatId, int pageNumber)
         {
@@ -211,6 +211,115 @@ namespace Web.MVC.Controllers
             createChatResponse.EnsureSuccessStatusCode();
 
             return RedirectToAction("GetChatById", new { chatId });
+        }
+
+        [Route("chat/{chatId}/messages/last-read")]
+        public async Task<IActionResult> GetJsonLastReadMessages(Guid chatId, int pageNumber)
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+
+            var accountType = User.FindFirst(ClaimTypeConstants.AccountTypeClaimName).Value;
+
+            List<MessageResponse> messages;
+            if (accountType == AccountTypeConstants.Employee)
+            {
+                var messagesResponse = await httpClient.GetAsync(
+                    $"{url}/api/Message/GetLastReadMessages/{chatId}?currentAccountType={AccountTypeEnum.Employee}&pageNumber={pageNumber}");
+                messagesResponse.EnsureSuccessStatusCode();
+                messages = await messagesResponse.Content.ReadFromJsonAsync<List<MessageResponse>>();
+            }
+            else
+            {
+                var messagesResponse = await httpClient.GetAsync(
+                    $"{url}/api/Message/GetLastReadMessages/{chatId}?currentAccountType={AccountTypeEnum.Employer}&pageNumber={pageNumber}");
+                messagesResponse.EnsureSuccessStatusCode();
+                messages = await messagesResponse.Content.ReadFromJsonAsync<List<MessageResponse>>();
+            }
+
+            return new JsonResult(new Queue<MessageResponse>(messages));
+        }
+
+        [Route("chat/{chatId}/messages/first-unread")]
+        public async Task<IActionResult> GetJsonFirstUnreadMessages(Guid chatId)
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+
+            var accountType = User.FindFirst(ClaimTypeConstants.AccountTypeClaimName).Value;
+
+            List<MessageResponse> messages;
+            if (accountType == AccountTypeConstants.Employee)
+            {
+                var messagesResponse = await httpClient.GetAsync(
+                    $"{url}/api/Message/GetFirstUnreadMessages/{chatId}?currentAccountType={AccountTypeEnum.Employee}");
+                messagesResponse.EnsureSuccessStatusCode();
+                messages = await messagesResponse.Content.ReadFromJsonAsync<List<MessageResponse>>();
+
+                using StringContent jsonContent = new(JsonSerializer.Serialize(new
+                {
+                    messages, CurrentAccountType = AccountTypeEnum.Employee
+                }), Encoding.UTF8, "application/json");
+                var markAsReadResponse = await httpClient.PostAsync($"{url}/api/Message/MarkMessagesAsRead", jsonContent);
+                markAsReadResponse.EnsureSuccessStatusCode();
+            }
+            else
+            {
+                var messagesResponse = await httpClient.GetAsync(
+                    $"{url}/api/Message/GetFirstUnreadMessages/{chatId}?currentAccountType={AccountTypeEnum.Employer}");
+                messagesResponse.EnsureSuccessStatusCode();
+                messages = await messagesResponse.Content.ReadFromJsonAsync<List<MessageResponse>>();
+
+                using StringContent jsonContent = new(JsonSerializer.Serialize(new
+                {
+                    messages, CurrentAccountType = AccountTypeEnum.Employer
+                }), Encoding.UTF8, "application/json");
+                var markAsReadResponse = await httpClient.PostAsync($"{url}/api/Message/MarkMessagesAsRead", jsonContent);
+                markAsReadResponse.EnsureSuccessStatusCode();
+            }
+
+            return new JsonResult(new Queue<MessageResponse>(messages));
+        }
+
+        [Route("message/{messageId}/mark-as-read")]
+        public async Task<IActionResult> MarkMessageAsRead(Guid messageId)
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+
+            var accountType = User.FindFirst(ClaimTypeConstants.AccountTypeClaimName).Value;
+
+            if (accountType == AccountTypeConstants.Employee)
+            {
+                var employeeResponse = await httpClient.GetAsync(
+                    $"{url}/api/Employee/GetEmployeeByEmail?email={User.Identity.Name}");
+                employeeResponse.EnsureSuccessStatusCode();
+                var employee = await employeeResponse.Content.ReadFromJsonAsync<EmployeeResponse>();
+                var markAsReadResponse = await httpClient.GetAsync(
+                    $"{url}/api/Message/MarkMessageAsRead/{messageId}?currentEmployeeId={employee.Id}");
+                markAsReadResponse.EnsureSuccessStatusCode();
+            }
+            else
+            {
+                var employerResponse = await httpClient.GetAsync(
+                    $"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
+                employerResponse.EnsureSuccessStatusCode();
+                var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
+                var markAsReadResponse = await httpClient.GetAsync(
+                    $"{url}/api/Message/MarkMessageAsRead/{messageId}?currentEmployerId={employer.Id}");
+                markAsReadResponse.EnsureSuccessStatusCode();
+            }
+
+            return Ok();
+        }
+
+        [Route("chat/{chatId}/messages-count")]
+        public async Task<IActionResult> GetJsonMessagesCountByChat(Guid chatId)
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+
+            var response = await httpClient.GetAsync($"{url}/api/Chat/GetMessagesCountByChat/{chatId}");
+            response.EnsureSuccessStatusCode();
+            var count = await response.Content.ReadFromJsonAsync<int>();
+
+            return new JsonResult(new { chatMessagesCount = count });
         }
     }
 }
