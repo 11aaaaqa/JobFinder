@@ -52,6 +52,9 @@
 Для создания чата необязательно приглашать на собеседование. В каждом резюме работодателю видна кнопка, с помощью которой можно создать чат или перейти в уже существующий с этим работником
 ![image](https://github.com/user-attachments/assets/20f53356-bd90-4de8-ac84-d0216d610474)
 ![image](https://github.com/user-attachments/assets/35e61f49-d0f9-4d4a-b522-ea4f2c2b420f)
+![image](https://github.com/user-attachments/assets/a0ae18de-2aa7-4b93-89dd-b061df28058a)
 <br/><br/>
 Также можно просматривать список созданных чатов
 ![image](https://github.com/user-attachments/assets/26335c50-7dcc-4fff-8a66-3eec12e9cbdd)
+![image](https://github.com/user-attachments/assets/c93132b9-4827-4d0d-bfd7-850846d68fd1)
+
