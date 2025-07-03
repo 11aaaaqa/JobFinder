@@ -12,6 +12,7 @@
     border: 1px solid #ccc;
     border-radius: 13px;
     margin: 5px 0;
+    display: flex;
 }
 
 .get-chat-link {
@@ -23,8 +24,16 @@
     cursor: pointer;
 }
 
-.chat-block p {
+.interlocutor-fullname {
     margin: 0;
+}
+
+.unread-messages-count {
+    margin: 0;
+    margin-right: 7px;
+    background-color: deepskyblue;
+    padding: 0 7px 0 6px;
+    border-radius: 20px;
 }
 
 @media (max-width: 1200px) {

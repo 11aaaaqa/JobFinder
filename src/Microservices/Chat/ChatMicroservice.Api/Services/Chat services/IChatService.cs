@@ -1,4 +1,5 @@
 ﻿using ChatMicroservice.Api.Models;
+using GeneralLibrary.Enums;
 
 namespace ChatMicroservice.Api.Services.Chat_services
 {
@@ -10,5 +11,8 @@ namespace ChatMicroservice.Api.Services.Chat_services
         Task CreateChatAsync(Chat chat);
         Task UpdateLastMessageSendingTimeAsync(Guid chatId);
         Task<Chat?> GetChatAsync(Guid employeeId, Guid employerId);
+        Task IncreaseUnreadMessagesCountByOneAsync(Guid chatId, AccountTypeEnum accountType);
+        Task DecreaseUnreadMessagesCountAsync(Guid chatId, int count, AccountTypeEnum accountType);
+        Task<int> GetMessagesCountByChatAsync(Guid chatId);
     }
 }

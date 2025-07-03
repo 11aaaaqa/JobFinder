@@ -22,7 +22,8 @@ namespace Web.MVC.Chat_services
 
         public async Task Send(string message, string to, Guid chatId)
         {
-            await Clients.User(to).SendAsync("Receive", message, DateTime.UtcNow);
+            Guid messageId = Guid.NewGuid();
+            await Clients.User(to).SendAsync("Receive", messageId, message, DateTime.UtcNow);
             
             using HttpClient httpClient = httpClientFactory.CreateClient();
 
@@ -47,7 +48,7 @@ namespace Web.MVC.Chat_services
 
             using StringContent jsonContent = new(JsonSerializer.Serialize(new
             {
-                ChatId = chatId, SenderId = senderId, Text = message
+                ChatId = chatId, SenderId = senderId, Text = message, Id = messageId
             }), Encoding.UTF8, "application/json");
             var addMessageResponse = await httpClient.PostAsync($"{url}/api/Message/CreateMessage", jsonContent);
             addMessageResponse.EnsureSuccessStatusCode();
