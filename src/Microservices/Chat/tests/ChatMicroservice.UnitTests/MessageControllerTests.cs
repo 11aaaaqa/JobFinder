@@ -3,6 +3,7 @@ using ChatMicroservice.Api.DTOs;
 using ChatMicroservice.Api.Models;
 using ChatMicroservice.Api.Services.Chat_services;
 using ChatMicroservice.Api.Services.Message_services;
+using GeneralLibrary.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -46,19 +47,52 @@ namespace ChatMicroservice.UnitTests
         }
 
         [Fact]
-        public async Task CreateMessage_ReturnsOk()
+        public async Task CreateMessageWhereSenderIsEmployee_ReturnsOk()
         {
-            var model = new CreateMessageDto{ChatId = Guid.NewGuid(), Text = It.IsAny<string>(), SenderId = Guid.NewGuid()};
-            var chatMock = new Mock<IChatService>();
-            var messageMock = new Mock<IMessageService>();
-            chatMock.Setup(x => x.UpdateLastMessageSendingTimeAsync(model.ChatId));
-            var controller = new MessageController(messageMock.Object, chatMock.Object);
+            Guid senderId = Guid.NewGuid();
+            var model = new CreateMessageDto
+            {
+                ChatId = Guid.NewGuid(), Id = Guid.NewGuid(), SenderId = senderId, Text = It.IsAny<string>()
+            };
+            var chatServiceMock = new Mock<IChatService>();
+            var messageServiceMock = new Mock<IMessageService>();
+            chatServiceMock.Setup(x => x.GetChatByIdAsync(model.ChatId))
+                .ReturnsAsync(new Chat { Id = model.ChatId, EmployeeId = senderId});
+            chatServiceMock.Setup(x => x.IncreaseUnreadMessagesCountByOneAsync(model.ChatId, AccountTypeEnum.Employer));
+            chatServiceMock.Setup(x => x.UpdateLastMessageSendingTimeAsync(model.ChatId));
+            var controller = new MessageController(messageServiceMock.Object, chatServiceMock.Object);
 
             var result = await controller.CreateMessageAsync(model);
 
             Assert.IsType<OkResult>(result);
-            messageMock.VerifyAll();
-            chatMock.Verify(x => x.UpdateLastMessageSendingTimeAsync(model.ChatId));
+            chatServiceMock.VerifyAll();
+            messageServiceMock.VerifyAll();
+        }
+
+        [Fact]
+        public async Task CreateMessageWhereSenderIsEmployer_ReturnsOk()
+        {
+            Guid senderId = Guid.NewGuid();
+            var model = new CreateMessageDto
+            {
+                ChatId = Guid.NewGuid(),
+                Id = Guid.NewGuid(),
+                SenderId = senderId,
+                Text = It.IsAny<string>()
+            };
+            var chatServiceMock = new Mock<IChatService>();
+            var messageServiceMock = new Mock<IMessageService>();
+            chatServiceMock.Setup(x => x.GetChatByIdAsync(model.ChatId))
+                .ReturnsAsync(new Chat { Id = model.ChatId, EmployerId = senderId });
+            chatServiceMock.Setup(x => x.IncreaseUnreadMessagesCountByOneAsync(model.ChatId, AccountTypeEnum.Employee));
+            chatServiceMock.Setup(x => x.UpdateLastMessageSendingTimeAsync(model.ChatId));
+            var controller = new MessageController(messageServiceMock.Object, chatServiceMock.Object);
+
+            var result = await controller.CreateMessageAsync(model);
+
+            Assert.IsType<OkResult>(result);
+            chatServiceMock.VerifyAll();
+            messageServiceMock.VerifyAll();
         }
     }
 }
