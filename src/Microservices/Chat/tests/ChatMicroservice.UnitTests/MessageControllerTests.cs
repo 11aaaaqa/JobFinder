@@ -142,5 +142,70 @@ namespace ChatMicroservice.UnitTests
             chatServiceMock.VerifyAll();
             messageServiceMock.VerifyAll();
         }
+
+        [Fact]
+        public async Task MarkMessageAsReadCurrentEmployeeNull_ReturnsOk()
+        {
+            Guid currentEmployerId = Guid.NewGuid();
+            Guid? currentEmployeeId = null;
+            var message = new Message
+            {
+                Id = Guid.NewGuid(), ChatId = Guid.NewGuid(), CreatedAt = DateTime.UtcNow, IsRead = true,
+                SenderId = Guid.NewGuid(), Text = It.IsAny<string>()
+            };
+            var messageServiceMock = new Mock<IMessageService>();
+            var chatServiceMock = new Mock<IChatService>();
+            messageServiceMock.Setup(x => x.MarkMessageAsReadAsync(message.Id)).ReturnsAsync(true);
+            messageServiceMock.Setup(x => x.GetMessageByIdAsync(message.Id)).ReturnsAsync(message);
+            chatServiceMock.Setup(x => x.DecreaseUnreadMessagesCountAsync(message.ChatId, 1, AccountTypeEnum.Employer));
+            var controller = new MessageController(messageServiceMock.Object, chatServiceMock.Object);
+
+            var result = await controller.MarkMessageAsReadAsync(message.Id, currentEmployerId, currentEmployeeId);
+
+            Assert.IsType<OkResult>(result);
+            messageServiceMock.VerifyAll();
+            chatServiceMock.VerifyAll();
+        }
+
+        [Fact]
+        public async Task MarkMessageAsReadCurrentEmployerNull_ReturnsOk()
+        {
+            Guid currentEmployeeId = Guid.NewGuid();
+            Guid? currentEmployerId = null;
+            var message = new Message
+            {
+                Id = Guid.NewGuid(),
+                ChatId = Guid.NewGuid(),
+                CreatedAt = DateTime.UtcNow,
+                IsRead = true,
+                SenderId = Guid.NewGuid(),
+                Text = It.IsAny<string>()
+            };
+            var messageServiceMock = new Mock<IMessageService>();
+            var chatServiceMock = new Mock<IChatService>();
+            messageServiceMock.Setup(x => x.MarkMessageAsReadAsync(message.Id)).ReturnsAsync(true);
+            messageServiceMock.Setup(x => x.GetMessageByIdAsync(message.Id)).ReturnsAsync(message);
+            chatServiceMock.Setup(x => x.DecreaseUnreadMessagesCountAsync(message.ChatId, 1, AccountTypeEnum.Employee));
+            var controller = new MessageController(messageServiceMock.Object, chatServiceMock.Object);
+
+            var result = await controller.MarkMessageAsReadAsync(message.Id, currentEmployerId, currentEmployeeId);
+
+            Assert.IsType<OkResult>(result);
+            messageServiceMock.VerifyAll();
+            chatServiceMock.VerifyAll();
+        }
+
+        [Fact]
+        public async Task MarkMessageAsReadBothCurrentEmployeeAndEmployerNull_ReturnsOk()
+        {
+            Guid? currentEmployerId = null;
+            Guid? currentEmployeeId = null;
+            
+            var controller = new MessageController(new Mock<IMessageService>().Object, new Mock<IChatService>().Object);
+
+            var result = await controller.MarkMessageAsReadAsync(Guid.NewGuid(), currentEmployerId, currentEmployeeId);
+
+            Assert.IsType<BadRequestResult>(result);
+        }
     }
 }
