@@ -47,7 +47,7 @@ namespace ChatMicroservice.UnitTests
         }
 
         [Fact]
-        public async Task CreateMessageWhereSenderIsEmployee_ReturnsOk()
+        public async Task CreateMessageWhereSenderIsEmployer_ReturnsOk()
         {
             Guid senderId = Guid.NewGuid();
             var model = new CreateMessageDto
@@ -70,7 +70,7 @@ namespace ChatMicroservice.UnitTests
         }
 
         [Fact]
-        public async Task CreateMessageWhereSenderIsEmployer_ReturnsOk()
+        public async Task CreateMessageWhereSenderIsEmployee_ReturnsOk()
         {
             Guid senderId = Guid.NewGuid();
             var model = new CreateMessageDto
@@ -89,6 +89,54 @@ namespace ChatMicroservice.UnitTests
             var controller = new MessageController(messageServiceMock.Object, chatServiceMock.Object);
 
             var result = await controller.CreateMessageAsync(model);
+
+            Assert.IsType<OkResult>(result);
+            chatServiceMock.VerifyAll();
+            messageServiceMock.VerifyAll();
+        }
+
+        [Fact]
+        public async Task MarkMessagesAsRead_ReturnsOk()
+        {
+            Guid chatId = Guid.NewGuid();
+            var model = new MarkMessagesAsReadDto
+                { CurrentAccountType = It.IsAny<AccountTypeEnum>(), Messages = new List<Message>
+                {
+                    new Message
+                    {
+                        IsRead = false, ChatId = chatId, CreatedAt = DateTime.UtcNow,
+                        Id = Guid.NewGuid(), SenderId = Guid.NewGuid(), Text = It.IsAny<string>()
+                    },
+                    new Message
+                    {
+                        IsRead = false, ChatId = chatId, CreatedAt = DateTime.UtcNow,
+                        Id = Guid.NewGuid(), SenderId = Guid.NewGuid(), Text = It.IsAny<string>()
+                    },
+                    new Message
+                    {
+                        IsRead = false, ChatId = chatId, CreatedAt = DateTime.UtcNow,
+                        Id = Guid.NewGuid(), SenderId = Guid.NewGuid(), Text = It.IsAny<string>()
+                    },
+                    new Message
+                    {
+                        IsRead = true, ChatId = chatId, CreatedAt = DateTime.UtcNow,
+                        Id = Guid.NewGuid(), SenderId = Guid.NewGuid(), Text = It.IsAny<string>()
+                    },
+                    new Message
+                    { 
+                        IsRead = false, ChatId = chatId, CreatedAt = DateTime.UtcNow, 
+                        Id = Guid.NewGuid(), SenderId = Guid.NewGuid(), Text = It.IsAny<string>()
+                    }
+                } };
+            var messageServiceMock = new Mock<IMessageService>();
+            var chatServiceMock = new Mock<IChatService>();
+            int markedMessagesCount = model.Messages.Count(x => x.IsRead == false);
+            messageServiceMock.Setup(x => x.MarkMessagesAsReadAsync(model.Messages)).ReturnsAsync(markedMessagesCount);
+            chatServiceMock.Setup(x =>
+                x.DecreaseUnreadMessagesCountAsync(chatId, markedMessagesCount, model.CurrentAccountType));
+            var controller = new MessageController(messageServiceMock.Object, chatServiceMock.Object);
+
+            var result = await controller.MarkMessagesAsReadAsync(model);
 
             Assert.IsType<OkResult>(result);
             chatServiceMock.VerifyAll();
