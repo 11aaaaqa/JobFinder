@@ -321,5 +321,27 @@ namespace Web.MVC.Controllers
 
             return new JsonResult(new { chatMessagesCount = count });
         }
+
+        [Route("chats/{chatId}/json")]
+        public async Task<IActionResult> GetJsonChat(Guid chatId)
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+            var response = await httpClient.GetAsync($"{url}/api/Chat/GetChatByChatId/{chatId}");
+            response.EnsureSuccessStatusCode();
+            var chat = await response.Content.ReadFromJsonAsync<ChatResponse>();
+
+            return new JsonResult(chat);
+        }
+
+        [Route("messages/{messageId}/json")]
+        public async Task<IActionResult> GetJsonMessage(Guid messageId)
+        {
+            using HttpClient httpClient = httpClientFactory.CreateClient();
+            var response = await httpClient.GetAsync($"{url}/api/Message/GetMessageByMessageId/{messageId}");
+            response.EnsureSuccessStatusCode();
+            var message = await response.Content.ReadFromJsonAsync<MessageResponse>();
+
+            return new JsonResult(message);
+        }
     }
 }
