@@ -51,7 +51,7 @@
 
     document.getElementById('sendMessageBtn').disabled = true;
 
-    connection.on("Receive", async function(messageId, message, sentAt) {
+    connection.on("ReceiveMessage", async function(messageId, chatId, message, sentAt) {
         if (remainingUnreadMessagesCount > 0) {
             remainingUnreadMessagesCount++;
             return;
