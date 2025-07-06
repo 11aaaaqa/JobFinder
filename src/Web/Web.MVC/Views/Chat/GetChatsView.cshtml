@@ -11,7 +11,9 @@
     <div id="chats-container"></div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
 <script>
+    const connection = new signalR.HubConnectionBuilder().withUrl("/chat").build();
     let currentPage = 1;
     let currentQuery = '';
     const chatsContainer = document.getElementById('chats-container');
@@ -19,6 +21,48 @@
     const searchInput = document.getElementById('chatsSearchingInput');
     const employeeId = @Html.Raw(JsonSerializer.Serialize(Model.EmployeeId));
     const employerId = @Html.Raw(JsonSerializer.Serialize(Model.EmployerId));
+
+    connection.on("ReceiveMessage", async function(messageId, chatId, message, sentAt) {
+        const chatResponse = await fetch(`/chats/${chatId}/json`);
+        const chatJson = await chatResponse.json();
+
+        const messageResponse = await fetch(`/messages/${messageId}/json`);
+        const messageJson = await messageResponse.json();
+
+        const interlocutorFullname = messageJson.senderId === chatJson.employeeId ? chatJson.employeeFullName : chatJson.employerFullName;
+        const unreadMessages = messageJson.senderId === chatJson.employeeId ? chatJson.employerUnreadMessagesCount : chatJson.employeeUnreadMessagesCount;
+
+        if (searchInput.value === '' || interlocutorFullname.toLowerCase().includes(searchInput.value.toLowerCase())) {
+            const chatBlock = document.querySelector(`a[chatId="${chatId}"]`);
+            if (chatBlock) {
+                chatsContainer.removeChild(chatBlock);
+            }
+
+            const chatDiv = document.createElement('div');
+            chatDiv.classList.add('chat-block');
+
+            const chatLink = document.createElement('a');
+            chatLink.href = `/chats/${chatId}`;
+            chatLink.classList.add('get-chat-link');
+            chatLink.setAttribute('chatId', chatId);
+
+            const chatP = document.createElement('p');
+            chatP.classList.add('interlocutor-fullname');
+            chatP.textContent = interlocutorFullname;
+
+            const chatUnreadMessagesCountP = document.createElement('p');
+            chatUnreadMessagesCountP.classList.add('unread-messages-count');
+            chatUnreadMessagesCountP.textContent = unreadMessages.toString();
+            chatDiv.appendChild(chatUnreadMessagesCountP);
+
+            chatDiv.appendChild(chatP);
+            chatLink.appendChild(chatDiv);
+
+            chatsContainer.insertBefore(chatLink, chatsContainer.firstChild);
+        }
+    });
+
+    connection.start().catch(err => console.error(err.toString()));
 
     async function loadChats(resetPage = false) {
         let url = '';
@@ -50,6 +94,7 @@
             const chatLink = document.createElement('a');
             chatLink.href = `/chats/${chat.id}`;
             chatLink.classList.add('get-chat-link');
+            chatLink.setAttribute('chatId', chat.id);
 
             const chatP = document.createElement('p');
             chatP.classList.add('interlocutor-fullname');

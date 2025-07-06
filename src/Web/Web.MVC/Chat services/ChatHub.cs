@@ -23,8 +23,6 @@ namespace Web.MVC.Chat_services
         public async Task Send(string message, string to, Guid chatId)
         {
             Guid messageId = Guid.NewGuid();
-            await Clients.User(to).SendAsync("Receive", messageId, message, DateTime.UtcNow);
-            
             using HttpClient httpClient = httpClientFactory.CreateClient();
 
             var accountType = Context.User.FindFirst(ClaimTypeConstants.AccountTypeClaimName).Value;
@@ -52,6 +50,8 @@ namespace Web.MVC.Chat_services
             }), Encoding.UTF8, "application/json");
             var addMessageResponse = await httpClient.PostAsync($"{url}/api/Message/CreateMessage", jsonContent);
             addMessageResponse.EnsureSuccessStatusCode();
+
+            await Clients.User(to).SendAsync("ReceiveMessage", messageId, chatId, message, DateTime.UtcNow);
         }
     }
 }
