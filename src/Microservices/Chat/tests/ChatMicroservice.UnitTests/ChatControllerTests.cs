@@ -3,7 +3,6 @@ using ChatMicroservice.Api.DTOs;
 using ChatMicroservice.Api.Models;
 using ChatMicroservice.Api.Services.Chat_services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Formatters;
 using Moq;
 
 namespace ChatMicroservice.UnitTests
