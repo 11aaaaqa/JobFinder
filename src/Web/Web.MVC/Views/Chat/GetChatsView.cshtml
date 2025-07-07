@@ -52,7 +52,11 @@
 
             const chatUnreadMessagesCountP = document.createElement('p');
             chatUnreadMessagesCountP.classList.add('unread-messages-count');
-            chatUnreadMessagesCountP.textContent = unreadMessages.toString();
+            if (unreadMessages > 99) {
+                chatUnreadMessagesCountP.textContent = '99+';
+            } else {
+                chatUnreadMessagesCountP.textContent = unreadMessages.toString();
+            }
             chatDiv.appendChild(chatUnreadMessagesCountP);
 
             chatDiv.appendChild(chatP);
