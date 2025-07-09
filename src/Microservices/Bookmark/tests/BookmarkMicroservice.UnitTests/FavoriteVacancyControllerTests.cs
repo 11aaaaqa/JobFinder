@@ -1,7 +1,6 @@
 ﻿using BookmarkMicroservice.Api.Controllers;
 using BookmarkMicroservice.Api.DTOs;
 using BookmarkMicroservice.Api.Models;
-using BookmarkMicroservice.Api.Services.Pagination;
 using BookmarkMicroservice.Api.Services.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
