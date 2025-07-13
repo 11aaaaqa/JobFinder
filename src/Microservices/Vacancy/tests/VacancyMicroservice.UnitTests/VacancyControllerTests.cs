@@ -1,5 +1,4 @@
-﻿using Castle.Components.DictionaryAdapter;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Moq;
 using VacancyMicroservice.Api.Controllers;
 using VacancyMicroservice.Api.DTOs;
