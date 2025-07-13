@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using System.Text;
+﻿using System.Text;
 using System.Text.Json;
 using GeneralLibrary.Constants;
 using Microsoft.AspNetCore.Authorization;
