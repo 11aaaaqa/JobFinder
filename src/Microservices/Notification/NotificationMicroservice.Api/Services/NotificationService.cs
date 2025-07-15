@@ -10,10 +10,10 @@ namespace NotificationMicroservice.Api.Services
         public async Task<Notification?> GetNotificationByIdAsync(Guid id)
             => await context.Notifications.SingleOrDefaultAsync(x => x.Id == id);
 
-        public async Task<List<Notification>> GetNotificationsByUserId(string aspNetUserId, int pageNumber)
+        public async Task<List<Notification>> GetNotificationsByUserEmailAsync(string userEmail, int pageNumber)
         {
             var notifications = await context.Notifications
-                .Where(x => x.AspNetUserId == aspNetUserId)
+                .Where(x => x.UserEmail == userEmail)
                 .OrderByDescending(x => x.CreatedAt)
                 .Skip((pageNumber - 1) * PaginationConstants.NotificationsPageSize)
                 .Take(PaginationConstants.NotificationsPageSize)
