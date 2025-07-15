@@ -21,9 +21,9 @@ namespace NotificationMicroservice.Api.Controllers
         }
 
         [HttpGet]
-        [Route("GetNotificationsByUserId")]
-        public async Task<IActionResult> GetNotificationsByUserIdAsync(string aspNetUserId, int pageNumber)
-            => Ok(await notificationService.GetNotificationsByUserId(aspNetUserId, pageNumber));
+        [Route("GetNotificationsByUserEmail")]
+        public async Task<IActionResult> GetNotificationsByUserEmailAsync(string userEmail, int pageNumber)
+            => Ok(await notificationService.GetNotificationsByUserEmailAsync(userEmail, pageNumber));
 
         [HttpPost]
         [Route("RemoveNotifications")]
@@ -39,7 +39,7 @@ namespace NotificationMicroservice.Api.Controllers
         {
             await notificationService.AddNotificationAsync(new Notification
             {
-                AspNetUserId = model.AspNetUserId, Body = model.Body,
+                UserEmail = model.UserEmail, Body = model.Body,
                 CreatedAt = DateTime.UtcNow, Id = model.Id
             });
             return Ok();
