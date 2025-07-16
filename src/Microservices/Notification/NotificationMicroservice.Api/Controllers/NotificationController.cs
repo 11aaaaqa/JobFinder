@@ -25,6 +25,11 @@ namespace NotificationMicroservice.Api.Controllers
         public async Task<IActionResult> GetNotificationsByUserEmailAsync(string userEmail, int pageNumber)
             => Ok(await notificationService.GetNotificationsByUserEmailAsync(userEmail, pageNumber));
 
+        [HttpGet]
+        [Route("GetNotificationsCountByUserEmail")]
+        public async Task<IActionResult> GetNotificationsCountByUserEmailAsync(string userEmail)
+            => Ok(await notificationService.GetNotificationsCountByUserEmailAsync(userEmail));
+
         [HttpPost]
         [Route("RemoveNotifications")]
         public async Task<IActionResult> RemoveNotificationsAsync([FromBody]RemoveNotificationsDto model)

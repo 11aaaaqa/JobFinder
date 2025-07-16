@@ -21,6 +21,12 @@ namespace NotificationMicroservice.Api.Services
             return notifications;
         }
 
+        public async Task<int> GetNotificationsCountByUserEmailAsync(string userEmail)
+        {
+            var count = await context.Notifications.Where(x => x.UserEmail == userEmail).CountAsync();
+            return count;
+        }
+
         public async Task AddNotificationAsync(Notification notification)
         {
             await context.Notifications.AddAsync(notification);
