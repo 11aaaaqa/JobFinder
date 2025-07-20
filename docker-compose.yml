@@ -185,6 +185,7 @@ services:
 
   notification-microservice-api:
     image: ${DOCKER_REGISTRY-}notification-microservice-api
+    container_name: notification-microservice-api
     build:
       context: .
       dockerfile: src/Microservices/Notification/NotificationMicroservice.Api/Dockerfile
