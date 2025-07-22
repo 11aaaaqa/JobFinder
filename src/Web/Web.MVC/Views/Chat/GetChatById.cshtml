@@ -24,7 +24,6 @@
     </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
 <script>
     const currentId = @Html.Raw(JsonSerializer.Serialize(Model.CurrentId));
     const chatId = @Html.Raw(JsonSerializer.Serialize(Model.ChatId));
@@ -38,7 +37,6 @@
 
     let remainingUnreadMessagesCount = parseInt(@Html.Raw(JsonSerializer.Serialize(Model.UnreadMessagesCount)));
     const currentUserEmail = @Html.Raw(JsonSerializer.Serialize(Model.CurrentEmail));
-    const connection = new signalR.HubConnectionBuilder().withUrl("/chat").build();
     const chat = document.getElementById('messagesList');
 
     function isAtBottom() {
@@ -49,9 +47,7 @@
         chat.scrollTop = chat.scrollHeight;
     }
 
-    document.getElementById('sendMessageBtn').disabled = true;
-
-    connection.on("ReceiveMessage", async function(messageId, chatId, message, sentAt) {
+    window.signalRConnection.on("ReceiveMessage", async function(messageId, chatId, message, sentAt) {
         if (remainingUnreadMessagesCount > 0) {
             remainingUnreadMessagesCount++;
             return;
@@ -81,10 +77,6 @@
         }
         await fetch(`/message/${messageId}/mark-as-read`);
     });
-
-    connection.start().then(function() {
-        document.getElementById('sendMessageBtn').disabled = false;
-    }).catch(err => console.error(err.toString()));
 
     let messageCollectionIndex = 1;
     const messagesToDisplay = {};
@@ -122,7 +114,7 @@
 
         const receiver = @Html.Raw(JsonSerializer.Serialize(Model.ReceiverEmail));
         const message = document.getElementById('messageInput').value;
-        connection.invoke("Send", message, receiver, @Html.Raw(JsonSerializer.Serialize(Model.ChatId))).catch(err => console.error(err));
+        window.signalRConnection.invoke("Send", message, receiver, @Html.Raw(JsonSerializer.Serialize(Model.ChatId))).catch(err => console.error(err));
 
         if (remainingUnreadMessagesCount > 0) {
             messagesToDisplay[messageCollectionIndex] = { message: message, sendingTime: new Date().toLocaleString() }
