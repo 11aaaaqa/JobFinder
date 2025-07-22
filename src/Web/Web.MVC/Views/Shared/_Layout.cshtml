@@ -8,6 +8,31 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Web.MVC.styles.css" asp-append-version="true" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
+    <script>
+        function startSignalRConnection() {
+            if (window.signalRConnection)
+                return;
+
+            window.signalRConnection = new signalR.HubConnectionBuilder().withUrl("/chat").build();
+            window.signalRConnection.start()
+                .then(() => window.signalRConnection.invoke("AddHubConnection", window.signalRConnection.connectionId))
+                .catch(err => console.error(err.toString()));
+
+            window.signalRConnection.on("StopSignalRConnection", function() {
+                window.signalRConnection.stop().then(() => { window.signalRConnection = null }).catch(err => console.error(err.toString()));
+            });
+        }
+    </script>
+    @if (User.Identity.IsAuthenticated)
+    {
+        <script>
+            if (window.signalRConnection === undefined || window.signalRConnection === null 
+                || window.signalRConnection.state === signalR.HubConnectionState.Disconnected) {
+                startSignalRConnection();
+            }
+        </script>
+    }
 </head>
 <body>
     <header>
