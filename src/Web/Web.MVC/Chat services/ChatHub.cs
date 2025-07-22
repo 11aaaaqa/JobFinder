@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Web.MVC.Models.ApiResponses;
 using Web.MVC.Models.ApiResponses.Employer;
+using Web.MVC.Services.Hub_connection_services;
 
 namespace Web.MVC.Chat_services
 {
@@ -13,9 +14,12 @@ namespace Web.MVC.Chat_services
     {
         private readonly IHttpClientFactory httpClientFactory;
         private readonly string url;
-        public ChatHub(IHttpClientFactory httpClientFactory, IConfiguration configuration)
+        private readonly IHubConnectionsManager hubConnectionsManager;
+        public ChatHub(IHttpClientFactory httpClientFactory, IConfiguration configuration,
+            IHubConnectionsManager hubConnectionsManager)
         {
             this.httpClientFactory = httpClientFactory;
+            this.hubConnectionsManager = hubConnectionsManager;
             url = $"{configuration["Url:Protocol"]}://{configuration["Url:Domain"]}";
         }
 
@@ -50,7 +54,13 @@ namespace Web.MVC.Chat_services
             var addMessageResponse = await httpClient.PostAsync($"{url}/api/Message/CreateMessage", jsonContent);
             addMessageResponse.EnsureSuccessStatusCode();
 
-            await Clients.User(to).SendAsync("ReceiveMessage", messageId, chatId, message, DateTime.UtcNow);
+            string connectionId = hubConnectionsManager.GetConnection(to);
+            await Clients.Client(connectionId).SendAsync("ReceiveMessage", messageId, chatId, message, DateTime.UtcNow);
+        }
+
+        public void AddHubConnection(string hubConnection)
+        {
+            hubConnectionsManager.AddConnection(Context.User.Identity.Name, hubConnection);
         }
     }
 }
