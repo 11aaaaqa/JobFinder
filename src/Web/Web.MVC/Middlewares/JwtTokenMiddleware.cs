@@ -3,6 +3,9 @@ using System.Security.Claims;
 using System.Text.Json;
 using System.Text;
 using Web.MVC.Models.ApiResponses;
+using Microsoft.AspNetCore.SignalR;
+using Web.MVC.Chat_services;
+using Web.MVC.Services.Hub_connection_services;
 
 namespace Web.MVC.Middlewares
 {
@@ -10,12 +13,17 @@ namespace Web.MVC.Middlewares
     {
         private readonly RequestDelegate next;
         private readonly IHttpClientFactory httpClientFactory;
+        private readonly IHubConnectionsManager hubConnectionsManager;
+        private readonly IHubContext<ChatHub> hubContext;
         private readonly string url;
 
-        public JwtTokenMiddleware(RequestDelegate next, IHttpClientFactory httpClientFactory, IConfiguration configuration)
+        public JwtTokenMiddleware(RequestDelegate next, IHttpClientFactory httpClientFactory, IConfiguration configuration,
+            IHubConnectionsManager hubConnectionsManager, IHubContext<ChatHub> hubContext)
         {
             this.next = next;
             this.httpClientFactory = httpClientFactory;
+            this.hubContext = hubContext;
+            this.hubConnectionsManager = hubConnectionsManager;
             url = $"{configuration["Url:Protocol"]}://{configuration["Url:Domain"]}";
         }
 
@@ -36,6 +44,15 @@ namespace Web.MVC.Middlewares
                     if (!getUserResponse.IsSuccessStatusCode)
                     {
                         context.Response.Cookies.Delete("access_token");
+
+                        string? connectionId = hubConnectionsManager.GetConnection(context.User.Identity.Name);
+                        if (connectionId != null)
+                        {
+                            await hubContext.Clients.Client(connectionId).SendAsync("StopSignalRConnection"); 
+                            hubConnectionsManager.RemoveConnection(context.User.Identity.Name);
+                        }
+                        
+
                         await next(context);
                     }
 
@@ -44,6 +61,14 @@ namespace Web.MVC.Middlewares
                     if (user.RefreshTokenExpiryTime < DateTime.UtcNow)
                     {
                         context.Response.Cookies.Delete("access_token");
+
+                        string? connectionId = hubConnectionsManager.GetConnection(context.User.Identity.Name);
+                        if (connectionId != null)
+                        {
+                            await hubContext.Clients.Client(connectionId).SendAsync("StopSignalRConnection");
+                            hubConnectionsManager.RemoveConnection(context.User.Identity.Name);
+                        }
+
                         await next(context);
                     }
 
