@@ -64,6 +64,18 @@
         }
     });
 
+    window.signalRConnection.on("DecreaseUnreadMessagesCount", function(chatId, decreasingCount) {
+        const chatBlock = document.querySelector(`a[chatId="${chatId}"]`);
+        const unreadMessagesCountP = chatBlock.querySelector('.unread-messages-count');
+        let unreadMessagesCount = parseInt(unreadMessagesCountP.textContent);
+        unreadMessagesCount -= decreasingCount;
+        if (unreadMessagesCount <= 0) {
+            chatBlock.removeChild(unreadMessagesCountP);
+        } else {
+            unreadMessagesCount.textContent = unreadMessagesCount.toString();
+        }
+    });
+
     async function loadChats(resetPage = false) {
         let url = '';
         const params = new URLSearchParams();
