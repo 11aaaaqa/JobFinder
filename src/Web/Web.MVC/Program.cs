@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using Web.MVC.Chat_services;
 using Web.MVC.Middlewares;
 using Web.MVC.Services.Hub_connection_services;
+using Web.MVC.Services.Notification_services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +30,7 @@ builder.Services.AddAuthentication(x =>
     };
 });
 
+builder.Services.AddTransient<INotificationService, NotificationService>();
 builder.Services.AddTransient<IHubConnectionsManager, HubConnectionsManager>();
 builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
 
