@@ -6,22 +6,30 @@ using GeneralLibrary.Constants;
 using GeneralLibrary.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using Web.MVC.Chat_services;
 using Web.MVC.Models.ApiResponses;
 using Web.MVC.Models.ApiResponses.Chat;
 using Web.MVC.Models.ApiResponses.Company;
 using Web.MVC.Models.ApiResponses.Employer;
 using Web.MVC.Models.View_models;
+using Web.MVC.Services.Hub_connection_services;
 
 namespace Web.MVC.Controllers
 {
     public class ChatController : Controller
     {
         private readonly IHttpClientFactory httpClientFactory;
+        private readonly IHubConnectionsManager hubConnectionsManager;
+        private readonly IHubContext<ChatHub> hubContext;
         private readonly string url;
-        public ChatController(IHttpClientFactory httpClientFactory, IConfiguration configuration)
+        public ChatController(IHttpClientFactory httpClientFactory, IConfiguration configuration, IHubConnectionsManager hubConnectionsManager,
+            IHubContext<ChatHub> hubContext)
         {
             this.httpClientFactory = httpClientFactory;
             url = $"{configuration["Url:Protocol"]}://{configuration["Url:Domain"]}";
+            this.hubConnectionsManager = hubConnectionsManager;
+            this.hubContext = hubContext;
         }
 
         [Authorize]
@@ -246,6 +254,8 @@ namespace Web.MVC.Controllers
 
             var accountType = User.FindFirst(ClaimTypeConstants.AccountTypeClaimName).Value;
 
+            string connectionId = hubConnectionsManager.GetConnection(User.Identity.Name);
+
             List<MessageResponse> messages;
             if (accountType == AccountTypeConstants.Employee)
             {
@@ -275,6 +285,8 @@ namespace Web.MVC.Controllers
                 var markAsReadResponse = await httpClient.PostAsync($"{url}/api/Message/MarkMessagesAsRead", jsonContent);
                 markAsReadResponse.EnsureSuccessStatusCode();
             }
+
+            await hubContext.Clients.Client(connectionId).SendAsync("DecreaseUnreadMessagesCount", chatId, messages.Count);
 
             return new JsonResult(new Queue<MessageResponse>(messages));
         }
@@ -306,6 +318,13 @@ namespace Web.MVC.Controllers
                     $"{url}/api/Message/MarkMessageAsRead/{messageId}?currentEmployerId={employer.Id}");
                 markAsReadResponse.EnsureSuccessStatusCode();
             }
+
+            var messageResponse = await httpClient.GetAsync($"{url}/api/Message/GetMessageByMessageId/{messageId}");
+            messageResponse.EnsureSuccessStatusCode();
+            var message = await messageResponse.Content.ReadFromJsonAsync<MessageResponse>();
+
+            string connectionId = hubConnectionsManager.GetConnection(User.Identity.Name);
+            await hubContext.Clients.Client(connectionId).SendAsync("DecreaseUnreadMessagesCount", message.ChatId, 1);
 
             return Ok();
         }

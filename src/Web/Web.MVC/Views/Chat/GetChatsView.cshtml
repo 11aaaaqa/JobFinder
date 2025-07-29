@@ -11,9 +11,7 @@
     <div id="chats-container"></div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
 <script>
-    const connection = new signalR.HubConnectionBuilder().withUrl("/chat").build();
     let currentPage = 1;
     let currentQuery = '';
     const chatsContainer = document.getElementById('chats-container');
@@ -22,7 +20,7 @@
     const employeeId = @Html.Raw(JsonSerializer.Serialize(Model.EmployeeId));
     const employerId = @Html.Raw(JsonSerializer.Serialize(Model.EmployerId));
 
-    connection.on("ReceiveMessage", async function(messageId, chatId, message, sentAt) {
+    window.signalRConnection.on("ReceiveMessage", async function(messageId, chatId, message, sentAt) {
         const chatResponse = await fetch(`/chats/${chatId}/json`);
         const chatJson = await chatResponse.json();
 
@@ -66,7 +64,17 @@
         }
     });
 
-    connection.start().catch(err => console.error(err.toString()));
+    window.signalRConnection.on("DecreaseUnreadMessagesCount", function(chatId, decreasingCount) {
+        const chatBlock = document.querySelector(`a[chatId="${chatId}"]`);
+        const unreadMessagesCountP = chatBlock.querySelector('.unread-messages-count');
+        let unreadMessagesCount = parseInt(unreadMessagesCountP.textContent);
+        unreadMessagesCount -= decreasingCount;
+        if (unreadMessagesCount <= 0) {
+            chatBlock.removeChild(unreadMessagesCountP);
+        } else {
+            unreadMessagesCount.textContent = unreadMessagesCount.toString();
+        }
+    });
 
     async function loadChats(resetPage = false) {
         let url = '';
