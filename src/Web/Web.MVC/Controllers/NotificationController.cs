@@ -16,12 +16,12 @@ namespace Web.MVC.Controllers
         }
 
         [Route("notifications/get-by-email/json")]
-        public async Task<IActionResult> GetJsonNotificationsByUserEmail(string userEmail, int pageNumber)
+        public async Task<IActionResult> GetJsonNotificationsByUserEmail(string userEmail)
         {
             using HttpClient httpClient = httpClientFactory.CreateClient();
 
             var notificationsResponse = await httpClient.GetAsync(
-                $"{url}/api/Notification/GetNotificationsByUserEmail?userEmail={userEmail}&pageNumber={pageNumber}");
+                $"{url}/api/Notification/GetNotificationsByUserEmail?userEmail={userEmail}&pageNumber=1");
             notificationsResponse.EnsureSuccessStatusCode();
             var notifications = await notificationsResponse.Content.ReadFromJsonAsync<List<NotificationResponse>>();
 
