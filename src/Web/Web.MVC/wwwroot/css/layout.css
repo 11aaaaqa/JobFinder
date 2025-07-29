@@ -1,0 +1,89 @@
+﻿.profile-block div{
+    display: block;
+    margin: 0;
+    padding: 0;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.profile-block ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.profile-block li {
+    display: inline;
+}
+
+.open-notifications-btn {
+    position: relative;
+    background-color: transparent;
+    color: black;
+    border: none;
+    cursor: pointer;
+    padding: 10px 15px;
+}
+
+.notifications-container {
+    position: relative;
+}
+
+.notifications-block {
+    position: absolute;
+    padding: 10px 15px;
+    top: 100%;
+    right: 0;
+    margin-top: 2px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 3.5px 15px rgba(0,0,0,0.3);
+    z-index: 1000;
+    width: 350px;
+    height: 400px;
+    overflow-y: auto;
+    -ms-overflow-style: none;
+}
+
+.notifications-block::-webkit-scrollbar {
+    display: none;
+}
+
+.notification-count {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: red;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 2px 5px;
+    border-radius: 10px;
+}
+
+.new-notification-info-block {
+    padding: 10px 0;
+    text-align: center;
+    border-top: 1px solid rgba(128, 128, 128, 0.45);
+    border-bottom: 1px solid rgba(128, 128, 128, 0.45);
+    width: 100%;
+}
+
+.notification-block {
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.18);
+}
+
+.notification-text-p {
+    font-size: 16px;
+    padding: 0;
+    margin-top: 0;
+    margin-bottom: 3px;
+}
+
+.notification-time-p {
+    font-size: 13px;
+    padding: 0;
+    margin: 3px 0 0 0;
+}
