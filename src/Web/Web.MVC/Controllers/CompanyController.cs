@@ -20,6 +20,7 @@ using Web.MVC.Models.ApiResponses.Employer;
 using Web.MVC.Models.ApiResponses.Response;
 using Web.MVC.Models.ApiResponses.Resume;
 using Web.MVC.Models.ApiResponses.Vacancy;
+using Web.MVC.Services.Notification_services;
 
 namespace Web.MVC.Controllers
 {
@@ -28,10 +29,13 @@ namespace Web.MVC.Controllers
         private readonly IHttpClientFactory httpClientFactory;
         private readonly string url;
         private readonly IHubContext<ChatHub> chatHub;
-        public CompanyController(IHttpClientFactory httpClientFactory, IConfiguration configuration, IHubContext<ChatHub> chatHub)
+        private readonly INotificationService notificationService;
+        public CompanyController(IHttpClientFactory httpClientFactory, IConfiguration configuration, IHubContext<ChatHub> chatHub,
+            INotificationService notificationService)
         {
             this.httpClientFactory = httpClientFactory;
             this.chatHub = chatHub;
+            this.notificationService = notificationService;
             url = $"{configuration["Url:Protocol"]}://{configuration["Url:Domain"]}";
         }
 
@@ -753,6 +757,8 @@ namespace Web.MVC.Controllers
             {
                 var chat = await chatResponse.Content.ReadFromJsonAsync<ChatResponse>();
 
+                await notificationService.AddNotification(employee.Email,
+                    $"Ваш отклик на вакансию <a href=\"vacancy/{vacancyResponse.VacancyId}\">{vacancyResponse.VacancyPosition}</a> был принят");
                 await SendJobInvitationMessageAsync(chat.Id, employee.Email, vacancyResponse.Id, vacancyResponse.VacancyPosition);
 
                 return RedirectToAction("GetChatById", "Chat", new { chatId = chat.Id });
@@ -890,6 +896,9 @@ namespace Web.MVC.Controllers
             if (chatResponse.IsSuccessStatusCode)
             {
                 var chat = await chatResponse.Content.ReadFromJsonAsync<ChatResponse>();
+
+                await notificationService.AddNotification(employee.Email,
+                    $"Вы были приглашены на собеседование компанией {vacancy.CompanyName} на вакансию <a href=\"vacancy/{vacancy.Id}\">{vacancy.Position}</a>");
 
                 await SendJobInvitationMessageAsync(chat.Id, employee.Email, vacancy.Id, vacancy.Position);
 

@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using System.Text.Json
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -8,10 +9,87 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Web.MVC.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/layout.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
+    <script>
+        let notificationsToDelete = [];
+        function startSignalRConnection() {
+            if (window.signalRConnection)
+                return;
+
+            window.signalRConnection = new signalR.HubConnectionBuilder().withUrl("/chat").build();
+            window.signalRConnection.start()
+                .then(() => window.signalRConnection.invoke("AddHubConnection", window.signalRConnection.connectionId))
+                .catch(err => console.error(err.toString()));
+
+            window.signalRConnection.on("StopSignalRConnection", function() {
+                window.signalRConnection.stop().then(() => { window.signalRConnection = null }).catch(err => console.error(err.toString()));
+            });
+
+            window.signalRConnection.on("ReceiveNotification", async function(notificationId) {
+                const notificationsBlock = document.getElementById('notifications-block');
+                if (notificationsBlock.style.display === 'none') {
+                    await setNotificationsCount();
+                } else {
+                    const notificationResponse = await fetch(`/notifications/${notificationId}`);
+                    const notification = await notificationResponse.json();
+
+                    if(document.getElementById('new-notification-information-block')) {
+                        const notificationDiv = document.createElement('div');
+                        notificationDiv.classList.add('notification-block');
+                        notificationDiv.style.padding = '10px 0';
+                        notificationDiv.innerHTML = notification.body;
+
+                        const notificationTimeP = document.createElement('p');
+                        notificationTimeP.classList.add('notification-time-p');
+                        notificationTimeP.textContent = new Date(notification.createdAt).toLocaleString();
+
+                        notificationDiv.appendChild(notificationTimeP);
+
+                        notificationsBlock.insertBefore(notificationDiv, notificationsBlock.firstChild);
+                    } else {
+                        const newNotificationInfoBlock = document.createElement('div');
+                        newNotificationInfoBlock.id = 'new-notification-information-block';
+                        newNotificationInfoBlock.classList.add('new-notification-info-block');
+                        newNotificationInfoBlock.style.padding = '12px 0 0 0';
+                        const newNotificationInfoP = document.createElement('p');
+                        newNotificationInfoP.textContent = 'Новые уведомления';
+                        newNotificationInfoBlock.appendChild(newNotificationInfoP);
+
+                        const notificationDiv = document.createElement('div');
+                        notificationDiv.classList.add('notification-block');
+                        notificationDiv.style.borderBottom = 'none';
+                        notificationDiv.style.padding = '10px 0';
+                        notificationDiv.innerHTML = notification.body;
+
+                        const notificationTimeP = document.createElement('p');
+                        notificationTimeP.classList.add('notification-time-p');
+                        notificationTimeP.textContent = new Date(notification.createdAt).toLocaleString();
+
+                        notificationDiv.appendChild(notificationTimeP);
+
+                        notificationsBlock.insertBefore(newNotificationInfoBlock, notificationsBlock.firstChild);
+                        notificationsBlock.insertBefore(notificationDiv, notificationsBlock.firstChild);
+                    }
+
+                    notificationsToDelete.push(notification);
+                }
+            });
+        }
+    </script>
+    @if (User.Identity.IsAuthenticated)
+    {
+        <script>
+        if (window.signalRConnection === undefined || window.signalRConnection === null 
+            || window.signalRConnection.state === signalR.HubConnectionState.Disconnected) {
+            startSignalRConnection();
+        }
+    </script>
+    }
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Web.MVC</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -27,6 +105,22 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
+                </div>
+                <div class="profile-block">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <div class="notifications-container">
+                            <button id="open-notifications-btn" class="open-notifications-btn" onclick="openNotifications()">
+                                <span style="font-size: 18px;">&#128276;</span>
+                            </button>
+                            <div id="notifications-block" class="notifications-block" style="display: none; padding: 10px 15px;"></div>
+                        </div>
+                    }
+                    else
+                    {
+                        <a asp-action="Login" asp-controller="Auth" asp-route-returnUrl="@Context.Request.Path">Войти</a>
+                        <a asp-action="Register" asp-controller="Auth">Зарегистрироваться</a>
+                    }
                 </div>
             </div>
         </nav>
@@ -45,6 +139,92 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        async function setNotificationsCount() {
+            const button = document.getElementById('open-notifications-btn');
+            const email = @Html.Raw(JsonSerializer.Serialize(User.Identity.Name));
+
+            const notificationsCountResponse = await fetch(`/notifications/get-notifications-count-by-user-email?userEmail=${email}`);
+            const notificationsCount = await notificationsCountResponse.json();
+
+            const notificationSpan = document.querySelector('.notification-count');
+            if (notificationSpan) {
+                notificationSpan.remove();
+            }
+            if (notificationsCount > 0) {
+                if (notificationsCount > 99) {
+                    const notificationHtml = `<span class="notification-count">99+</span>`;
+                    button.insertAdjacentHTML('afterbegin', notificationHtml);
+                } else {
+                    const notificationHtml = `<span class="notification-count">${notificationsCount}</span>`;
+                    button.insertAdjacentHTML('afterbegin', notificationHtml);
+                }
+            }
+        }
+    </script>
+    @if (User.Identity.IsAuthenticated)
+    {
+        <script>
+            setNotificationsCount();
+        </script>
+    }
+    
+    <script>
+        const userEmail = @Html.Raw(JsonSerializer.Serialize(User.Identity.Name));
+        const notificationsDiv = document.getElementById('notifications-block');
+
+        async function getNotifications() {
+            const notificationsResponse = await fetch(`/notifications/get-by-email/json?userEmail=${userEmail}`);
+            const notifications = await notificationsResponse.json();
+            notifications.forEach(notification => {
+                const notificationDiv = document.createElement('div');
+                notificationDiv.classList.add('notification-block');
+                notificationDiv.style.padding = '10px 0';
+                notificationDiv.innerHTML = notification.body;
+
+                const notificationTimeP = document.createElement('p');
+                notificationTimeP.classList.add('notification-time-p');
+                notificationTimeP.textContent = new Date(notification.createdAt).toLocaleString();
+
+                notificationDiv.appendChild(notificationTimeP);
+
+                notificationsDiv.appendChild(notificationDiv);
+            });
+            await setNotificationsCount();
+        }
+
+        async function openNotifications() {
+            if (notificationsDiv.style.display === 'none') {
+                notificationsDiv.style.display = 'block';
+
+                const notificationsBlock = document.getElementById('notifications-block');
+                notificationsBlock.innerHTML = '';
+
+                await getNotifications();
+            } else {
+                notificationsDiv.style.display = 'none';
+                if (notificationsToDelete.length > 0) {
+                    await fetch('/notifications/remove',
+                        {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(notificationsToDelete)
+                        });
+                    notificationsToDelete = [];
+                }
+            }
+        }
+
+        notificationsDiv.addEventListener('scroll', async function() {
+            const scrollHeight = notificationsDiv.scrollHeight;
+            const scrollTop = notificationsDiv.scrollTop;
+            const clientHeight = notificationsDiv.clientHeight;
+
+            if (scrollTop + clientHeight >= scrollHeight) {
+                await getNotifications();
+            }
+        });
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
