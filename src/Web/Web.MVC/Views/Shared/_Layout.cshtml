@@ -37,16 +37,13 @@
                     if(document.getElementById('new-notification-information-block')) {
                         const notificationDiv = document.createElement('div');
                         notificationDiv.classList.add('notification-block');
-
-                        const notificationTextP = document.createElement('p');
-                        notificationTextP.classList.add('notification-text-p');
-                        notificationTextP.textContent = notification.body;
+                        notificationDiv.style.padding = '10px 0';
+                        notificationDiv.innerHTML = notification.body;
 
                         const notificationTimeP = document.createElement('p');
                         notificationTimeP.classList.add('notification-time-p');
                         notificationTimeP.textContent = new Date(notification.createdAt).toLocaleString();
 
-                        notificationDiv.appendChild(notificationTextP);
                         notificationDiv.appendChild(notificationTimeP);
 
                         notificationsBlock.insertBefore(notificationDiv, notificationsBlock.firstChild);
@@ -54,6 +51,7 @@
                         const newNotificationInfoBlock = document.createElement('div');
                         newNotificationInfoBlock.id = 'new-notification-information-block';
                         newNotificationInfoBlock.classList.add('new-notification-info-block');
+                        newNotificationInfoBlock.style.padding = '12px 0 0 0';
                         const newNotificationInfoP = document.createElement('p');
                         newNotificationInfoP.textContent = 'Новые уведомления';
                         newNotificationInfoBlock.appendChild(newNotificationInfoP);
@@ -61,16 +59,13 @@
                         const notificationDiv = document.createElement('div');
                         notificationDiv.classList.add('notification-block');
                         notificationDiv.style.borderBottom = 'none';
-
-                        const notificationTextP = document.createElement('p');
-                        notificationTextP.classList.add('notification-text-p');
-                        notificationTextP.textContent = notification.body;
+                        notificationDiv.style.padding = '10px 0';
+                        notificationDiv.innerHTML = notification.body;
 
                         const notificationTimeP = document.createElement('p');
                         notificationTimeP.classList.add('notification-time-p');
                         notificationTimeP.textContent = new Date(notification.createdAt).toLocaleString();
 
-                        notificationDiv.appendChild(notificationTextP);
                         notificationDiv.appendChild(notificationTimeP);
 
                         notificationsBlock.insertBefore(newNotificationInfoBlock, notificationsBlock.firstChild);
@@ -94,7 +89,7 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Web.MVC</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -118,7 +113,7 @@
                             <button id="open-notifications-btn" class="open-notifications-btn" onclick="openNotifications()">
                                 <span style="font-size: 18px;">&#128276;</span>
                             </button>
-                            <div id="notifications-block" class="notifications-block" style="display: none;"></div>
+                            <div id="notifications-block" class="notifications-block" style="display: none; padding: 10px 15px;"></div>
                         </div>
                     }
                     else
@@ -179,23 +174,20 @@
         const userEmail = @Html.Raw(JsonSerializer.Serialize(User.Identity.Name));
         const notificationsDiv = document.getElementById('notifications-block');
 
-        async function getNotification() {
+        async function getNotifications() {
             const notificationsResponse = await fetch(`/notifications/get-by-email/json?userEmail=${userEmail}&pageNumber=${notificationPageNumber}`);
             const notifications = await notificationsResponse.json();
             notifications.forEach(notification => {
                 notificationsToDelete.push(notification);
                 const notificationDiv = document.createElement('div');
                 notificationDiv.classList.add('notification-block');
-
-                const notificationTextP = document.createElement('p');
-                notificationTextP.classList.add('notification-text-p');
-                notificationTextP.textContent = notification.body;
+                notificationDiv.style.padding = '10px 0';
+                notificationDiv.innerHTML = notification.body;
 
                 const notificationTimeP = document.createElement('p');
                 notificationTimeP.classList.add('notification-time-p');
                 notificationTimeP.textContent = new Date(notification.createdAt).toLocaleString();
 
-                notificationDiv.appendChild(notificationTextP);
                 notificationDiv.appendChild(notificationTimeP);
 
                 notificationsDiv.appendChild(notificationDiv);
@@ -207,7 +199,7 @@
         async function openNotifications() {
             if (notificationsDiv.style.display === 'none') {
                 notificationsDiv.style.display = 'block';
-                await getNotification();
+                await getNotifications();
             } else {
                 notificationsDiv.style.display = 'none';
                 await fetch('/notifications/remove',
