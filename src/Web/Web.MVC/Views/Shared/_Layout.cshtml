@@ -170,15 +170,13 @@
     }
     
     <script>
-        let notificationPageNumber = 1;
         const userEmail = @Html.Raw(JsonSerializer.Serialize(User.Identity.Name));
         const notificationsDiv = document.getElementById('notifications-block');
 
         async function getNotifications() {
-            const notificationsResponse = await fetch(`/notifications/get-by-email/json?userEmail=${userEmail}&pageNumber=${notificationPageNumber}`);
+            const notificationsResponse = await fetch(`/notifications/get-by-email/json?userEmail=${userEmail}`);
             const notifications = await notificationsResponse.json();
             notifications.forEach(notification => {
-                notificationsToDelete.push(notification);
                 const notificationDiv = document.createElement('div');
                 notificationDiv.classList.add('notification-block');
                 notificationDiv.style.padding = '10px 0';
@@ -193,7 +191,6 @@
                 notificationsDiv.appendChild(notificationDiv);
             });
             await setNotificationsCount();
-            notificationPageNumber++;
         }
 
         async function openNotifications() {
@@ -202,16 +199,27 @@
                 await getNotifications();
             } else {
                 notificationsDiv.style.display = 'none';
-                await fetch('/notifications/remove',
-                    {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(notificationsToDelete)
-                    });
-                notificationsToDelete = [];
-                notificationPageNumber = 1;
+                if (notificationsToDelete.length > 0) {
+                    await fetch('/notifications/remove',
+                        {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(notificationsToDelete)
+                        });
+                    notificationsToDelete = [];
+                }
             }
         }
+
+        notificationsDiv.addEventListener('scroll', async function() {
+            const scrollHeight = notificationsDiv.scrollHeight;
+            const scrollTop = notificationsDiv.scrollTop;
+            const clientHeight = notificationsDiv.clientHeight;
+
+            if (scrollTop + clientHeight >= scrollHeight) {
+                await getNotifications();
+            }
+        });
     </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
