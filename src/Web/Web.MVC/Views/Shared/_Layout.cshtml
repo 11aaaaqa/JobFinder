@@ -196,6 +196,10 @@
         async function openNotifications() {
             if (notificationsDiv.style.display === 'none') {
                 notificationsDiv.style.display = 'block';
+
+                const notificationsBlock = document.getElementById('notifications-block');
+                notificationsBlock.innerHTML = '';
+
                 await getNotifications();
             } else {
                 notificationsDiv.style.display = 'none';
