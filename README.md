@@ -57,4 +57,10 @@
 Также можно просматривать список созданных чатов
 ![image](https://github.com/user-attachments/assets/26335c50-7dcc-4fff-8a66-3eec12e9cbdd)
 ![image](https://github.com/user-attachments/assets/c93132b9-4827-4d0d-bfd7-850846d68fd1)
+Есть система уведомлений
+<img width="1919" height="927" alt="image" src="https://github.com/user-attachments/assets/0ca11bca-7ca9-491f-a2f1-072646510e98" />
+<img width="387" height="468" alt="image" src="https://github.com/user-attachments/assets/a77305d2-801e-4bdd-a564-e12512c8d816" />
+<img width="383" height="468" alt="image" src="https://github.com/user-attachments/assets/2e1b20e8-e1d1-4883-bb6f-0eea42b1a87c" />
+
+
 
