@@ -54,8 +54,11 @@ namespace Web.MVC.Chat_services
             var addMessageResponse = await httpClient.PostAsync($"{url}/api/Message/CreateMessage", jsonContent);
             addMessageResponse.EnsureSuccessStatusCode();
 
-            string connectionId = hubConnectionsManager.GetConnection(to);
-            await Clients.Client(connectionId).SendAsync("ReceiveMessage", messageId, chatId, message, DateTime.UtcNow);
+            string? connectionId = hubConnectionsManager.GetConnection(to);
+            if (connectionId != null)
+            {
+                await Clients.Client(connectionId).SendAsync("ReceiveMessage", messageId, chatId, message, DateTime.UtcNow);
+            }
         }
 
         public void AddHubConnection(string hubConnection)
