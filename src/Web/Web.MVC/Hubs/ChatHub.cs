@@ -4,32 +4,33 @@ using GeneralLibrary.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Web.MVC.Models.ApiResponses;
+using Web.MVC.Models.ApiResponses.Chat;
 using Web.MVC.Models.ApiResponses.Employer;
-using Web.MVC.Services.Hub_connection_services;
 
-namespace Web.MVC.Chat_services
+namespace Web.MVC.Hubs
 {
     [Authorize]
     public class ChatHub : Hub
     {
         private readonly IHttpClientFactory httpClientFactory;
         private readonly string url;
-        private readonly IHubConnectionsManager hubConnectionsManager;
-        public ChatHub(IHttpClientFactory httpClientFactory, IConfiguration configuration,
-            IHubConnectionsManager hubConnectionsManager)
+        public ChatHub(IHttpClientFactory httpClientFactory, IConfiguration configuration)
         {
             this.httpClientFactory = httpClientFactory;
-            this.hubConnectionsManager = hubConnectionsManager;
             url = $"{configuration["Url:Protocol"]}://{configuration["Url:Domain"]}";
         }
 
-        public async Task Send(string message, string to, Guid chatId)
+        public async Task Send(string message, Guid chatId)
         {
             Guid messageId = Guid.NewGuid();
             using HttpClient httpClient = httpClientFactory.CreateClient();
 
             var accountType = Context.User.FindFirst(ClaimTypeConstants.AccountTypeClaimName).Value;
-            Guid senderId;
+            Guid senderId, receiverUserId;
+
+            var chatResponse = await httpClient.GetAsync($"{url}/api/Chat/GetChatByChatId/{chatId}");
+            chatResponse.EnsureSuccessStatusCode();
+            var chat = await chatResponse.Content.ReadFromJsonAsync<ChatResponse>();
             if (accountType == AccountTypeConstants.Employee)
             {
                 var employeeResponse = await httpClient.GetAsync(
@@ -37,14 +38,16 @@ namespace Web.MVC.Chat_services
                 employeeResponse.EnsureSuccessStatusCode();
                 var employee = await employeeResponse.Content.ReadFromJsonAsync<EmployeeResponse>();
                 senderId = employee.Id;
+                receiverUserId = chat.EmployerId;
             }
             else
             {
                 var employerResponse = await httpClient.GetAsync(
-                        $"{url}/api/Employer/GetEmployerByEmail?email={Context.User.Identity.Name}");
+                    $"{url}/api/Employer/GetEmployerByEmail?email={Context.User.Identity.Name}");
                 employerResponse.EnsureSuccessStatusCode();
                 var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
                 senderId = employer.Id;
+                receiverUserId = chat.EmployeeId;
             }
 
             using StringContent jsonContent = new(JsonSerializer.Serialize(new
@@ -54,16 +57,19 @@ namespace Web.MVC.Chat_services
             var addMessageResponse = await httpClient.PostAsync($"{url}/api/Message/CreateMessage", jsonContent);
             addMessageResponse.EnsureSuccessStatusCode();
 
-            string? connectionId = hubConnectionsManager.GetConnection(to);
-            if (connectionId != null)
-            {
-                await Clients.Client(connectionId).SendAsync("ReceiveMessage", messageId, chatId, message, DateTime.UtcNow);
-            }
+            await Clients.Group($"chat_{chatId}")
+                .SendAsync("ReceiveMessage", messageId, message, DateTime.UtcNow, senderId);
+            await Clients.Group($"chats_list_{receiverUserId}").SendAsync("ReceiveMessage", messageId, chatId);
         }
 
-        public void AddHubConnection(string hubConnection)
+        public async Task AddToChatGroup(string hubConnection, Guid chatId)
         {
-            hubConnectionsManager.AddConnection(Context.User.Identity.Name, hubConnection);
+            await Groups.AddToGroupAsync(hubConnection, $"chat_{chatId}");
+        }
+
+        public async Task AddToChatsListGroup(string hubConnection, Guid userId)
+        {
+            await Groups.AddToGroupAsync(hubConnection, $"chats_list_{userId}");
         }
     }
 }
