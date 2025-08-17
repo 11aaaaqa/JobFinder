@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.SignalR;
 
-namespace Web.MVC.Chat_services
+namespace Web.MVC.Hubs
 {
     public class CustomUserIdProvider : IUserIdProvider
     {
