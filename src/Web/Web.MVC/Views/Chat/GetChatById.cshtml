@@ -25,8 +25,13 @@
 </div>
 
 <script>
-    const currentId = @Html.Raw(JsonSerializer.Serialize(Model.CurrentId));
     const chatId = @Html.Raw(JsonSerializer.Serialize(Model.ChatId));
+    const chatSignalRConnection = new signalR.HubConnectionBuilder().withUrl("/chat-hub").build();
+    chatSignalRConnection.start()
+        .then(() => chatSignalRConnection.invoke("AddToChatGroup", chatSignalRConnection.connectionId, chatId))
+        .catch(err => console.error(err.toString()));
+
+    const currentId = @Html.Raw(JsonSerializer.Serialize(Model.CurrentId));
     let allChatMessagesCount;
     async function getChatMessagesCount(){
         const chatMessagesCountResponse = await fetch(`/chat/${chatId}/messages-count`);
@@ -47,7 +52,11 @@
         chat.scrollTop = chat.scrollHeight;
     }
 
-    window.signalRConnection.on("ReceiveMessage", async function(messageId, chatId, message, sentAt) {
+    chatSignalRConnection.on("ReceiveMessage", async function(messageId, message, sentAt, senderId) {
+        if (senderId === currentId) {
+            return;
+        }
+
         if (remainingUnreadMessagesCount > 0) {
             remainingUnreadMessagesCount++;
             return;
@@ -112,9 +121,8 @@
 
         const userWasAtBottom = isAtBottom();
 
-        const receiver = @Html.Raw(JsonSerializer.Serialize(Model.ReceiverEmail));
         const message = document.getElementById('messageInput').value;
-        window.signalRConnection.invoke("Send", message, receiver, @Html.Raw(JsonSerializer.Serialize(Model.ChatId))).catch(err => console.error(err));
+        chatSignalRConnection.invoke("Send", message, @Html.Raw(JsonSerializer.Serialize(Model.ChatId))).catch(err => console.error(err));
 
         if (remainingUnreadMessagesCount > 0) {
             messagesToDisplay[messageCollectionIndex] = { message: message, sendingTime: new Date().toLocaleString() }
@@ -161,217 +169,217 @@
 @if (Model.UnreadMessagesCount > 0)
 {
     <script>
-        let currentPage = 1;
-        const messagesContainer = document.getElementById('messagesList');
+    let currentPage = 1;
+    const messagesContainer = document.getElementById('messagesList');
 
-        async function initialLoadMessages() {
-            const lastReadMessagesResponse = await fetch(`/chat/${chatId}/messages/last-read?pageNumber=${currentPage}`);
-            const lastReadMessages = await lastReadMessagesResponse.json();
-            lastReadMessages.reverse().forEach(message => {
-                const messageDiv = document.createElement('div');
-                messageDiv.classList.add('message-block');
+    async function initialLoadMessages() {
+        const lastReadMessagesResponse = await fetch(`/chat/${chatId}/messages/last-read?pageNumber=${currentPage}`);
+        const lastReadMessages = await lastReadMessagesResponse.json();
+        lastReadMessages.reverse().forEach(message => {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message-block');
 
-                const textDiv = document.createElement('div');
-                textDiv.innerHTML = message.text;
-                textDiv.classList.add('message-text');
+            const textDiv = document.createElement('div');
+            textDiv.innerHTML = message.text;
+            textDiv.classList.add('message-text');
 
-                if (message.senderId === currentId) {
-                    messageDiv.classList.add('sent-message');
-                    textDiv.classList.add('send-message');
-                } else {
-                    messageDiv.classList.add('received-message');
-                    textDiv.classList.add('receive-message');
-                }
-
-                const createdAtDiv = document.createElement('div');
-                createdAtDiv.textContent = new Date(message.createdAt).toLocaleString();
-                createdAtDiv.classList.add('message-time');
-
-                messageDiv.appendChild(textDiv);
-                messageDiv.appendChild(createdAtDiv);
-
-                messagesContainer.append(messageDiv);
-            });
-
-            const unreadMessagesInfoDiv = document.createElement('div');
-            if(allChatMessagesCount !== remainingUnreadMessagesCount){
-                unreadMessagesInfoDiv.classList.add('unread-messages-info');
-                const unreadMessagesInfoP = document.createElement('p');
-                unreadMessagesInfoP.textContent = 'Непрочитанные сообщения';
-                unreadMessagesInfoDiv.appendChild(unreadMessagesInfoP);
-                messagesContainer.appendChild(unreadMessagesInfoDiv);
+            if (message.senderId === currentId) {
+                messageDiv.classList.add('sent-message');
+                textDiv.classList.add('send-message');
+            } else {
+                messageDiv.classList.add('received-message');
+                textDiv.classList.add('receive-message');
             }
 
-            const automaticScrollNeeded = allChatMessagesCount !== remainingUnreadMessagesCount;
+            const createdAtDiv = document.createElement('div');
+            createdAtDiv.textContent = new Date(message.createdAt).toLocaleString();
+            createdAtDiv.classList.add('message-time');
 
-            let scrollHeightBeforeLoadingUnreadMessages = messagesContainer.scrollHeight;
+            messageDiv.appendChild(textDiv);
+            messageDiv.appendChild(createdAtDiv);
 
-            const unreadMessagesResponse = await fetch(`/chat/${chatId}/messages/first-unread`);
-            const unreadMessages = await unreadMessagesResponse.json();
-            unreadMessages.forEach(message => {
-                const messageDiv = document.createElement('div');
-                messageDiv.classList.add('message-block');
-
-                const textDiv = document.createElement('div');
-                textDiv.innerHTML = message.text;
-                textDiv.classList.add('message-text');
-
-                if (message.senderId === currentId) {
-                    messageDiv.classList.add('sent-message');
-                    textDiv.classList.add('send-message');
-                } else {
-                    messageDiv.classList.add('received-message');
-                    textDiv.classList.add('receive-message');
-                }
-
-                const createdAtDiv = document.createElement('div');
-                createdAtDiv.textContent = new Date(message.createdAt).toLocaleString();
-                createdAtDiv.classList.add('message-time');
-
-                messageDiv.appendChild(textDiv);
-                messageDiv.appendChild(createdAtDiv);
-
-                messagesContainer.appendChild(messageDiv);
-                remainingUnreadMessagesCount--;
-            });
-
-            if (automaticScrollNeeded === true) {
-                messagesContainer.scrollTop = scrollHeightBeforeLoadingUnreadMessages + unreadMessagesInfoDiv.scrollHeight - 150;
-            }
-            currentPage++;
-        }
-
-        async function loadReadMessages() {
-            let scrollHeightBeforeLoading = messagesContainer.scrollHeight;
-            const response = await fetch(`/chat/${chatId}/messages/last-read?pageNumber=${currentPage}`);
-            const messages = await response.json();
-            messages.forEach(message => {
-                const messageDiv = document.createElement('div');
-                messageDiv.classList.add('message-block');
-
-                const textDiv = document.createElement('div');
-                textDiv.innerHTML = message.text;
-                textDiv.classList.add('message-text');
-
-                if (message.senderId === currentId) {
-                    messageDiv.classList.add('sent-message');
-                    textDiv.classList.add('send-message');
-                } else {
-                    messageDiv.classList.add('received-message');
-                    textDiv.classList.add('receive-message');
-                }
-
-                const createdAtDiv = document.createElement('div');
-                createdAtDiv.textContent = new Date(message.createdAt).toLocaleString();
-                createdAtDiv.classList.add('message-time');
-
-                messageDiv.appendChild(textDiv);
-                messageDiv.appendChild(createdAtDiv);
-
-                messagesContainer.insertBefore(messageDiv, messagesContainer.firstChild);
-            });
-
-            messagesContainer.scrollTop = messagesContainer.scrollHeight - scrollHeightBeforeLoading;
-
-            currentPage++;
-        }
-
-        async function loadUnreadMessages() {
-            const response = await fetch(`/chat/${chatId}/messages/first-unread`);
-            const messages = await response.json();
-            messages.forEach(message => {
-                const messageDiv = document.createElement('div');
-                messageDiv.classList.add('message-block');
-
-                const textDiv = document.createElement('div');
-                textDiv.innerHTML = message.text;
-                textDiv.classList.add('message-text');
-
-                if (message.senderId === currentId) {
-                    messageDiv.classList.add('sent-message');
-                    textDiv.classList.add('send-message');
-                } else {
-                    messageDiv.classList.add('received-message');
-                    textDiv.classList.add('receive-message');
-                }
-
-                const createdAtDiv = document.createElement('div');
-                createdAtDiv.textContent = new Date(message.createdAt).toLocaleString();
-                createdAtDiv.classList.add('message-time');
-
-                messageDiv.appendChild(textDiv);
-                messageDiv.appendChild(createdAtDiv);
-
-                messagesContainer.appendChild(messageDiv);
-                remainingUnreadMessagesCount--;
-            });
-        }
-
-        messagesContainer.addEventListener('scroll', async () => {
-            if (messagesContainer.scrollTop <= 0) {
-                await loadReadMessages();
-            }
-            if (messagesContainer.scrollHeight - messagesContainer.scrollTop === messagesContainer.clientHeight && remainingUnreadMessagesCount > 0) {
-                await loadUnreadMessages();
-            }
+            messagesContainer.append(messageDiv);
         });
 
-        initialLoadMessages();
-    </script>
+        const unreadMessagesInfoDiv = document.createElement('div');
+        if(allChatMessagesCount !== remainingUnreadMessagesCount){
+            unreadMessagesInfoDiv.classList.add('unread-messages-info');
+            const unreadMessagesInfoP = document.createElement('p');
+            unreadMessagesInfoP.textContent = 'Непрочитанные сообщения';
+            unreadMessagesInfoDiv.appendChild(unreadMessagesInfoP);
+            messagesContainer.appendChild(unreadMessagesInfoDiv);
+        }
+
+        const automaticScrollNeeded = allChatMessagesCount !== remainingUnreadMessagesCount;
+
+        let scrollHeightBeforeLoadingUnreadMessages = messagesContainer.scrollHeight;
+
+        const unreadMessagesResponse = await fetch(`/chat/${chatId}/messages/first-unread`);
+        const unreadMessages = await unreadMessagesResponse.json();
+        unreadMessages.forEach(message => {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message-block');
+
+            const textDiv = document.createElement('div');
+            textDiv.innerHTML = message.text;
+            textDiv.classList.add('message-text');
+
+            if (message.senderId === currentId) {
+                messageDiv.classList.add('sent-message');
+                textDiv.classList.add('send-message');
+            } else {
+                messageDiv.classList.add('received-message');
+                textDiv.classList.add('receive-message');
+            }
+
+            const createdAtDiv = document.createElement('div');
+            createdAtDiv.textContent = new Date(message.createdAt).toLocaleString();
+            createdAtDiv.classList.add('message-time');
+
+            messageDiv.appendChild(textDiv);
+            messageDiv.appendChild(createdAtDiv);
+
+            messagesContainer.appendChild(messageDiv);
+            remainingUnreadMessagesCount--;
+        });
+
+        if (automaticScrollNeeded === true) {
+            messagesContainer.scrollTop = scrollHeightBeforeLoadingUnreadMessages + unreadMessagesInfoDiv.scrollHeight - 150;
+        }
+        currentPage++;
+    }
+
+    async function loadReadMessages() {
+        let scrollHeightBeforeLoading = messagesContainer.scrollHeight;
+        const response = await fetch(`/chat/${chatId}/messages/last-read?pageNumber=${currentPage}`);
+        const messages = await response.json();
+        messages.forEach(message => {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message-block');
+
+            const textDiv = document.createElement('div');
+            textDiv.innerHTML = message.text;
+            textDiv.classList.add('message-text');
+
+            if (message.senderId === currentId) {
+                messageDiv.classList.add('sent-message');
+                textDiv.classList.add('send-message');
+            } else {
+                messageDiv.classList.add('received-message');
+                textDiv.classList.add('receive-message');
+            }
+
+            const createdAtDiv = document.createElement('div');
+            createdAtDiv.textContent = new Date(message.createdAt).toLocaleString();
+            createdAtDiv.classList.add('message-time');
+
+            messageDiv.appendChild(textDiv);
+            messageDiv.appendChild(createdAtDiv);
+
+            messagesContainer.insertBefore(messageDiv, messagesContainer.firstChild);
+        });
+
+        messagesContainer.scrollTop = messagesContainer.scrollHeight - scrollHeightBeforeLoading;
+
+        currentPage++;
+    }
+
+    async function loadUnreadMessages() {
+        const response = await fetch(`/chat/${chatId}/messages/first-unread`);
+        const messages = await response.json();
+        messages.forEach(message => {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message-block');
+
+            const textDiv = document.createElement('div');
+            textDiv.innerHTML = message.text;
+            textDiv.classList.add('message-text');
+
+            if (message.senderId === currentId) {
+                messageDiv.classList.add('sent-message');
+                textDiv.classList.add('send-message');
+            } else {
+                messageDiv.classList.add('received-message');
+                textDiv.classList.add('receive-message');
+            }
+
+            const createdAtDiv = document.createElement('div');
+            createdAtDiv.textContent = new Date(message.createdAt).toLocaleString();
+            createdAtDiv.classList.add('message-time');
+
+            messageDiv.appendChild(textDiv);
+            messageDiv.appendChild(createdAtDiv);
+
+            messagesContainer.appendChild(messageDiv);
+            remainingUnreadMessagesCount--;
+        });
+    }
+
+    messagesContainer.addEventListener('scroll', async () => {
+        if (messagesContainer.scrollTop <= 0) {
+            await loadReadMessages();
+        }
+        if (messagesContainer.scrollHeight - messagesContainer.scrollTop === messagesContainer.clientHeight && remainingUnreadMessagesCount > 0) {
+            await loadUnreadMessages();
+        }
+    });
+
+    initialLoadMessages();
+</script>
 }
 else
 {
     <script>
-        let currentPage = 1;
-        const messagesContainer = document.getElementById('messagesList');
+    let currentPage = 1;
+    const messagesContainer = document.getElementById('messagesList');
 
-        async function loadMessages() {
-            let scrollHeightBeforeLoading = messagesContainer.scrollHeight;
-            const response = await fetch(`/chat/${chatId}/get-messages?pageNumber=${currentPage}`);
-            const messages = await response.json();
-            messages.forEach(message => {
-                const messageDiv = document.createElement('div');
-                messageDiv.classList.add('message-block');
+    async function loadMessages() {
+        let scrollHeightBeforeLoading = messagesContainer.scrollHeight;
+        const response = await fetch(`/chat/${chatId}/get-messages?pageNumber=${currentPage}`);
+        const messages = await response.json();
+        messages.forEach(message => {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message-block');
 
-                const textDiv = document.createElement('div');
-                textDiv.innerHTML = message.text;
-                textDiv.classList.add('message-text');
+            const textDiv = document.createElement('div');
+            textDiv.innerHTML = message.text;
+            textDiv.classList.add('message-text');
 
-                if (message.senderId === currentId) {
-                    messageDiv.classList.add('sent-message');
-                    textDiv.classList.add('send-message');
-                } else {
-                    messageDiv.classList.add('received-message');
-                    textDiv.classList.add('receive-message');
-                }
-
-                const createdAtDiv = document.createElement('div');
-                createdAtDiv.textContent = new Date(message.createdAt).toLocaleString();
-                createdAtDiv.classList.add('message-time');
-
-                messageDiv.appendChild(textDiv);
-                messageDiv.appendChild(createdAtDiv);
-
-                messagesContainer.insertBefore(messageDiv, messagesContainer.firstChild);
-            });
-
-            if (currentPage === 1) {
-                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            if (message.senderId === currentId) {
+                messageDiv.classList.add('sent-message');
+                textDiv.classList.add('send-message');
             } else {
-                messagesContainer.scrollTop = messagesContainer.scrollHeight - scrollHeightBeforeLoading;
+                messageDiv.classList.add('received-message');
+                textDiv.classList.add('receive-message');
             }
 
-            currentPage++;
-        }
+            const createdAtDiv = document.createElement('div');
+            createdAtDiv.textContent = new Date(message.createdAt).toLocaleString();
+            createdAtDiv.classList.add('message-time');
 
-        messagesContainer.addEventListener('scroll', async () => {
-            if (messagesContainer.scrollTop <= 0) {
-                await loadMessages();
-            }
+            messageDiv.appendChild(textDiv);
+            messageDiv.appendChild(createdAtDiv);
+
+            messagesContainer.insertBefore(messageDiv, messagesContainer.firstChild);
         });
 
-        loadMessages();
-    </script>
+        if (currentPage === 1) {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        } else {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight - scrollHeightBeforeLoading;
+        }
+
+        currentPage++;
+    }
+
+    messagesContainer.addEventListener('scroll', async () => {
+        if (messagesContainer.scrollTop <= 0) {
+            await loadMessages();
+        }
+    });
+
+    loadMessages();
+</script>
 }
 <script>
     function autoResize(textarea) {
