@@ -1,8 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text;
 using Microsoft.AspNetCore.SignalR;
-using Web.MVC.Chat_services;
-using Web.MVC.Services.Hub_connection_services;
+using Web.MVC.Hubs;
 
 namespace Web.MVC.Services.Notification_services
 {
@@ -10,15 +9,13 @@ namespace Web.MVC.Services.Notification_services
     {
         private readonly ILogger<NotificationService> logger;
         private readonly IHttpClientFactory httpClientFactory;
-        private readonly IHubConnectionsManager hubConnectionsManager;
-        private readonly IHubContext<ChatHub> hubContext;
+        private readonly IHubContext<NotificationHub> hubContext;
         private readonly string url;
         public NotificationService(IHttpClientFactory httpClientFactory, ILogger<NotificationService> logger, IConfiguration configuration,
-            IHubConnectionsManager hubConnectionsManager, IHubContext<ChatHub> hubContext)
+            IHubContext<NotificationHub> hubContext)
         {
             this.httpClientFactory = httpClientFactory;
             this.logger = logger;
-            this.hubConnectionsManager = hubConnectionsManager;
             this.hubContext = hubContext;
             url = $"{configuration["Url:Protocol"]}://{configuration["Url:Domain"]}";
         }
@@ -37,9 +34,7 @@ namespace Web.MVC.Services.Notification_services
             if (!response.IsSuccessStatusCode)
                 logger.LogCritical("Something went wrong, notification hasn't been created");
 
-            var connection = hubConnectionsManager.GetConnection(receiverUserEmail);
-            if (connection != null)
-                await hubContext.Clients.Client(connection).SendAsync("ReceiveNotification", notificationId);
+            await hubContext.Clients.User(receiverUserEmail).SendAsync("ReceiveNotification", notificationId);
         }
     }
 }
