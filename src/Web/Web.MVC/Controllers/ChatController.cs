@@ -7,29 +7,26 @@ using GeneralLibrary.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using Web.MVC.Chat_services;
+using Web.MVC.Hubs;
 using Web.MVC.Models.ApiResponses;
 using Web.MVC.Models.ApiResponses.Chat;
 using Web.MVC.Models.ApiResponses.Company;
 using Web.MVC.Models.ApiResponses.Employer;
 using Web.MVC.Models.View_models;
-using Web.MVC.Services.Hub_connection_services;
 
 namespace Web.MVC.Controllers
 {
     public class ChatController : Controller
     {
         private readonly IHttpClientFactory httpClientFactory;
-        private readonly IHubConnectionsManager hubConnectionsManager;
-        private readonly IHubContext<ChatHub> hubContext;
+        private readonly IHubContext<ChatHub> chatHub;
         private readonly string url;
-        public ChatController(IHttpClientFactory httpClientFactory, IConfiguration configuration, IHubConnectionsManager hubConnectionsManager,
-            IHubContext<ChatHub> hubContext)
+        public ChatController(IHttpClientFactory httpClientFactory, IConfiguration configuration,
+            IHubContext<ChatHub> chatHub)
         {
             this.httpClientFactory = httpClientFactory;
             url = $"{configuration["Url:Protocol"]}://{configuration["Url:Domain"]}";
-            this.hubConnectionsManager = hubConnectionsManager;
-            this.hubContext = hubContext;
+            this.chatHub = chatHub;
         }
 
         [Authorize]
@@ -254,9 +251,8 @@ namespace Web.MVC.Controllers
 
             var accountType = User.FindFirst(ClaimTypeConstants.AccountTypeClaimName).Value;
 
-            string connectionId = hubConnectionsManager.GetConnection(User.Identity.Name);
-
             List<MessageResponse> messages;
+            Guid userId;
             if (accountType == AccountTypeConstants.Employee)
             {
                 var messagesResponse = await httpClient.GetAsync(
@@ -270,6 +266,11 @@ namespace Web.MVC.Controllers
                 }), Encoding.UTF8, "application/json");
                 var markAsReadResponse = await httpClient.PostAsync($"{url}/api/Message/MarkMessagesAsRead", jsonContent);
                 markAsReadResponse.EnsureSuccessStatusCode();
+                
+                var employeeResponse = await httpClient.GetAsync($"{url}/api/Employee/GetEmployeeByEmail?email={User.Identity.Name}");
+                employeeResponse.EnsureSuccessStatusCode();
+                var employee = await employeeResponse.Content.ReadFromJsonAsync<EmployeeResponse>();
+                userId = employee.Id;
             }
             else
             {
@@ -284,9 +285,14 @@ namespace Web.MVC.Controllers
                 }), Encoding.UTF8, "application/json");
                 var markAsReadResponse = await httpClient.PostAsync($"{url}/api/Message/MarkMessagesAsRead", jsonContent);
                 markAsReadResponse.EnsureSuccessStatusCode();
+
+                var employerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
+                employerResponse.EnsureSuccessStatusCode();
+                var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
+                userId = employer.Id;
             }
 
-            await hubContext.Clients.Client(connectionId).SendAsync("DecreaseUnreadMessagesCount", chatId, messages.Count);
+            await chatHub.Clients.Group($"chats_list_{userId}").SendAsync("DecreaseUnreadMessagesCount", chatId, messages.Count);
 
             return new JsonResult(new Queue<MessageResponse>(messages));
         }
@@ -298,6 +304,7 @@ namespace Web.MVC.Controllers
 
             var accountType = User.FindFirst(ClaimTypeConstants.AccountTypeClaimName).Value;
 
+            Guid userId;
             if (accountType == AccountTypeConstants.Employee)
             {
                 var employeeResponse = await httpClient.GetAsync(
@@ -307,6 +314,7 @@ namespace Web.MVC.Controllers
                 var markAsReadResponse = await httpClient.GetAsync(
                     $"{url}/api/Message/MarkMessageAsRead/{messageId}?currentEmployeeId={employee.Id}");
                 markAsReadResponse.EnsureSuccessStatusCode();
+                userId = employee.Id;
             }
             else
             {
@@ -317,14 +325,14 @@ namespace Web.MVC.Controllers
                 var markAsReadResponse = await httpClient.GetAsync(
                     $"{url}/api/Message/MarkMessageAsRead/{messageId}?currentEmployerId={employer.Id}");
                 markAsReadResponse.EnsureSuccessStatusCode();
+                userId = employer.Id;
             }
 
             var messageResponse = await httpClient.GetAsync($"{url}/api/Message/GetMessageByMessageId/{messageId}");
             messageResponse.EnsureSuccessStatusCode();
             var message = await messageResponse.Content.ReadFromJsonAsync<MessageResponse>();
 
-            string connectionId = hubConnectionsManager.GetConnection(User.Identity.Name);
-            await hubContext.Clients.Client(connectionId).SendAsync("DecreaseUnreadMessagesCount", message.ChatId, 1);
+            await chatHub.Clients.Group($"chats_list_{userId}").SendAsync("DecreaseUnreadMessagesCount", message.ChatId, 1);
 
             return Ok();
         }

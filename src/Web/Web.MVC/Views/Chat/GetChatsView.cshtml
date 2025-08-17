@@ -19,8 +19,14 @@
     const searchInput = document.getElementById('chatsSearchingInput');
     const employeeId = @Html.Raw(JsonSerializer.Serialize(Model.EmployeeId));
     const employerId = @Html.Raw(JsonSerializer.Serialize(Model.EmployerId));
+    const userId = employeeId ?? employerId;
 
-    window.signalRConnection.on("ReceiveMessage", async function(messageId, chatId, message, sentAt) {
+    const chatsSignalRConnection = new signalR.HubConnectionBuilder().withUrl("/chat-hub").build();
+    chatsSignalRConnection.start()
+        .then(() => chatsSignalRConnection.invoke("AddToChatsListGroup", chatsSignalRConnection.connectionId, userId))
+        .catch(err => console.error(err.toString()));
+
+    chatsSignalRConnection.on("ReceiveMessage", async function(messageId, chatId) {
         const chatResponse = await fetch(`/chats/${chatId}/json`);
         const chatJson = await chatResponse.json();
 
@@ -64,13 +70,13 @@
         }
     });
 
-    window.signalRConnection.on("DecreaseUnreadMessagesCount", function(chatId, decreasingCount) {
+    chatsSignalRConnection.on("DecreaseUnreadMessagesCount", function(chatId, decreasingCount) {
         const chatBlock = document.querySelector(`a[chatId="${chatId}"]`);
         const unreadMessagesCountP = chatBlock.querySelector('.unread-messages-count');
         let unreadMessagesCount = parseInt(unreadMessagesCountP.textContent);
         unreadMessagesCount -= decreasingCount;
         if (unreadMessagesCount <= 0) {
-            chatBlock.removeChild(unreadMessagesCountP);
+            chatBlock.firstElementChild.removeChild(unreadMessagesCountP);
         } else {
             unreadMessagesCount.textContent = unreadMessagesCount.toString();
         }

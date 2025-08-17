@@ -8,11 +8,11 @@ using GeneralLibrary.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using Web.MVC.Chat_services;
 using Web.MVC.Constants.Permissions_constants;
 using Web.MVC.DTOs.Company;
 using Web.MVC.DTOs.Vacancy;
 using Web.MVC.Filters.Authorization_filters.Company_filters;
+using Web.MVC.Hubs;
 using Web.MVC.Models.ApiResponses;
 using Web.MVC.Models.ApiResponses.Chat;
 using Web.MVC.Models.ApiResponses.Company;
@@ -1030,39 +1030,33 @@ namespace Web.MVC.Controllers
         private async Task SendJobInvitationMessageAsync(Guid chatId, string receiverEmail, Guid jobVacancyId, string jobVacancyPosition)
         {
             string message = $"Приглашаем Вас на собеседование на позицию <a href=\"/vacancy/{jobVacancyId}\">{jobVacancyPosition}</a>";
-            string from = User.FindFirst(ClaimTypes.Email).Value;
-            await chatHub.Clients.Users(receiverEmail, from).SendAsync("Receive", message, from, DateTime.UtcNow);
+            Guid messageId = Guid.NewGuid();
 
             using HttpClient httpClient = httpClientFactory.CreateClient();
 
-            var accountType = User.FindFirst(ClaimTypeConstants.AccountTypeClaimName).Value;
-            Guid senderId;
-            if (accountType == AccountTypeConstants.Employee)
-            {
-                var employeeResponse = await httpClient.GetAsync(
-                    $"{url}/api/Employee/GetEmployeeByEmail?email={User.Identity.Name}");
-                employeeResponse.EnsureSuccessStatusCode();
-                var employee = await employeeResponse.Content.ReadFromJsonAsync<EmployeeResponse>();
-                senderId = employee.Id;
-            }
-            else
-            {
-                var employerResponse = await httpClient.GetAsync(
-                    $"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
-                employerResponse.EnsureSuccessStatusCode();
-                var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
-                senderId = employer.Id;
-            }
+            var employerResponse = await httpClient.GetAsync(
+                $"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
+            employerResponse.EnsureSuccessStatusCode();
+            var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
+            Guid senderId = employer.Id;
+
+            var receiverEmployeeResponse = await httpClient.GetAsync($"{url}/api/Employee/GetEmployeeByEmail?email={receiverEmail}");
+            receiverEmployeeResponse.EnsureSuccessStatusCode();
+            var receiverEmployee = await receiverEmployeeResponse.Content.ReadFromJsonAsync<EmployeeResponse>();
 
             using StringContent jsonContent = new(JsonSerializer.Serialize(new
             {
-                Id = Guid.NewGuid(),
+                Id = messageId,
                 ChatId = chatId,
                 SenderId = senderId,
                 Text = message
             }), Encoding.UTF8, "application/json");
             var addMessageResponse = await httpClient.PostAsync($"{url}/api/Message/CreateMessage", jsonContent);
             addMessageResponse.EnsureSuccessStatusCode();
+
+            await chatHub.Clients.Group($"chat_{chatId}")
+                .SendAsync("ReceiveMessage", messageId, message, DateTime.UtcNow, senderId);
+            await chatHub.Clients.Group($"chats_list_{receiverEmployee.Id}").SendAsync("ReceiveMessage", messageId, chatId);
         }
     }
 }

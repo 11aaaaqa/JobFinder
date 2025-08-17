@@ -4,9 +4,8 @@ using System.Web;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.Tokens;
-using Web.MVC.Chat_services;
+using Web.MVC.Hubs;
 using Web.MVC.Middlewares;
-using Web.MVC.Services.Hub_connection_services;
 using Web.MVC.Services.Notification_services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,7 +30,6 @@ builder.Services.AddAuthentication(x =>
 });
 
 builder.Services.AddTransient<INotificationService, NotificationService>();
-builder.Services.AddTransient<IHubConnectionsManager, HubConnectionsManager>();
 builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
 
 builder.Services.AddSignalR();
@@ -93,7 +91,8 @@ app.UseStatusCodePages(context =>
 
 app.MapStaticAssets();
 
-app.MapHub<ChatHub>("/chat");
+app.MapHub<ChatHub>("/chat-hub");
+app.MapHub<NotificationHub>("/notification-hub");
 
 app.MapControllerRoute(
     name: "default",
