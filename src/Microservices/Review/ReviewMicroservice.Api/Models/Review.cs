@@ -6,6 +6,7 @@
         public Guid CompanyId { get; set; }
         public Guid EmployeeId { get; set; }
         public string Position { get; set; }
+        public string City { get; set; }
         public string WorkingState { get; set; }
         public string WorkingTime { get; set; }
         public string Advantages { get; set; }
