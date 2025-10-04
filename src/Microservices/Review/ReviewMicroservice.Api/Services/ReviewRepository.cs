@@ -7,7 +7,17 @@ namespace ReviewMicroservice.Api.Services
 {
     public class ReviewRepository(ApplicationDbContext context) : IReviewRepository
     {
-        public async Task<List<Review>> GetReviewsByEmployeeIdAsync(Guid employeeId, int pageNumber)
+        public async Task<List<Review>> GetAllReviewsByCompanyIdAsync(Guid companyId)
+        {
+            return await context.Reviews.Where(x => x.CompanyId == companyId).ToListAsync();
+        }
+
+        public async Task<List<Review>> GetAllReviewsByEmployeeIdAsync(Guid employeeId)
+        {
+            return await context.Reviews.Where(x => x.EmployeeId == employeeId).ToListAsync();
+        }
+
+        public async Task<List<Review>> GetReviewsByEmployeeIdPaginationAsync(Guid employeeId, int pageNumber)
         {
             var reviews = await context.Reviews
                 .Where(x => x.EmployeeId == employeeId)
@@ -17,7 +27,7 @@ namespace ReviewMicroservice.Api.Services
             return reviews;
         }
 
-        public async Task<List<Review>> GetReviewsByCompanyIdAsync(Guid companyId, int pageNumber)
+        public async Task<List<Review>> GetReviewsByCompanyIdPaginationAsync(Guid companyId, int pageNumber)
         {
             var reviews = await context.Reviews
                 .Where(x => x.CompanyId == companyId)
