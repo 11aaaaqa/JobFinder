@@ -11,13 +11,13 @@
         public string WorkingTime { get; set; }
         public string Advantages { get; set; }
         public string CanBeImproved { get; set; }
-        public byte WorkingConditions { get; set; }
-        public byte Colleagues { get; set; }
-        public byte Management { get; set; }
-        public byte GrowthOpportunities { get; set; }
-        public byte RestConditions { get; set; }
-        public byte SalaryLevel { get; set; }
-        public byte GeneralEstimation { get; set; }
+        public int WorkingConditions { get; set; }
+        public int Colleagues { get; set; }
+        public int Management { get; set; }
+        public int GrowthOpportunities { get; set; }
+        public int RestConditions { get; set; }
+        public int SalaryLevel { get; set; }
+        public double GeneralEstimation { get; set; }
         public DateOnly CreatedAt { get; set; }
     }
 }
