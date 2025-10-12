@@ -70,6 +70,7 @@ namespace ReviewMicroservice.Api.Controllers
 
             var companyReviews = await reviewRepository.GetAllReviewsByCompanyIdAsync(model.CompanyId);
             double companyEstimation = companyReviews.Sum(companyReview => companyReview.GeneralEstimation) / companyReviews.Count;
+            companyEstimation = Math.Round(companyEstimation, 1);
 
             await kafkaProducer.ProduceAsync("company-rating-updated-topic", new Message<Null, string> { Value = JsonSerializer.Serialize(new
             {
@@ -88,6 +89,7 @@ namespace ReviewMicroservice.Api.Controllers
 
             var companyReviews = await reviewRepository.GetAllReviewsByCompanyIdAsync(review.CompanyId);
             double companyEstimation = companyReviews.Sum(companyReview => companyReview.GeneralEstimation) / companyReviews.Count;
+            companyEstimation = Math.Round(companyEstimation, 1);
 
             await kafkaProducer.ProduceAsync("company-rating-updated-topic", new Message<Null, string>
             {
