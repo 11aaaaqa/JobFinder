@@ -1,47 +1,43 @@
-﻿.textarea {
+﻿.input-text {
     border: 1.8px solid #ccc;
     padding: 11px;
-    font-size: 16px;
+    width: 35%;
     outline: none;
     border-radius: 5px;
-    width: 35%;
-    overflow: hidden;
-    resize: none;
     transition: border-color 0.1s, box-shadow 0.1s;
 }
 
-.textarea:focus {
+.input-text:focus {
     border-color: deepskyblue;
     box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
-    outline: none;
 }
 
 @media (max-width: 1200px) {
-    .textarea {
+    .input-text {
         width: 50%;
     }
 }
 
 @media (max-width: 992px) {
-    .textarea {
+    .input-text {
         width: 60%;
     }
 }
 
 @media (max-width: 768px) {
-    .textarea {
+    .input-text {
         width: 70%;
     }
 }
 
 @media (max-width: 600px) {
-    .textarea {
+    .input-text {
         width: 80%;
     }
 }
 
 @media (max-width: 520px) {
-    .textarea {
+    .input-text {
         width: 95%;
     }
 }
