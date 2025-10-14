@@ -8,6 +8,8 @@ using Web.MVC.DTOs.Employee;
 using Web.MVC.Models.ApiResponses;
 using Web.MVC.Models.ApiResponses.Bookmark;
 using Web.MVC.Models.ApiResponses.Response;
+using Web.MVC.Models.ApiResponses.Review;
+using Web.MVC.Models.View_models;
 
 namespace Web.MVC.Controllers
 {
@@ -82,10 +84,15 @@ namespace Web.MVC.Controllers
         [Authorize]
         [Route("employee/favorite/vacancies")]
         [HttpGet]
-        public async Task<IActionResult> GetFavoriteVacanciesByEmployeeId(Guid employeeId, string? query, int index = 1)
+        public async Task<IActionResult> GetEmployeeFavoriteVacancies(string? query, int index = 1)
         {
             using HttpClient httpClient = httpClientFactory.CreateClient();
             var encodedQuery = HttpUtility.UrlEncode(query);
+
+            var employeeResponse = await httpClient.GetAsync($"{url}/api/Employee/GetEmployeeByEmail?email={User.Identity.Name}");
+            employeeResponse.EnsureSuccessStatusCode();
+            var employee = await employeeResponse.Content.ReadFromJsonAsync<EmployeeResponse>();
+            Guid employeeId = employee.Id;
 
             var vacancyResponse = await httpClient.GetAsync(
                 $"{url}/api/FavoriteVacancy/GetFavoriteVacancies/{employeeId}?searchingQuery={encodedQuery}&pageNumber={index}");
@@ -164,6 +171,30 @@ namespace Web.MVC.Controllers
             ViewBag.SearchingQuery = query;
 
             return View(interviewInvitations);
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("employee/company-reviews")]
+        public async Task<IActionResult> GetEmployeeCompanyReviews(int index = 1)
+        {
+            HttpClient httpClient = httpClientFactory.CreateClient();
+
+            var employeeResponse = await httpClient.GetAsync($"{url}/api/Employee/GetEmployeeByEmail?email={User.Identity.Name}");
+            employeeResponse.EnsureSuccessStatusCode();
+            var employee = await employeeResponse.Content.ReadFromJsonAsync<EmployeeResponse>();
+
+            var reviewsResponse = await httpClient.GetAsync(
+                    $"{url}/api/Review/GetReviewsByEmployeeIdPagination/{employee.Id}?pageNumber={index}");
+            reviewsResponse.EnsureSuccessStatusCode();
+            var reviews = await reviewsResponse.Content.ReadFromJsonAsync<List<ReviewResponse>>();
+
+            var isNextPageExistedResponse = await httpClient.GetAsync(
+                $"{url}/api/Review/IsNextReviewsByEmployeeIdPageExisted/{employee.Id}?currentPageNumber={index}");
+            isNextPageExistedResponse.EnsureSuccessStatusCode();
+            bool isNextPageExisted = await isNextPageExistedResponse.Content.ReadFromJsonAsync<bool>();
+
+            return View(new GetEmployeeCompanyReviews{CurrentPageNumber = index, IsNextPageExisted = isNextPageExisted, Reviews = reviews});
         }
     }
 }

@@ -1,0 +1,315 @@
+﻿@using Web.MVC.Constants.Review
+@model Web.MVC.DTOs.Review.AddReviewDto
+
+<link rel="stylesheet" href="~/css/review/add-review.css"/>
+<link rel="stylesheet" href="~/css/site-themed-textarea.css"/>
+<link rel="stylesheet" href="~/css/input.css"/>
+
+<h2 class="mb-3">Добавить отзыв на компанию <a asp-controller="Review" asp-action="GetReviewsByCompanyId" asp-route-companyId="@Model.CompanyId">
+    @ViewBag.CompanyName
+</a></h2>
+
+<form method="post" id="review-form">
+    <div asp-validation-summary="ModelOnly"></div>
+    <div id="stars-error-message" style="color: red; display: none;"></div>
+
+
+    <input type="hidden" asp-for="Id"/>
+    <input type="hidden" asp-for="CompanyId"/>
+    <input type="hidden" asp-for="EmployeeId"/>
+        
+    <div class="add-review-block">
+        <h3>Должность</h3>
+        <input class="input-text" asp-for="Position" placeholder="Введите вашу должность в компании" required/>
+    </div>
+        
+    <div class="add-review-block">
+        <h3>Город</h3>
+        <input class="input-text" asp-for="City" placeholder="Введите город работы" required />
+    </div>
+        
+    <div class="add-review-block">
+        <h3>Я оцениваю</h3>
+        @if (Model.WorkingState == null)
+        {
+            <p>
+                <input type="radio" name="WorkingState" value="@WorkingStateConstants.CurrentJob" required />
+                @WorkingStateConstants.CurrentJob
+            </p>
+            <p>
+                <input type="radio" name="WorkingState" value="@WorkingStateConstants.PreviousJob" required />
+                @WorkingStateConstants.PreviousJob
+            </p>
+        }
+        else
+        {
+            <p>
+                <input type="radio" name="WorkingState" value="@WorkingStateConstants.CurrentJob" checked="@(WorkingStateConstants.CurrentJob == Model.WorkingState)" required />
+                @WorkingStateConstants.CurrentJob
+            </p>
+            <p>
+                <input type="radio" name="WorkingState" value="@WorkingStateConstants.PreviousJob" checked="@(WorkingStateConstants.PreviousJob == Model.WorkingState)" required />
+                @WorkingStateConstants.PreviousJob
+            </p>
+        }
+    </div>
+        
+    <div class="add-review-block">
+        <h3>Как долго работали?</h3>
+        @if (Model.WorkingTime == null)
+        {
+            <p>
+                <input type="radio" name="WorkingTime" value="@WorkingTimeConstants.LessThanYear" required />
+                @WorkingTimeConstants.LessThanYear
+            </p>
+            <p>
+                <input type="radio" name="WorkingTime" value="@WorkingTimeConstants.OneToTwoYears" required />
+                @WorkingTimeConstants.OneToTwoYears
+            </p>
+            <p>
+                <input type="radio" name="WorkingTime" value="@WorkingTimeConstants.ThreeToFiveYears" required />
+                @WorkingTimeConstants.ThreeToFiveYears
+            </p>
+            <p>
+                <input type="radio" name="WorkingTime" value="@WorkingTimeConstants.FiveToTenYears" required />
+                @WorkingTimeConstants.FiveToTenYears
+            </p>
+            <p>
+                <input type="radio" name="WorkingTime" value="@WorkingTimeConstants.MoreThanTenYears" required />
+                @WorkingTimeConstants.MoreThanTenYears
+            </p>
+        }
+        else
+        {
+            <p>
+                <input type="radio" name="WorkingTime" value="@WorkingTimeConstants.LessThanYear" checked="@(WorkingTimeConstants.LessThanYear == Model.WorkingTime)" required />
+                @WorkingTimeConstants.LessThanYear
+            </p>
+            <p>
+                <input type="radio" name="WorkingTime" value="@WorkingTimeConstants.OneToTwoYears" checked="@(WorkingTimeConstants.OneToTwoYears == Model.WorkingTime)" required />
+                @WorkingTimeConstants.OneToTwoYears
+            </p>
+            <p>
+                <input type="radio" name="WorkingTime" value="@WorkingTimeConstants.ThreeToFiveYears" checked="@(WorkingTimeConstants.ThreeToFiveYears == Model.WorkingTime)" required />
+                @WorkingTimeConstants.ThreeToFiveYears
+            </p>
+            <p>
+                <input type="radio" name="WorkingTime" value="@WorkingTimeConstants.FiveToTenYears" checked="@(WorkingTimeConstants.FiveToTenYears == Model.WorkingTime)" required />
+                @WorkingTimeConstants.FiveToTenYears
+            </p>
+            <p>
+                <input type="radio" name="WorkingTime" value="@WorkingTimeConstants.MoreThanTenYears" checked="@(WorkingTimeConstants.MoreThanTenYears == Model.WorkingTime)" required />
+                @WorkingTimeConstants.MoreThanTenYears
+            </p>
+        }
+    </div>
+        
+    <div class="star-container">
+        <h3 class="star-description">Условия труда</h3>
+        <div class="star-rating">
+            <input type="radio" id="wc-star5" name="wc-stars" checked="@(Model.WorkingConditions == 5)" value="5" />
+            <label for="wc-star5" title="Отлично">&#9733;</label>
+        
+            <input type="radio" id="wc-star4" name="wc-stars" checked="@(Model.WorkingConditions == 4)" value="4" />
+            <label for="wc-star4" title="Хорошо">&#9733;</label>
+        
+            <input type="radio" id="wc-star3" name="wc-stars" checked="@(Model.WorkingConditions == 3)" value="3" />
+            <label for="wc-star3" title="Нормально">&#9733;</label>
+        
+            <input type="radio" id="wc-star2" name="wc-stars" checked="@(Model.WorkingConditions == 2)" value="2" />
+            <label for="wc-star2" title="Плохо">&#9733;</label>
+        
+            <input type="radio" id="wc-star1" name="wc-stars" checked="@(Model.WorkingConditions == 1)" value="1" />
+            <label for="wc-star1" title="Очень плохо">&#9733;</label>
+                
+            <input type="hidden" asp-for="WorkingConditions" id="wc-stars-value"/>
+        </div>
+    </div>
+
+    <div class="star-container">
+        <h3 class="star-description">Коллектив</h3>
+        <div class="star-rating">
+            <input type="radio" id="col-star5" name="col-stars" checked="@(Model.Colleagues == 5)" value="5" />
+            <label for="col-star5" title="Отлично">&#9733;</label>
+
+            <input type="radio" id="col-star4" name="col-stars" checked="@(Model.Colleagues == 4)" value="4" />
+            <label for="col-star4" title="Хорошо">&#9733;</label>
+
+            <input type="radio" id="col-star3" name="col-stars" checked="@(Model.Colleagues == 3)" value="3" />
+            <label for="col-star3" title="Нормально">&#9733;</label>
+
+            <input type="radio" id="col-star2" name="col-stars" checked="@(Model.Colleagues == 2)" value="2" />
+            <label for="col-star2" title="Плохо">&#9733;</label>
+
+            <input type="radio" id="col-star1" name="col-stars" checked="@(Model.Colleagues == 1)" value="1" />
+            <label for="col-star1" title="Очень плохо">&#9733;</label>
+
+            <input type="hidden" asp-for="Colleagues" id="col-stars-value" />
+        </div>
+    </div>
+
+    <div class="star-container">
+        <h3 class="star-description">Руководство</h3>
+        <div class="star-rating">
+            <input type="radio" id="mng-star5" name="mng-stars" checked="@(Model.Management == 5)" value="5" />
+            <label for="mng-star5" title="Отлично">&#9733;</label>
+
+            <input type="radio" id="mng-star4" name="mng-stars" checked="@(Model.Management == 4)" value="4" />
+            <label for="mng-star4" title="Хорошо">&#9733;</label>
+
+            <input type="radio" id="mng-star3" name="mng-stars" checked="@(Model.Management == 3)" value="3" />
+            <label for="mng-star3" title="Нормально">&#9733;</label>
+
+            <input type="radio" id="mng-star2" name="mng-stars" checked="@(Model.Management == 2)" value="2" />
+            <label for="mng-star2" title="Плохо">&#9733;</label>
+
+            <input type="radio" id="mng-star1" name="mng-stars" checked="@(Model.Management == 1)" value="1" />
+            <label for="mng-star1" title="Очень плохо">&#9733;</label>
+
+            <input type="hidden" asp-for="Management" id="mng-stars-value" />
+        </div>
+    </div>
+
+    <div class="star-container">
+        <h3 class="star-description">Возможности роста</h3>
+        <div class="star-rating">
+            <input type="radio" id="grop-star5" name="grop-stars" checked="@(Model.GrowthOpportunities == 5)" value="5" />
+            <label for="grop-star5" title="Отлично">&#9733;</label>
+
+            <input type="radio" id="grop-star4" name="grop-stars" checked="@(Model.GrowthOpportunities == 4)" value="4" />
+            <label for="grop-star4" title="Хорошо">&#9733;</label>
+
+            <input type="radio" id="grop-star3" name="grop-stars" checked="@(Model.GrowthOpportunities == 3)" value="3" />
+            <label for="grop-star3" title="Нормально">&#9733;</label>
+
+            <input type="radio" id="grop-star2" name="grop-stars" checked="@(Model.GrowthOpportunities == 2)" value="2" />
+            <label for="grop-star2" title="Плохо">&#9733;</label>
+
+            <input type="radio" id="grop-star1" name="grop-stars" checked="@(Model.GrowthOpportunities == 1)" value="1" />
+            <label for="grop-star1" title="Очень плохо">&#9733;</label>
+
+            <input type="hidden" asp-for="GrowthOpportunities" id="grop-stars-value" />
+        </div>
+    </div>
+
+    <div class="star-container">
+        <h3 class="star-description">Условия для отдыха</h3>
+        <div class="star-rating">
+            <input type="radio" id="rcon-star5" name="rcon-stars" checked="@(Model.RestConditions == 5)" value="5" />
+            <label for="rcon-star5" title="Отлично">&#9733;</label>
+
+            <input type="radio" id="rcon-star4" name="rcon-stars" checked="@(Model.RestConditions == 4)" value="4" />
+            <label for="rcon-star4" title="Хорошо">&#9733;</label>
+
+            <input type="radio" id="rcon-star3" name="rcon-stars" checked="@(Model.RestConditions == 3)" value="3" />
+            <label for="rcon-star3" title="Нормально">&#9733;</label>
+
+            <input type="radio" id="rcon-star2" name="rcon-stars" checked="@(Model.RestConditions == 2)" value="2" />
+            <label for="rcon-star2" title="Плохо">&#9733;</label>
+
+            <input type="radio" id="rcon-star1" name="rcon-stars" checked="@(Model.RestConditions == 1)" value="1" />
+            <label for="rcon-star1" title="Очень плохо">&#9733;</label>
+
+            <input type="hidden" asp-for="RestConditions" id="rcon-stars-value" />
+        </div>
+    </div>
+
+    <div class="star-container">
+        <h3 class="star-description">Уровень дохода</h3>
+        <div class="star-rating">
+            <input type="radio" id="slvl-star5" name="slvl-stars" checked="@(Model.SalaryLevel == 5)" value="5" />
+            <label for="slvl-star5" title="Отлично">&#9733;</label>
+
+            <input type="radio" id="slvl-star4" name="slvl-stars" checked="@(Model.SalaryLevel == 4)" value="4" />
+            <label for="slvl-star4" title="Хорошо">&#9733;</label>
+
+            <input type="radio" id="slvl-star3" name="slvl-stars" checked="@(Model.SalaryLevel == 3)" value="3" />
+            <label for="slvl-star3" title="Нормально">&#9733;</label>
+
+            <input type="radio" id="slvl-star2" name="slvl-stars" checked="@(Model.SalaryLevel == 2)" value="2" />
+            <label for="slvl-star2" title="Плохо">&#9733;</label>
+
+            <input type="radio" id="slvl-star1" name="slvl-stars" checked="@(Model.SalaryLevel == 1)" value="1" />
+            <label for="slvl-star1" title="Очень плохо">&#9733;</label>
+
+            <input type="hidden" asp-for="SalaryLevel" id="slvl-stars-value" />
+        </div>
+    </div>
+        
+    <div class="add-review-block">
+        <h3>Что вам нравится в работодателе</h3>
+        <textarea class="textarea" asp-for="Advantages" oninput="autoResize(this);" placeholder="Например: свобода в выборе рабочего графика" required></textarea>
+    </div>
+        
+    <div>
+        <h3>Что можно было бы улучшить</h3>
+        <textarea class="textarea" asp-for="CanBeImproved" oninput="autoResize(this);" placeholder="Например: коммуникация между сотрудниками" required></textarea>
+    </div>
+        
+    <input type="submit" value="Отправить"/>
+</form>
+
+<script>
+    const form = document.getElementById('review-form');
+    const starsErrorBlock = document.getElementById('stars-error-message');
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const selectedWc = document.querySelector('input[name=wc-stars]:checked');
+        if(selectedWc) {
+            document.getElementById('wc-stars-value').value = selectedWc.value;
+        } else {
+            starsErrorBlock.textContent = 'Оцените условия труда';
+            starsErrorBlock.display = 'block';
+            return;
+        }
+
+        const selectedCol = document.querySelector('input[name=col-stars]:checked');
+        if(selectedCol)  {
+            document.getElementById('col-stars-value').value = selectedCol.value;
+        } else {
+            starsErrorBlock.textContent = 'Оцените коллектив';
+            starsErrorBlock.display = 'block';
+            return;
+        }
+
+        const selectedMng = document.querySelector('input[name=mng-stars]:checked');
+        if(selectedMng)  {
+            document.getElementById('mng-stars-value').value = selectedMng.value;
+        } else {
+            starsErrorBlock.textContent = 'Оцените руководство';
+            starsErrorBlock.display = 'block';
+            return;
+        }
+
+        const selectedGrop = document.querySelector('input[name=grop-stars]:checked');
+        if(selectedGrop) {
+            document.getElementById('grop-stars-value').value = selectedGrop.value;
+        } else {
+            starsErrorBlock.textContent = 'Оцените возможности для роста';
+            starsErrorBlock.display = 'block';
+            return;
+        }
+
+        const selectedRcon = document.querySelector('input[name=rcon-stars]:checked');
+        if(selectedRcon) {
+            document.getElementById('rcon-stars-value').value = selectedRcon.value;
+        } else {
+            starsErrorBlock.textContent = 'Оцените условия для отдыха';
+            starsErrorBlock.display = 'block';
+            return;
+        }
+
+        const selectedSlvl = document.querySelector('input[name=slvl-stars]:checked');
+        if(selectedSlvl) {
+            document.getElementById('slvl-stars-value').value = selectedSlvl.value;
+        } else {
+            starsErrorBlock.textContent = 'Оцените уровень дохода';
+            starsErrorBlock.display = 'block';
+            return;
+        }
+
+        form.submit();
+    });
+</script>
+<script src="~/js/textarea-resizing.js"></script>

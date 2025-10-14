@@ -86,7 +86,7 @@ namespace CompanyMicroservice.Api.Controllers
             await companyRepository.AddCompanyAsync(new Company
             {
                 Id = companyId, CompanyName = model.CompanyName, CompanyDescription = model.CompanyDescription,
-                CompanyColleaguesCount = model.CompanyColleaguesCount, FounderEmployerId = model.FounderEmployerId
+                CompanyColleaguesCount = model.CompanyColleaguesCount, FounderEmployerId = model.FounderEmployerId, Rating = 0
             });
 
             await kafkaProducer.ProduceAsync("company-added-topic", new Message<Null, string>

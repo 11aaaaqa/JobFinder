@@ -1,4 +1,5 @@
 using CompanyMicroservice.Api.Database;
+using CompanyMicroservice.Api.Kafka.Consumers;
 using CompanyMicroservice.Api.Kafka.Producer;
 using CompanyMicroservice.Api.Services;
 using CompanyMicroservice.Api.Services.Pagination;
@@ -13,6 +14,8 @@ builder.Services.AddTransient<ICheckForNextPageExisting, CheckForNextPageExistin
 builder.Services.AddTransient<ICompanyEmployerRepository, CompanyEmployerRepository>();
 builder.Services.AddTransient<ICompanyRepository, CompanyRepository>();
 builder.Services.AddTransient<IKafkaProducer, KafkaProducer>();
+
+builder.Services.AddHostedService<CompanyRatingUpdatedKafkaConsumer>();
 
 builder.Services.AddControllers();
 

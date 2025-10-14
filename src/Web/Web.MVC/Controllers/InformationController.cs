@@ -4,6 +4,13 @@ namespace Web.MVC.Controllers
 {
     public class InformationController : Controller
     {
+
+        [Route("reviews/{companyId}/add/conflict")]
+        public IActionResult ReviewOfTheCurrentCompanyAlreadyExistsInfoPage()
+        {
+            return View();
+        }
+
         [Route("forbidden")]
         public IActionResult AccessForbidden()
         {
