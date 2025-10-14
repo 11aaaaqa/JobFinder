@@ -84,10 +84,15 @@ namespace Web.MVC.Controllers
         [Authorize]
         [Route("employee/favorite/vacancies")]
         [HttpGet]
-        public async Task<IActionResult> GetFavoriteVacanciesByEmployeeId(Guid employeeId, string? query, int index = 1)
+        public async Task<IActionResult> GetEmployeeFavoriteVacancies(string? query, int index = 1)
         {
             using HttpClient httpClient = httpClientFactory.CreateClient();
             var encodedQuery = HttpUtility.UrlEncode(query);
+
+            var employeeResponse = await httpClient.GetAsync($"{url}/api/Employee/GetEmployeeByEmail?email={User.Identity.Name}");
+            employeeResponse.EnsureSuccessStatusCode();
+            var employee = await employeeResponse.Content.ReadFromJsonAsync<EmployeeResponse>();
+            Guid employeeId = employee.Id;
 
             var vacancyResponse = await httpClient.GetAsync(
                 $"{url}/api/FavoriteVacancy/GetFavoriteVacancies/{employeeId}?searchingQuery={encodedQuery}&pageNumber={index}");

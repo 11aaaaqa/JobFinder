@@ -3,13 +3,12 @@
 @model List<Web.MVC.Models.ApiResponses.Bookmark.FavoriteVacancyResponse>
 
 <link rel="stylesheet" href="~/css/next-previous-page-button.css" />
-<link rel="stylesheet" href="~/css/vacancy/get-all-vacancies.css"/>
+<link rel="stylesheet" href="~/css/vacancy/get-all-vacancies.css" />
 
 <div>
-    <form method="get" asp-controller="Employee" asp-action="GetFavoriteVacanciesByEmployeeId">
-        <input type="hidden" name="employeeId" value="@ViewBag.EmployeeId" />
-        <input name="query" placeholder="Профессия или должность"/>
-        <input type="submit" value="Найти"/>
+    <form method="get" asp-controller="Employee" asp-action="GetEmployeeFavoriteVacancies">
+        <input name="query" placeholder="Профессия или должность" />
+        <input type="submit" value="Найти" />
     </form>
 </div>
 
@@ -76,15 +75,14 @@
         {
             if (ViewBag.SearchingQuery is null)
             {
-                <a class="previous-button" asp-controller="Employee" asp-action="GetFavoriteVacanciesByEmployeeId" asp-route-index="@(ViewBag.CurrentPageNumber - 1)"
-                   asp-route-employeeId="@ViewBag.EmployeeId">
+                <a class="previous-button" asp-controller="Employee" asp-action="GetEmployeeFavoriteVacancies" asp-route-index="@(ViewBag.CurrentPageNumber - 1)">
                     Назад
                 </a>
             }
             else
             {
-                <a class="previous-button" asp-controller="Employee" asp-action="GetFavoriteVacanciesByEmployeeId" asp-route-index="@(ViewBag.CurrentPageNumber - 1)"
-                   asp-route-query="@ViewBag.SearchingQuery" asp-route-employeeId="@ViewBag.EmployeeId">
+                <a class="previous-button" asp-controller="Employee" asp-action="GetEmployeeFavoriteVacancies" asp-route-index="@(ViewBag.CurrentPageNumber - 1)"
+                   asp-route-query="@ViewBag.SearchingQuery">
                     Назад
                 </a>
             }
@@ -98,15 +96,14 @@
         {
             if (ViewBag.SearchingQuery is null)
             {
-                <a class="next-button" asp-controller="Employee" asp-action="GetFavoriteVacanciesByEmployeeId" asp-route-index="@(ViewBag.CurrentPageNumber + 1)"
-                   asp-route-employeeId="@ViewBag.EmployeeId">
+                <a class="next-button" asp-controller="Employee" asp-action="GetEmployeeFavoriteVacancies" asp-route-index="@(ViewBag.CurrentPageNumber + 1)">
                     Вперед
                 </a>
             }
             else
             {
-                <a class="next-button" asp-controller="Employee" asp-action="GetFavoriteVacanciesByEmployeeId" asp-route-index="@(ViewBag.CurrentPageNumber + 1)"
-                   asp-route-query="@ViewBag.SearchingQuery" asp-route-employeeId="@ViewBag.EmployeeId">
+                <a class="next-button" asp-controller="Employee" asp-action="GetEmployeeFavoriteVacancies" asp-route-index="@(ViewBag.CurrentPageNumber + 1)"
+                   asp-route-query="@ViewBag.SearchingQuery">
                     Вперед
                 </a>
             }
