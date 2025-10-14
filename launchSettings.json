@@ -15,7 +15,8 @@
         "bookmarkmicroservice.api": "StartDebugging",
         "responsemicroservice.api": "StartDebugging",
         "chatmicroservice.api": "StartDebugging",
-        "notificationmicroservice.api": "StartDebugging"
+        "notificationmicroservice.api": "StartDebugging",
+        "reviewmicroservice.api": "StartDebugging"
       }
     }
   }

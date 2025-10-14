@@ -1,0 +1,35 @@
+﻿.add-review-block {
+    margin-bottom: 15px;
+}
+
+.star-container {
+    display: flex;
+}
+
+.star-description {
+    padding-top: 4px;
+    margin-right: 7px;
+}
+
+.star-rating {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: start;
+}
+
+.star-rating input[type="radio"] {
+    display: none;
+}
+
+.star-rating label {
+    font-size: 2em;
+    color: lightgray;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.star-rating label:hover,
+.star-rating label:hover ~ label,
+.star-rating input[type="radio"]:checked ~ label {
+    color: gold;
+}

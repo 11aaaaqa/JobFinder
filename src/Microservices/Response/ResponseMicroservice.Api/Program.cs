@@ -19,8 +19,8 @@ builder.Services.AddTransient<ICheckForNextPageExistingService, CheckForNextPage
 builder.Services.AddTransient<IVacancyResponseService, VacancyResponseService>();
 builder.Services.AddTransient<IInterviewInvitationService, InterviewInvitationService>();
 
-builder.Services.AddHangfire(x => x.UsePostgreSqlStorage(x =>
-    x.UseNpgsqlConnection(builder.Configuration["Database:HangfireConnectionString"])));
+builder.Services.AddHangfire(x => x.UsePostgreSqlStorage(y =>
+    y.UseNpgsqlConnection(builder.Configuration["Database:HangfireConnectionString"])));
 builder.Services.AddHangfireServer();
 builder.Services.AddControllers();
 
