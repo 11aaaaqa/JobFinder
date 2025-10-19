@@ -42,6 +42,10 @@
 Мониторинг своих откликов и их статусов:
 ![image](https://github.com/user-attachments/assets/9e5acacf-b0eb-4956-8d63-c2f4fde8d0b2)
 <br/><br/>
+Есть возможность добавления отзывов на компанию
+<img width="1919" height="1000" alt="image" src="https://github.com/user-attachments/assets/3259f873-13c1-4d31-b7d5-eba3cd24993a" />
+<img width="1919" height="992" alt="image" src="https://github.com/user-attachments/assets/501f45a8-46b2-4bfe-b52f-04ab7061b103" />
+<br/><br/>
 Работодатель может просматривать отклики на все вакансии, сортировать их, проводить в них поиск, а также просматривать списки откликов по отдельной вакансии.
 После принятия отклика, создаётся чат работника и работодателя
 ![image](https://github.com/user-attachments/assets/24f3e519-b803-4f94-b608-294253d1da2e)
