@@ -13,11 +13,11 @@
         <div class="mb-1" style="display: flex;">
             @if (review.WorkingState == WorkingStateConstants.CurrentJob)
             {
-                <p class="highlited-review-p">Работал @review.WorkingTime.ToLower()</p>
+                <p class="highlited-review-p">Работаю @review.WorkingTime.ToLower()</p>
             }
             else
             {
-                <p class="highlited-review-p">Работаю @review.WorkingTime.ToLower()</p>
+                <p class="highlited-review-p">Работал @review.WorkingTime.ToLower()</p>
             }
             
             @switch (review.CreatedAt.Month)
@@ -62,37 +62,37 @@
         </div>
 
         <div class="rating-container mb-1">
-            <h4>@review.GeneralEstimation</h4>
+            <h4 style="margin-top: 8px;">@review.GeneralEstimation</h4>
             <div class="rating-stars" data-rating-value="@review.GeneralEstimation"></div>
         </div>
 
         <div class="rating-container">
-            <h6>Условия труда</h6>
+            <h6 style="margin-top: 8px;">Условия труда</h6>
             <div class="rating-stars" data-rating-value="@review.WorkingConditions"></div>
         </div>
 
         <div class="rating-container">
-            <h6>Уровень дохода</h6>
+            <h6 style="margin-top: 8px;">Уровень дохода</h6>
             <div class="rating-stars" data-rating-value="@review.SalaryLevel"></div>
         </div>
 
         <div class="rating-container">
-            <h6>Коллектив</h6>
+            <h6 style="margin-top: 8px;">Коллектив</h6>
             <div class="rating-stars" data-rating-value="@review.Colleagues"></div>
         </div>
 
         <div class="rating-container">
-            <h6>Руководство</h6>
+            <h6 style="margin-top: 8px;">Руководство</h6>
             <div class="rating-stars" data-rating-value="@review.Management"></div>
         </div>
 
         <div class="rating-container">
-            <h6>Условия для отдыха</h6>
+            <h6 style="margin-top: 8px;">Условия для отдыха</h6>
             <div class="rating-stars" data-rating-value="@review.RestConditions"></div>
         </div>
 
         <div class="rating-container mb-1">
-            <h6>Возможности для роста</h6>
+            <h6 style="margin-top: 8px;">Возможности для роста</h6>
             <div class="rating-stars" data-rating-value="@review.GrowthOpportunities"></div>
         </div>
 
