@@ -49,8 +49,10 @@ namespace ReviewMicroservice.Api.Services
         public async Task DeleteReviewAsync(Guid reviewId)
         {
             var reviewToDelete = await context.Reviews.SingleOrDefaultAsync(x => x.Id == reviewId);
-            if (reviewToDelete != null)
-                context.Reviews.Remove(reviewToDelete);
+            if (reviewToDelete == null)
+                return;
+            context.Reviews.Remove(reviewToDelete);
+            await context.SaveChangesAsync();
         }
     }
 }
