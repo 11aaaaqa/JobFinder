@@ -1,7 +1,7 @@
 ﻿.delete-btn{
     color: white;
     background-color: red;
-    padding: 8px 16px;
+    padding: 6px 32px;
     border: none;
     border-radius: 10px;
     transition: background-color 0.2s;
