@@ -2,14 +2,14 @@
     blockToFill.innerHTML = '';
 
     for (let i = 1; i <= 5; i++) {
-        const star = document.createElement('div');
+        const star = document.createElement('label');
         star.className = 'rating-star';
 
-        const emptyStar = document.createElement('div');
+        const emptyStar = document.createElement('label');
         emptyStar.className = 'empty';
         emptyStar.innerHTML = '★';
 
-        const fullStar = document.createElement('div');
+        const fullStar = document.createElement('label');
         fullStar.className = 'full';
         fullStar.innerHTML = '★';
 
