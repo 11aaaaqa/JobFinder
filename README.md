@@ -48,6 +48,9 @@
 <img width="1919" height="992" alt="image" src="https://github.com/user-attachments/assets/501f45a8-46b2-4bfe-b52f-04ab7061b103" />
 <img width="1919" height="991" alt="image" src="https://github.com/user-attachments/assets/1fac6e07-998d-43b2-9bfa-44f81024b094" />
 <br/><br/>
+Просмотра оставленных собой отзывов
+<img width="1915" height="995" alt="image" src="https://github.com/user-attachments/assets/03487bdb-1a41-46b4-a83f-8be63214d6b8" />
+<br/><br/>
 Работодатель может просматривать отклики на все вакансии, сортировать их, проводить в них поиск, а также просматривать списки откликов по отдельной вакансии.
 После принятия отклика, создаётся чат работника и работодателя
 ![image](https://github.com/user-attachments/assets/24f3e519-b803-4f94-b608-294253d1da2e)
