@@ -1,10 +1,10 @@
 Проект реализуется на микросервисной архитектуре. В настоящее время работа над проектом продолжается, поэтому пока что используется стандартный макет (Layout) из шаблона, который в дальнейшем будет доработан и изменён. Некоторые страницы на данный момент ещё не стилизованы.
 Проект включает в себя процесс регистрации пользователей в качестве работника или работодателя на основе JWT-токенов, а также подтверждение электронной почты посредством отправки соответствующего письма.
-<img width="1919" height="994" alt="image" src="https://github.com/user-attachments/assets/72fada6d-fc03-4135-ab75-0ae98e227a98" />
-<img width="1919" height="994" alt="image" src="https://github.com/user-attachments/assets/3b23ce57-bf24-40aa-9eac-318f2491d371" />
+![image](https://github.com/user-attachments/assets/72fada6d-fc03-4135-ab75-0ae98e227a98)
+![image](https://github.com/user-attachments/assets/3b23ce57-bf24-40aa-9eac-318f2491d371)
 <br/>
 Работодатель может создавать компании, приглашать пользователей, зарегистрировавшихся как работодатели, принимать или отклонять их запросы на вступление, а также просматривать список коллег. Владелец компании по умолчанию обладает полными правами и может выполнять все действия от имени компании, такие как создание, удаление, архивация вакансий, обновление информации о компании. Для остальных участников, входящих в состав компании и не являющихся её владельцами, выполнение данных действий требует наличия соответствующих разрешений, которые выдаются владельцем компании или доверенными пользователями.
-<img width="1919" height="994" alt="image" src="https://github.com/user-attachments/assets/093b08df-0648-4652-8397-74a98336500b" />
+![image](https://github.com/user-attachments/assets/093b08df-0648-4652-8397-74a98336500b)
 <br/>
 <h3>Работодатель может создавать, редактировать, удалять, архивировать, разархивировать вакансии, просматривать список активных и архивных вакансий своей компании</h3>
 <img width="1919" height="994" alt="image" src="https://github.com/user-attachments/assets/1fe1b4af-8996-4f15-aeec-d18173d30704" />
@@ -17,56 +17,56 @@
 <img width="1919" height="994" alt="image" src="https://github.com/user-attachments/assets/b7ada3dc-024b-447e-b0e5-30784d7ee807" />
 <img width="1919" height="994" alt="image" src="https://github.com/user-attachments/assets/23fbc1b9-fee8-4a1c-8e7c-cce052b8237c" />
 <br/><br/>
-<strong>Работник может создавать, редактировать резюме, обновлять общую для всех своих резюме информацию</strong>
+<h3>Работник может создавать, редактировать резюме, обновлять общую для всех своих резюме информацию</h3>
 <img width="1919" height="994" alt="image" src="https://github.com/user-attachments/assets/3b971cbc-e605-457c-81e8-09b22931ba65" />
 <img width="1919" height="994" alt="image" src="https://github.com/user-attachments/assets/9cd656fb-acef-4099-97ad-e2d20cee8647" />
 <img width="1919" height="994" alt="image" src="https://github.com/user-attachments/assets/20e05081-5096-4e15-b306-a9c151a5e3fc" />
 <img width="1919" height="994" alt="image" src="https://github.com/user-attachments/assets/e751077a-5f91-4ae4-be41-e821545f6cee" />
 <img width="1919" height="994" alt="image" src="https://github.com/user-attachments/assets/dd34b55f-9b17-4d97-bd76-431d69573b0f" />
 <br/><br/>
-<strong>Просмотр своих резюме:<strong/>
+<h3>Просмотр своих резюме:<h3/>
 <img width="1919" height="994" alt="image" src="https://github.com/user-attachments/assets/a0026c9f-54a2-418e-aef1-9ced6b8ef850" />
 <img width="1919" height="994" alt="image" src="https://github.com/user-attachments/assets/a245d33e-eb0d-4b92-97fc-b58691278eec" />
 <img width="1919" height="994" alt="image" src="https://github.com/user-attachments/assets/79243801-36bf-4621-a26f-1b98a9ebb011" />
 <img width="1919" height="994" alt="image" src="https://github.com/user-attachments/assets/40706348-6ab1-4efc-b7d7-7cac7676c601" />
 <img width="1919" height="994" alt="image" src="https://github.com/user-attachments/assets/f4ce29c9-e07e-42f3-9fe6-80d8952d2b41" />
 <br/><br/>
-<strong>Также работник может менять статус, согласно которому его резюме будет или не будет отображаться в списке у работодателя<strong/>
+<h3>Также работник может менять статус, согласно которому его резюме будет или не будет отображаться в списке у работодателя<h3/>
 <img width="1919" height="994" alt="image" src="https://github.com/user-attachments/assets/7c24ff1e-042d-4acb-ac3d-248111d74fd9" />
 <br/><br/>
-<strong>Работник может откликаться на вакансию, добавлять её в избранное<strong/>
+<h3>Работник может откликаться на вакансию, добавлять её в избранное<h3/>
 <img width="1919" height="994" alt="image" src="https://github.com/user-attachments/assets/73580b6a-7540-4106-9a84-8c67b3b09c46" />
 <br/><br/>
-<strong>Если у работника больше одного резюме, то можно выбрать какое отправить<strong/>
+<h3>Если у работника больше одного резюме, то можно выбрать какое отправить<h3/>
 <img width="1919" height="994" alt="image" src="https://github.com/user-attachments/assets/81ddca03-f42e-468b-8d1d-300a721a24d5" />
 <br/><br/>
-<strong>Мониторинг своих откликов и их статусов:<strong/>
+<h3>Мониторинг своих откликов и их статусов:<h3/>
 <img width="1919" height="994" alt="image" src="https://github.com/user-attachments/assets/9e5acacf-b0eb-4956-8d63-c2f4fde8d0b2" />
 <br/><br/>
-<strong>Есть возможность добавления отзывов на компанию, их просмотра<strong/>
+<h3>Есть возможность добавления отзывов на компанию, их просмотра<h3/>
 <img width="1919" height="1000" alt="image" src="https://github.com/user-attachments/assets/3259f873-13c1-4d31-b7d5-eba3cd24993a" />
 <img width="1919" height="992" alt="image" src="https://github.com/user-attachments/assets/501f45a8-46b2-4bfe-b52f-04ab7061b103" />
 <img width="1919" height="991" alt="image" src="https://github.com/user-attachments/assets/1fac6e07-998d-43b2-9bfa-44f81024b094" />
 <br/><br/>
-<strong>Просмотра оставленных собой отзывов<strong/>
+<h3>Просмотра оставленных собой отзывов<h3/>
 <img width="1915" height="995" alt="image" src="https://github.com/user-attachments/assets/03487bdb-1a41-46b4-a83f-8be63214d6b8" />
 <br/><br/>
-<strong>Работодатель может просматривать отклики на все вакансии, сортировать их, проводить в них поиск, а также просматривать списки откликов по отдельной вакансии.
-После принятия отклика, создаётся чат работника и работодателя<strong/>
+<h3>Работодатель может просматривать отклики на все вакансии, сортировать их, проводить в них поиск, а также просматривать списки откликов по отдельной вакансии.
+После принятия отклика, создаётся чат работника и работодателя<h3/>
 <img width="1919" height="994" alt="image" src="https://github.com/user-attachments/assets/24f3e519-b803-4f94-b608-294253d1da2e" />
 <br/><br/>
-<strong>Если работодатель без отклика работника решит пригласить его на собеседование, то также создастся чат и автоматически отправится шаблонное сообщение. Если же чат уже существует, то отправка будет осуществлена в него<strong/>
+<h3>Если работодатель без отклика работника решит пригласить его на собеседование, то также создастся чат и автоматически отправится шаблонное сообщение. Если же чат уже существует, то отправка будет осуществлена в него<h3/>
 <img width="1919" height="994" alt="image" src="https://github.com/user-attachments/assets/859f0288-f706-4b10-809f-b64536d8dac9" />
 <br/><br/>
-<strong>Для создания чата необязательно приглашать на собеседование. В каждом резюме работодателю видна кнопка, с помощью которой можно создать чат или перейти в уже существующий с этим работником<strong/>
+<h3>Для создания чата необязательно приглашать на собеседование. В каждом резюме работодателю видна кнопка, с помощью которой можно создать чат или перейти в уже существующий с этим работником<h3/>
 <img width="1919" height="994" alt="image" src="https://github.com/user-attachments/assets/20f53356-bd90-4de8-ac84-d0216d610474" />
 <img width="1919" height="994" alt="image" src="https://github.com/user-attachments/assets/35e61f49-d0f9-4d4a-b522-ea4f2c2b420f" />
 <img width="1919" height="994" alt="image" src="https://github.com/user-attachments/assets/a0ae18de-2aa7-4b93-89dd-b061df28058a" />
 <br/><br/>
-<strong>Также можно просматривать список созданных чатов<strong/>
+<h3>Также можно просматривать список созданных чатов<h3/>
 <img width="1919" height="994" alt="image" src="https://github.com/user-attachments/assets/26335c50-7dcc-4fff-8a66-3eec12e9cbdd" />
 <img width="1919" height="994" alt="image" src="https://github.com/user-attachments/assets/c93132b9-4827-4d0d-bfd7-850846d68fd1" />
-<strong>Есть система уведомлений, созданная с помощью SignalR<strong/>
+<h3>Есть система уведомлений, созданная с помощью SignalR<h3/>
 <img width="1919" height="927" alt="image" src="https://github.com/user-attachments/assets/0ca11bca-7ca9-491f-a2f1-072646510e98" />
 <img width="387" height="468" alt="image" src="https://github.com/user-attachments/assets/a77305d2-801e-4bdd-a564-e12512c8d816" />
 <img width="383" height="468" alt="image" src="https://github.com/user-attachments/assets/2e1b20e8-e1d1-4883-bb6f-0eea42b1a87c" />
