@@ -12,6 +12,7 @@
 ![image](https://github.com/user-attachments/assets/d6527a60-4351-4c9a-affc-4b0359bcc62b)
 ![image](https://github.com/user-attachments/assets/3930f5cd-9e6d-408b-8b42-2fdf2d9fdd64)
 ![image](https://github.com/user-attachments/assets/064d0da8-65a8-442e-83bc-8eb016c116ab)
+<img width="1893" height="1000" alt="image" src="https://github.com/user-attachments/assets/4c619841-192d-46d7-bb5d-e377c8610d71" />
 ![image](https://github.com/user-attachments/assets/9ca21ad9-40dd-4f69-becb-08ba7ee72af9)
 ![image](https://github.com/user-attachments/assets/b7ada3dc-024b-447e-b0e5-30784d7ee807)
 ![image](https://github.com/user-attachments/assets/23fbc1b9-fee8-4a1c-8e7c-cce052b8237c)
@@ -42,9 +43,10 @@
 Мониторинг своих откликов и их статусов:
 ![image](https://github.com/user-attachments/assets/9e5acacf-b0eb-4956-8d63-c2f4fde8d0b2)
 <br/><br/>
-Есть возможность добавления отзывов на компанию
+Есть возможность добавления отзывов на компанию, их просмотра
 <img width="1919" height="1000" alt="image" src="https://github.com/user-attachments/assets/3259f873-13c1-4d31-b7d5-eba3cd24993a" />
 <img width="1919" height="992" alt="image" src="https://github.com/user-attachments/assets/501f45a8-46b2-4bfe-b52f-04ab7061b103" />
+<img width="1919" height="991" alt="image" src="https://github.com/user-attachments/assets/1fac6e07-998d-43b2-9bfa-44f81024b094" />
 <br/><br/>
 Работодатель может просматривать отклики на все вакансии, сортировать их, проводить в них поиск, а также просматривать списки откликов по отдельной вакансии.
 После принятия отклика, создаётся чат работника и работодателя
