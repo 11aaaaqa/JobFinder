@@ -79,11 +79,9 @@
     color: black;
     background-color: rgba(144, 238, 144, 0.7);
     border: none;
-    border-radius: 7px;
-    padding: 5px 12px;
-    margin-right: 4px;
-    margin-bottom: 4px;
-    transition: background-color 0.3s;
+    border-radius: 10px;
+    padding: 7px 14px;
+    transition: background-color 0.2s;
 }
 
 .add-to-favorites-action-btn:hover {
@@ -106,4 +104,54 @@
 .remove-from-favorites-action-btn:hover {
     background-color: rgba(255, 0, 0, 0.6);
     cursor: pointer;
+}
+
+.rating-container {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.respond-to-vacancy-link {
+    color: white;
+    text-decoration: none;
+    background-color: deepskyblue;
+    border: none;
+    border-radius: 10px;
+    padding: 7px 28px;
+    transition: background-color 0.2s;
+}
+
+.respond-to-vacancy-link:hover {
+    background-color: dodgerblue;
+    cursor: pointer;
+}
+
+.responded-to-vacancy-btn {
+    color: white;
+    text-decoration: none;
+    background-color: deepskyblue;
+    border: none;
+    border-radius: 10px;
+    padding: 7px 28px;
+}
+
+.responded-to-vacancy-btn:hover {
+    cursor: pointer;
+}
+
+.vacancy-reviews-link {
+    text-decoration: none;
+    color: black;
+}
+
+.vacancy-reviews-link:hover {
+    color: black;
+    cursor: pointer;
+}
+
+@media (max-width: 520px) {
+    .get-vacancy-page-block {
+        margin: 0;
+    }
 }
