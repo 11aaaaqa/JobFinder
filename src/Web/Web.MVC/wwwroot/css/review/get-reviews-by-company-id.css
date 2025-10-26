@@ -1,0 +1,82 @@
+﻿p {
+    overflow-wrap: break-word;
+    word-break: break-word;
+    margin: 0;
+}
+
+.reviews-page-container {
+    display: flex;
+    gap: 20px;
+}
+
+.review-block {
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 14px;
+    margin-bottom: 10px;
+}
+
+.rating-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.add-review-btn {
+    color: white;
+    text-decoration: none;
+    background-color: deepskyblue;
+    border: none;
+    border-radius: 10px;
+    padding: 7px 25px;
+    width: 100%;
+    transition: background-color 0.2s;
+}
+
+.add-review-btn:hover {
+    background-color: dodgerblue;
+    cursor: pointer;
+}
+
+.highlited-review-p {
+    font-size: 15px;
+    color: gray;
+    background-color: rgba(240, 240, 240,240);
+    padding: 4px 8px;
+    border-radius: 10px;
+    margin-right: 5px;
+}
+
+@media (max-width: 1200px) {
+    .reviews-page-container {
+        gap: 15px;
+    }
+}
+
+@media (max-width: 992px) {
+    .reviews-page-container {
+        gap: 10px;
+    }
+}
+
+@media (max-width: 768px) {
+    .reviews-page-container {
+        gap: 5px;
+    }
+}
+
+@media (max-width: 600px) {
+    .reviews-page-container {
+        gap: 3px;
+    }
+}
+
+@media (max-width: 520px) {
+    .reviews-page-container {
+        gap: 0;
+    }
+
+    .general-company-estimation-block {
+        margin-bottom: 5px;
+    }
+}

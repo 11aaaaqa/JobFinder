@@ -57,34 +57,10 @@ namespace Web.MVC.Controllers
 
                 var addReviewResponse = await httpClient.PostAsync($"{url}/api/Review/AddReview", jsonContent);
                 addReviewResponse.EnsureSuccessStatusCode();
-                return RedirectToAction("GetReviewById", new{ reviewId = model.Id});
+                return RedirectToAction("GetReviewsByCompanyId", new{ companyId = model.CompanyId});
             }
 
             return View(model);
-        }
-
-        [HttpGet]
-        [Route("reviews/{reviewId}")]
-        public async Task<IActionResult> GetReviewById(Guid reviewId)
-        {
-            HttpClient httpClient = httpClientFactory.CreateClient();
-
-            var reviewResponse = await httpClient.GetAsync($"{url}/api/Review/GetReviewById/{reviewId}");
-            reviewResponse.EnsureSuccessStatusCode();
-            var review = await reviewResponse.Content.ReadFromJsonAsync<ReviewResponse>();
-
-            EmployeeResponse? employee = null;
-            var employeeResponse = await httpClient.GetAsync($"{url}/api/Employee/GetEmployeeByEmail?email={User.Identity.Name}");
-            if (employeeResponse.IsSuccessStatusCode)
-            {
-                employee = await employeeResponse.Content.ReadFromJsonAsync<EmployeeResponse>();
-            }
-
-            string returnUrl = Request.Path;
-            if (Request.QueryString.HasValue)
-                returnUrl += Request.QueryString;
-
-            return View(new GetReviewById{Employee = employee, Review = review, ReturnUrl = returnUrl});
         }
 
         [Authorize]
@@ -125,7 +101,18 @@ namespace Web.MVC.Controllers
             isNextPageExistedResponse.EnsureSuccessStatusCode();
             bool isNextPageExisted = await isNextPageExistedResponse.Content.ReadFromJsonAsync<bool>();
 
-            return View(new GetReviewsByCompanyId{CurrentPageNumber = index, IsNextPageExisted = isNextPageExisted, Reviews = reviews});
+            var companyResponse = await httpClient.GetAsync($"{url}/api/Company/GetCompanyByCompanyId/{companyId}");
+            companyResponse.EnsureSuccessStatusCode();
+            var company = await companyResponse.Content.ReadFromJsonAsync<CompanyResponse>();
+
+            return View(new GetReviewsByCompanyId
+            {
+                CompanyId = companyId,
+                GeneralCompanyEstimation = company.Rating,
+                CurrentPageNumber = index,
+                IsNextPageExisted = isNextPageExisted,
+                Reviews = reviews.OrderByDescending(x => x.CreatedAt).ToList()
+            });
         }
     }
 }
