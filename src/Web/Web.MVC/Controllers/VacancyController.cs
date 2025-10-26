@@ -12,6 +12,7 @@ using Web.MVC.Models.ApiResponses.Company;
 using Web.MVC.Models.ApiResponses.Employer;
 using Web.MVC.Models.ApiResponses.Resume;
 using Web.MVC.Models.ApiResponses.Vacancy;
+using Web.MVC.Models.View_models;
 
 namespace Web.MVC.Controllers
 {
@@ -160,6 +161,10 @@ namespace Web.MVC.Controllers
 
             var vacancy = await response.Content.ReadFromJsonAsync<VacancyResponse>();
 
+            var companyResponse = await httpClient.GetAsync($"{url}/api/Company/GetCompanyByCompanyId/{vacancy.CompanyId}");
+            companyResponse.EnsureSuccessStatusCode();
+            var company = await companyResponse.Content.ReadFromJsonAsync<CompanyResponse>();
+
             var employerResponse = await httpClient.GetAsync($"{url}/api/Employer/GetEmployerByEmail?email={User.Identity.Name}");
             var employeeResponse = await httpClient.GetAsync($"{url}/api/Employee/GetEmployeeByEmail?email={User.Identity.Name}");
             
@@ -167,14 +172,9 @@ namespace Web.MVC.Controllers
             {
                 var employer = await employerResponse.Content.ReadFromJsonAsync<EmployerResponse>();
                 if(vacancy.CompanyId != employer.CompanyId)
-                    return View(vacancy);
+                    return View(new GetVacancyViewModel{Company = company, Vacancy = vacancy});
 
                 ViewBag.IsEmployerVacancyOwner = true;
-
-                var companyResponse = await httpClient.GetAsync($"{url}/api/Company/GetCompanyByCompanyId/{employer.CompanyId}");
-                companyResponse.EnsureSuccessStatusCode();
-
-                var company = await companyResponse.Content.ReadFromJsonAsync<CompanyResponse>();
 
                 if (company.FounderEmployerId == employer.Id)
                 {
@@ -216,8 +216,8 @@ namespace Web.MVC.Controllers
                 bool isVacancyInFavorites = await favoriteVacancyResponse.Content.ReadFromJsonAsync<bool>();
                 ViewBag.IsVacancyInFavorites = isVacancyInFavorites;
             }
-            
-            return View(vacancy);
+
+            return View(new GetVacancyViewModel{Vacancy = vacancy, Company = company});
         }
 
         [HttpGet]

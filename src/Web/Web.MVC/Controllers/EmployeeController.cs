@@ -194,7 +194,12 @@ namespace Web.MVC.Controllers
             isNextPageExistedResponse.EnsureSuccessStatusCode();
             bool isNextPageExisted = await isNextPageExistedResponse.Content.ReadFromJsonAsync<bool>();
 
-            return View(new GetEmployeeCompanyReviews{CurrentPageNumber = index, IsNextPageExisted = isNextPageExisted, Reviews = reviews});
+            return View(new GetEmployeeCompanyReviews
+            {
+                CurrentPageNumber = index,
+                IsNextPageExisted = isNextPageExisted,
+                Reviews = reviews.OrderByDescending(x => x.CreatedAt).ToList()
+            });
         }
     }
 }

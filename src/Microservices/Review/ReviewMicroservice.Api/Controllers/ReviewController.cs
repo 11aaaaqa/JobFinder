@@ -88,8 +88,12 @@ namespace ReviewMicroservice.Api.Controllers
             await reviewRepository.DeleteReviewAsync(reviewId);
 
             var companyReviews = await reviewRepository.GetAllReviewsByCompanyIdAsync(review.CompanyId);
-            double companyEstimation = companyReviews.Sum(companyReview => companyReview.GeneralEstimation) / companyReviews.Count;
-            companyEstimation = Math.Round(companyEstimation, 1);
+            double companyEstimation = 0d;
+            if (companyReviews.Count > 0)
+            {
+                companyEstimation = companyReviews.Sum(companyReview => companyReview.GeneralEstimation) / companyReviews.Count;
+                companyEstimation = Math.Round(companyEstimation, 1);
+            }
 
             await kafkaProducer.ProduceAsync("company-rating-updated-topic", new Message<Null, string>
             {

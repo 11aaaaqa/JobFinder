@@ -1,59 +1,60 @@
 ﻿@using Web.MVC.Constants.Vacancy
-@model Web.MVC.Models.ApiResponses.Vacancy.VacancyResponse
+@model Web.MVC.Models.View_models.GetVacancyViewModel
 <link rel="stylesheet" href="~/css/vacancy/get-vacancy.css"/>
+<link rel="stylesheet" href="~/css/rating-stars.css"/>
 
 <div class="get-vacancy-page-block">
     <div class="vacancy-additional-info-block">
         <div class="short-vacancy-info mb-2">
-            @if (Model.IsArchived)
+            @if (Model.Vacancy.IsArchived)
             {
-                <h3 class="mb-0" style="color: lightgray;">@Model.Position</h3>
+                <h3 class="mb-0" style="color: lightgray;">@Model.Vacancy.Position</h3>
                 <p style="color: lightgray;" class="mb-1 mt-0">Вакансия в архиве</p>
             }
             else
             {
-                <h3>@Model.Position</h3>
+                <h3>@Model.Vacancy.Position</h3>
             }
 
-            @if (Model.SalaryFrom is not null && Model.SalaryTo is not null)
+            @if (Model.Vacancy.SalaryFrom is not null && Model.Vacancy.SalaryTo is not null)
             {
-                @if (Model.SalaryTo == Model.SalaryFrom)
+                @if (Model.Vacancy.SalaryTo == Model.Vacancy.SalaryFrom)
                 {
-                    <p class="salary format-number">@Model.SalaryFrom ₽ за месяц</p>
+                    <p class="salary format-number">@Model.Vacancy.SalaryFrom ₽ за месяц</p>
                 }
                 else
                 {
-                    <p class="salary format-number">@Model.SalaryFrom - @Model.SalaryTo ₽ за месяц</p>
+                    <p class="salary format-number">@Model.Vacancy.SalaryFrom - @Model.Vacancy.SalaryTo ₽ за месяц</p>
                 }
             }
-            @if (Model.SalaryFrom is not null && Model.SalaryTo is null)
+            @if (Model.Vacancy.SalaryFrom is not null && Model.Vacancy.SalaryTo is null)
             {
-                <p class="salary format-number">от @Model.SalaryFrom ₽ за месяц</p>
+                <p class="salary format-number">от @Model.Vacancy.SalaryFrom ₽ за месяц</p>
             }
-            @if (Model.SalaryFrom is null && Model.SalaryTo is not null)
+            @if (Model.Vacancy.SalaryFrom is null && Model.Vacancy.SalaryTo is not null)
             {
-                <p class="salary format-number">до @Model.SalaryTo ₽ за месяц</p>
+                <p class="salary format-number">до @Model.Vacancy.SalaryTo ₽ за месяц</p>
             }
-            @if (Model.SalaryTo is null && Model.SalaryFrom is null)
+            @if (Model.Vacancy.SalaryTo is null && Model.Vacancy.SalaryFrom is null)
             {
                 <p class="salary">Уровень дохода не указан</p>
             }
 
-            @if (Model.WorkExperience is not null)
+            @if (Model.Vacancy.WorkExperience is not null)
             {
-                @if (Model.WorkExperience == WorkExperienceConstants.NoExperience)
+                @if (Model.Vacancy.WorkExperience == WorkExperienceConstants.NoExperience)
                 {
-                    <p>@Model.WorkExperience</p>
+                    <p>@Model.Vacancy.WorkExperience</p>
                 }
                 else
                 {
-                    <p>Опыт @Model.WorkExperience.ToLower()</p>
+                    <p>Опыт @Model.Vacancy.WorkExperience.ToLower()</p>
                 }
             }
 
-            <p>@Model.EmploymentType</p>
+            <p>@Model.Vacancy.EmploymentType</p>
 
-            @if (Model.RemoteWork)
+            @if (Model.Vacancy.RemoteWork)
             {
                 <p>Формат работы: в офисе или удаленно</p>
             }
@@ -70,15 +71,15 @@
                 <div class="vacancy-actions-block">
                     @if (ViewBag.DoesEmployerHavePermissionToEditVacancies is true)
                     {
-                        <a class="vacancy-action-btn" asp-controller="Company" asp-action="EditVacancy" asp-route-vacancyId="@Model.Id">Изменить</a>
+                        <a class="vacancy-action-btn" asp-controller="Company" asp-action="EditVacancy" asp-route-vacancyId="@Model.Vacancy.Id">Изменить</a>
                     }
 
-                    @if (Model.IsArchived)
+                    @if (Model.Vacancy.IsArchived)
                     {
                         if (ViewBag.DoesEmployerHavePermissionToArchiveAndUnarchiveVacancies is true)
                         {
                             <form method="post" asp-controller="Company" asp-action="UnarchiveVacancy"
-                                  asp-route-returnUrl="@returnUrl" asp-route-vacancyId="@Model.Id">
+                                  asp-route-returnUrl="@returnUrl" asp-route-vacancyId="@Model.Vacancy.Id">
                                 <input class="vacancy-action-btn" type="submit" value="Разархивировать" />
                             </form>
                         }
@@ -88,7 +89,7 @@
                         @if (ViewBag.DoesEmployerHavePermissionToArchiveAndUnarchiveVacancies is true)
                         {
                             <form method="post" asp-controller="Company" asp-action="ArchiveVacancy"
-                                  asp-route-returnUrl="@returnUrl" asp-route-vacancyId="@Model.Id">
+                                  asp-route-returnUrl="@returnUrl" asp-route-vacancyId="@Model.Vacancy.Id">
                                 <input class="vacancy-action-btn" type="submit" value="Архивировать" />
                             </form>
                         }
@@ -96,61 +97,69 @@
 
                     @if (ViewBag.DoesEmployerHavePermissionToDeleteVacancies is true)
                     {
-                        <form method="post" asp-controller="Company" asp-action="DeleteVacancy" asp-route-vacancyId="@Model.Id">
+                        <form method="post" asp-controller="Company" asp-action="DeleteVacancy" asp-route-vacancyId="@Model.Vacancy.Id">
                             <input class="vacancy-action-btn" type="submit" value="Удалить вакансию" onclick="return confirm('Вы действительно хотите удалить эту вакансию?');" />
                         </form>
                     }
-                    @if (ViewBag.IsVacancyInFavorites is not null && ViewBag.IsVacancyInFavorites == true)
-                    {
-                        <form method="post" asp-controller="Vacancy" asp-action="RemoveVacancyFromFavorites" asp-route-returnUrl="@returnUrl">
-                            <input type="hidden" name="vacancyId"  value="@Model.Id"/>
-                            <input class="remove-from-favorites-action-btn" type="submit" value="✖ Удалить из избранного"/>
-                        </form>
-                    }
-                    @if (ViewBag.IsVacancyInFavorites is not null && ViewBag.IsVacancyInFavorites == false)
-                    {
-                        <form method="post" asp-controller="Vacancy" asp-action="AddVacancyToFavorites" asp-route-returnUrl="@returnUrl">
-                            <input type="hidden" name="vacancyId" value="@Model.Id" />
-                            <input class="add-to-favorites-action-btn" type="submit" value="+ В избранное"/>
-                        </form>
-                    }
-
+                    <div style="display: flex; gap: 5px; align-items: center;">
+                        @if (ViewBag.HasEmployeeRespondedToVacancy is not null && ViewBag.EmployeeGotInvitedToThisVacancy is not null
+                                                                               && ViewBag.EmployeeGotInvitedToThisVacancy == false)
+                        {
+                            @if (ViewBag.HasEmployeeRespondedToVacancy == true)
+                            {
+                                <button class="responded-to-vacancy-btn">✓ Вы откликнулись на вакансию</button>
+                            }
+                            else
+                            {
+                                <a class="respond-to-vacancy-link" asp-controller="Vacancy" asp-action="ChooseResumeToRespondToVacancy"
+                                   asp-route-vacancyId="@Model.Vacancy.Id">Откликнуться</a>
+                            }
+                        }
+                        @if (ViewBag.IsVacancyInFavorites is not null && ViewBag.IsVacancyInFavorites == true)
+                        {
+                            <form method="post" asp-controller="Vacancy" asp-action="RemoveVacancyFromFavorites" asp-route-returnUrl="@returnUrl">
+                                <input type="hidden" name="vacancyId" value="@Model.Vacancy.Id" />
+                                <input class="remove-from-favorites-action-btn" type="submit" value="✖ Удалить из избранного"/>
+                            </form>
+                        }
+                        @if (ViewBag.IsVacancyInFavorites is not null && ViewBag.IsVacancyInFavorites == false)
+                        {
+                            <form method="post" asp-controller="Vacancy" asp-action="AddVacancyToFavorites" asp-route-returnUrl="@returnUrl">
+                                <input type="hidden" name="vacancyId" value="@Model.Vacancy.Id" />
+                                <input class="add-to-favorites-action-btn" type="submit" value="+ В избранное"/>
+                            </form>
+                        }
+                    </div>
                     @if (ViewBag.IsEmployerVacancyOwner is not null && ViewBag.IsEmployerVacancyOwner == true)
                     {
-                        <a class="vacancy-action-btn" asp-controller="Company" asp-action="GetVacancyResponsesByVacancyId" asp-route-vacancyId="@Model.Id"
+                        <a class="vacancy-action-btn" asp-controller="Company" asp-action="GetVacancyResponsesByVacancyId" asp-route-vacancyId="@Model.Vacancy.Id"
                            asp-route-timeSort="Descending">
                             Отклики на вакансию
                         </a>
 
-                        <a class="vacancy-action-btn" asp-controller="Company" asp-action="GetInterviewInvitationsByVacancyId" 
-                           asp-route-vacancyId="@Model.Id">Приглашения</a>
+                        <a class="vacancy-action-btn" asp-controller="Company" asp-action="GetInterviewInvitationsByVacancyId"
+                           asp-route-vacancyId="@Model.Vacancy.Id">Приглашения</a>
                     }
                 </div>
-                @if (ViewBag.HasEmployeeRespondedToVacancy is not null && ViewBag.EmployeeGotInvitedToThisVacancy is not null
-                                                                       && ViewBag.EmployeeGotInvitedToThisVacancy == false)
-                {
-                    @if (ViewBag.HasEmployeeRespondedToVacancy == true)
-                    {
-                        <button>✓ Вы откликнулись на вакансию</button>
-                    }
-                    else
-                    {
-                        <div>
-                            <a asp-controller="Vacancy" asp-action="ChooseResumeToRespondToVacancy" asp-route-vacancyId="@Model.Id">Откликнуться</a>
-                        </div>
-                    }
-                }
             }
             @* кнопка написать сообщение *@
         </div>
 
         <div class="vacancy-company-info">
-            <h5>@Model.CompanyName</h5>
-            @* рейтинг и переход к отзывам *@
+            <a class="vacancy-reviews-link" asp-controller="Review" asp-action="GetReviewsByCompanyId" asp-route-companyId="@Model.Company.Id">
+                <h5>@Model.Company.CompanyName</h5>
+                @if (Model.Company.Rating != 0)
+                {
+                    <div style="margin-top: -9px;" class="rating-container">
+                        <h6 style="margin-top: 10px;">@Model.Company.Rating</h6>
+                        <div class="rating-stars" data-rating-value="@Model.Company.Rating"></div>
+                    </div>
+                }
+            </a>
         </div>
     </div>
     
-    @if (Model.IsArchived)
+    @if (Model.Vacancy.IsArchived)
     {
         <div class="mb-3">
             <h3>Вакансия в архиве</h3>
@@ -162,78 +171,79 @@
 
     <div id="vacancy-description-block">
         <div>
-            <p>@Html.Raw(Model.Description)</p>
+            <p>@Html.Raw(Model.Vacancy.Description)</p>
         </div>
     
-        @if (Model.EmployerContactEmail is not null || Model.EmployerContactPhoneNumber is not null)
+        @if (Model.Vacancy.EmployerContactEmail is not null || Model.Vacancy.EmployerContactPhoneNumber is not null)
         {
             <h4>Контактная информация</h4>
-            if (Model.EmployerContactEmail is not null && Model.EmployerContactPhoneNumber is not null)
+            if (Model.Vacancy.EmployerContactEmail is not null && Model.Vacancy.EmployerContactPhoneNumber is not null)
             {
-                <p class="mb-0">Почта: @Model.EmployerContactEmail</p>
+                <p class="mb-0">Почта: @Model.Vacancy.EmployerContactEmail</p>
             }
-            if (Model.EmployerContactEmail is not null && Model.EmployerContactPhoneNumber is null)
+            if (Model.Vacancy.EmployerContactEmail is not null && Model.Vacancy.EmployerContactPhoneNumber is null)
             {
-                <p>Почта: @Model.EmployerContactEmail</p>
+                <p>Почта: @Model.Vacancy.EmployerContactEmail</p>
             }
 
-            if (Model.EmployerContactPhoneNumber is not null)
+            if (Model.Vacancy.EmployerContactPhoneNumber is not null)
             {
-                <p>Телефон: @Model.EmployerContactPhoneNumber</p>
+                <p>Телефон: @Model.Vacancy.EmployerContactPhoneNumber</p>
             }
         }
     
-        @if (Model.Address is not null)
+        @if (Model.Vacancy.Address is not null)
         {
             <h4>Адрес места работы</h4>
-            <p>@Model.VacancyCity, @Model.Address</p>
+            <p>@Model.Vacancy.VacancyCity, @Model.Vacancy.Address</p>
         }
     </div>
 
-    @switch (Model.CreatedAt.Month)
+    @switch (Model.Vacancy.CreatedAt.Month)
     {
         case 1:
-            <p style="color: gray;">Вакансия опубликована @Model.CreatedAt.Day января @Model.CreatedAt.Year года</p>
+            <p style="color: gray;">Вакансия опубликована @Model.Vacancy.CreatedAt.Day января @Model.Vacancy.CreatedAt.Year года</p>
             break;
         case 2:
-            <p style="color: gray;">Вакансия опубликована @Model.CreatedAt.Day февраля @Model.CreatedAt.Year года</p>
+            <p style="color: gray;">Вакансия опубликована @Model.Vacancy.CreatedAt.Day февраля @Model.Vacancy.CreatedAt.Year года</p>
             break;
         case 3:
-            <p style="color: gray;">Вакансия опубликована @Model.CreatedAt.Day марта @Model.CreatedAt.Year года</p>
+            <p style="color: gray;">Вакансия опубликована @Model.Vacancy.CreatedAt.Day марта @Model.Vacancy.CreatedAt.Year года</p>
             break;
         case 4:
-            <p style="color: gray;">Вакансия опубликована @Model.CreatedAt.Day апреля @Model.CreatedAt.Year года</p>
+            <p style="color: gray;">Вакансия опубликована @Model.Vacancy.CreatedAt.Day апреля @Model.Vacancy.CreatedAt.Year года</p>
             break;
         case 5:
-            <p style="color: gray;">Вакансия опубликована @Model.CreatedAt.Day мая @Model.CreatedAt.Year года</p>
+            <p style="color: gray;">Вакансия опубликована @Model.Vacancy.CreatedAt.Day мая @Model.Vacancy.CreatedAt.Year года</p>
             break;
         case 6:
-            <p style="color: gray;">Вакансия опубликована @Model.CreatedAt.Day июня @Model.CreatedAt.Year года</p>
+            <p style="color: gray;">Вакансия опубликована @Model.Vacancy.CreatedAt.Day июня @Model.Vacancy.CreatedAt.Year года</p>
             break;
         case 7:
-            <p style="color: gray;">Вакансия опубликована @Model.CreatedAt.Day июля @Model.CreatedAt.Year года</p>
+            <p style="color: gray;">Вакансия опубликована @Model.Vacancy.CreatedAt.Day июля @Model.Vacancy.CreatedAt.Year года</p>
             break;
         case 8:
-            <p style="color: gray;">Вакансия опубликована @Model.CreatedAt.Day августа @Model.CreatedAt.Year года</p>
+            <p style="color: gray;">Вакансия опубликована @Model.Vacancy.CreatedAt.Day августа @Model.Vacancy.CreatedAt.Year года</p>
             break;
         case 9:
-            <p style="color: gray;">Вакансия опубликована @Model.CreatedAt.Day сентября @Model.CreatedAt.Year года</p>
+            <p style="color: gray;">Вакансия опубликована @Model.Vacancy.CreatedAt.Day сентября @Model.Vacancy.CreatedAt.Year года</p>
             break;
         case 10:
-            <p style="color: gray;">Вакансия опубликована @Model.CreatedAt.Day октября @Model.CreatedAt.Year года</p>
+            <p style="color: gray;">Вакансия опубликована @Model.Vacancy.CreatedAt.Day октября @Model.Vacancy.CreatedAt.Year года</p>
             break;
         case 11:
-            <p style="color: gray;">Вакансия опубликована @Model.CreatedAt.Day ноября @Model.CreatedAt.Year года</p>
+            <p style="color: gray;">Вакансия опубликована @Model.Vacancy.CreatedAt.Day ноября @Model.Vacancy.CreatedAt.Year года</p>
             break;
         case 12:
-            <p style="color: gray;">Вакансия опубликована @Model.CreatedAt.Day декабря @Model.CreatedAt.Year года</p>
+            <p style="color: gray;">Вакансия опубликована @Model.Vacancy.CreatedAt.Day декабря @Model.Vacancy.CreatedAt.Year года</p>
             break;
     }
 </div>
 
 <script src="~/js/vacancy/format-number-displaying-in-p.js"></script>
+<script src="~/js/render-stars.js"></script>
 <script>
-    var isArchived = @Html.Raw(Json.Serialize(Model.IsArchived));
+    var isArchived = @Html.Raw(Json.Serialize(Model.Vacancy.IsArchived));
     var showVacancyDescriptionBtn = document.getElementById('show-vacancy-description-btn');
     var vacancyDescription = document.getElementById('vacancy-description-block');
 

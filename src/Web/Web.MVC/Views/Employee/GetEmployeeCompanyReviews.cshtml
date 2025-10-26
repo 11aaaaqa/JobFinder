@@ -1,0 +1,149 @@
+﻿@using Web.MVC.Constants.Review
+@model Web.MVC.Models.View_models.GetEmployeeCompanyReviews
+
+<link rel="stylesheet" href="~/css/Employee/get-employee-company-reviews.css"/>
+<link rel="stylesheet" href="~/css/rating-stars.css"/>
+<link rel="stylesheet" href="~/css/next-previous-page-button.css"/>
+<link rel="stylesheet" href="~/css/buttons.css"/>
+
+@foreach (var review in Model.Reviews)
+{
+    <div class="review-block">
+        <h3 class="mb-1">@review.Position</h3>
+        <div class="mb-1" style="display: flex;">
+            @if (review.WorkingState == WorkingStateConstants.CurrentJob)
+            {
+                <p class="highlited-review-p">Работаю @review.WorkingTime.ToLower()</p>
+            }
+            else
+            {
+                <p class="highlited-review-p">Работал @review.WorkingTime.ToLower()</p>
+            }
+            
+            @switch (review.CreatedAt.Month)
+            {
+                case 1:
+                    <p class="highlited-review-p">@review.City, январь @review.CreatedAt.Year</p>
+                    break;
+                case 2:
+                    <p class="highlited-review-p">@review.City, февраль @review.CreatedAt.Year</p>
+                    break;
+                case 3:
+                    <p class="highlited-review-p">@review.City, март @review.CreatedAt.Year</p>
+                    break;
+                case 4:
+                    <p class="highlited-review-p">@review.City, апрель @review.CreatedAt.Year</p>
+                    break;
+                case 5:
+                    <p class="highlited-review-p">@review.City, май @review.CreatedAt.Year</p>
+                    break;
+                case 6:
+                    <p class="highlited-review-p">@review.City, июнь @review.CreatedAt.Year</p>
+                    break;
+                case 7:
+                    <p class="highlited-review-p">@review.City, июль @review.CreatedAt.Year</p>
+                    break;
+                case 8:
+                    <p class="highlited-review-p">@review.City, август @review.CreatedAt.Year</p>
+                    break;
+                case 9:
+                    <p class="highlited-review-p">@review.City, сентябрь @review.CreatedAt.Year</p>
+                    break;
+                case 10:
+                    <p class="highlited-review-p">@review.City, октябрь @review.CreatedAt.Year</p>
+                    break;
+                case 11:
+                    <p class="highlited-review-p">@review.City, ноябрь @review.CreatedAt.Year</p>
+                    break;
+                case 12:
+                    <p class="highlited-review-p">@review.City, декабрь @review.CreatedAt.Year</p>
+                    break;
+            }
+        </div>
+
+        <div class="rating-container mb-1">
+            <h4 style="margin-top: 8px;">@review.GeneralEstimation</h4>
+            <div class="rating-stars" data-rating-value="@review.GeneralEstimation"></div>
+        </div>
+
+        <div class="rating-container">
+            <h6 style="margin-top: 8px;">Условия труда</h6>
+            <div class="rating-stars" data-rating-value="@review.WorkingConditions"></div>
+        </div>
+
+        <div class="rating-container">
+            <h6 style="margin-top: 8px;">Уровень дохода</h6>
+            <div class="rating-stars" data-rating-value="@review.SalaryLevel"></div>
+        </div>
+
+        <div class="rating-container">
+            <h6 style="margin-top: 8px;">Коллектив</h6>
+            <div class="rating-stars" data-rating-value="@review.Colleagues"></div>
+        </div>
+
+        <div class="rating-container">
+            <h6 style="margin-top: 8px;">Руководство</h6>
+            <div class="rating-stars" data-rating-value="@review.Management"></div>
+        </div>
+
+        <div class="rating-container">
+            <h6 style="margin-top: 8px;">Условия для отдыха</h6>
+            <div class="rating-stars" data-rating-value="@review.RestConditions"></div>
+        </div>
+
+        <div class="rating-container mb-1">
+            <h6 style="margin-top: 8px;">Возможности для роста</h6>
+            <div class="rating-stars" data-rating-value="@review.GrowthOpportunities"></div>
+        </div>
+
+        <div class="mb-1">
+            <h5>Преимущества</h5>
+            <p>@review.Advantages</p>
+        </div>
+
+        <div class="mb-1">
+            <h5>Можно улучшить</h5>
+            <p>@review.CanBeImproved</p>
+        </div>
+        
+        @if (true)
+        {
+            string returnUrl = Context.Request.Path;
+            if (Context.Request.QueryString.HasValue)
+                returnUrl += Context.Request.QueryString;
+
+            <form method="post" asp-controller="Review" asp-action="DeleteReview" asp-route-reviewId="@review.Id" asp-route-returnUrl="@returnUrl">
+                <input class="delete-btn" type="submit" value="Удалить" />
+            </form>
+        }
+    </div>
+}
+
+<div class="pagination-link-container">
+    @if (Model.Reviews.Count > 0)
+    {
+        @if (Model.CurrentPageNumber - 1 > 0)
+        {
+            <a class="previous-button" asp-controller="Employee" asp-action="GetEmployeeCompanyReviews" asp-route-index="@(Model.CurrentPageNumber - 1)">
+                Назад
+            </a>
+        }
+        else
+        {
+            <a class="previous-doesnt-exist-button">Назад</a>
+        }
+
+        @if (Model.IsNextPageExisted)
+        {
+            <a class="next-button" asp-controller="Employee" asp-action="GetEmployeeCompanyReviews" asp-route-index="@(Model.CurrentPageNumber + 1)">
+                Вперед
+            </a>
+        }
+        else
+        {
+            <a class="next-doesnt-exist-button">Вперед</a>
+        }
+    }
+</div>
+
+<script src="~/js/render-stars.js"></script>
