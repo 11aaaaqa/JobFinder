@@ -20,7 +20,6 @@
 
 	<ItemGroup>
 	  <Folder Include="Views\Chat\" />
-	  <Folder Include="Views\Review\" />
 	</ItemGroup>
 
 </Project>
