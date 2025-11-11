@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.SignalR;
 using Web.MVC.Constants.Permissions_constants;
 using Web.MVC.DTOs.Company;
 using Web.MVC.DTOs.Vacancy;
+using Web.MVC.Filters.Authorization_filters.Account_type_filters;
 using Web.MVC.Filters.Authorization_filters.Company_filters;
 using Web.MVC.Hubs;
 using Web.MVC.Models.ApiResponses;
@@ -24,6 +25,7 @@ using Web.MVC.Services.Notification_services;
 
 namespace Web.MVC.Controllers
 {
+    [AccountTypeAuthorizationFilter(AccountTypeEnum.Employer)]
     public class CompanyController : Controller
     {
         private readonly IHttpClientFactory httpClientFactory;

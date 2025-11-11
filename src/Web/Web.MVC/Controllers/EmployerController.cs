@@ -1,12 +1,15 @@
 ﻿using System.Text;
 using System.Text.Json;
+using GeneralLibrary.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web.MVC.DTOs.Employer;
+using Web.MVC.Filters.Authorization_filters.Account_type_filters;
 using Web.MVC.Models.ApiResponses.Employer;
 
 namespace Web.MVC.Controllers
 {
+    [AccountTypeAuthorizationFilter(AccountTypeEnum.Employer)]
     public class EmployerController : Controller
     {
         private readonly IHttpClientFactory httpClientFactory;
