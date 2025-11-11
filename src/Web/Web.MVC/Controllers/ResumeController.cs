@@ -2,9 +2,11 @@
 using System.Text;
 using System.Text.Json;
 using System.Web;
+using GeneralLibrary.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web.MVC.DTOs.Resume;
+using Web.MVC.Filters.Authorization_filters.Account_type_filters;
 using Web.MVC.Models.ApiResponses;
 using Web.MVC.Models.ApiResponses.Employer;
 using Web.MVC.Models.ApiResponses.Response;
@@ -23,6 +25,7 @@ namespace Web.MVC.Controllers
         }
 
         [Authorize]
+        [AccountTypeAuthorizationFilter(AccountTypeEnum.Employee)]
         [HttpGet]
         [Route("employee/profile/resumes")]
         public async Task<IActionResult> GetMyResumes()
@@ -44,6 +47,7 @@ namespace Web.MVC.Controllers
         }
 
         [Authorize]
+        [AccountTypeAuthorizationFilter(AccountTypeEnum.Employee)]
         [HttpGet]
         [Route("employee/profile/resumes/create")]
         public async Task<IActionResult> AddResume()
@@ -67,6 +71,7 @@ namespace Web.MVC.Controllers
         }
 
         [Authorize]
+        [AccountTypeAuthorizationFilter(AccountTypeEnum.Employee)]
         [HttpPost]
         [Route("employee/profile/resumes/create")]
         public async Task<IActionResult> AddResume(AddResumeDto model, string? returnUrl)
@@ -200,6 +205,7 @@ namespace Web.MVC.Controllers
         }
 
         [Authorize]
+        [AccountTypeAuthorizationFilter(AccountTypeEnum.Employee)]
         [HttpPost]
         [Route("resume/delete/{resumeId}")]
         public async Task<IActionResult> DeleteResume(Guid resumeId)
@@ -224,6 +230,7 @@ namespace Web.MVC.Controllers
         }
 
         [Authorize]
+        [AccountTypeAuthorizationFilter(AccountTypeEnum.Employee)]
         [HttpGet]
         [Route("resume/edit/{resumeId}")]
         public async Task<IActionResult> EditResume(Guid resumeId)
@@ -240,6 +247,7 @@ namespace Web.MVC.Controllers
         }
 
         [Authorize]
+        [AccountTypeAuthorizationFilter(AccountTypeEnum.Employee)]
         [HttpPost]
         [Route("resume/edit/{resumeId}")]
         public async Task<IActionResult> EditResume(EditResumeDto model)

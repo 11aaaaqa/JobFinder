@@ -1,8 +1,10 @@
 ﻿using System.Text;
 using System.Text.Json;
+using GeneralLibrary.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web.MVC.DTOs.Review;
+using Web.MVC.Filters.Authorization_filters.Account_type_filters;
 using Web.MVC.Models.ApiResponses;
 using Web.MVC.Models.ApiResponses.Company;
 using Web.MVC.Models.ApiResponses.Review;
@@ -21,6 +23,7 @@ namespace Web.MVC.Controllers
         }
 
         [Authorize]
+        [AccountTypeAuthorizationFilter(AccountTypeEnum.Employee)]
         [HttpGet]
         [Route("reviews/{companyId}/add")]
         public async Task<IActionResult> AddReview(Guid companyId)
@@ -46,6 +49,7 @@ namespace Web.MVC.Controllers
         }
 
         [Authorize]
+        [AccountTypeAuthorizationFilter(AccountTypeEnum.Employee)]
         [HttpPost]
         [Route("reviews/{companyId}/add")]
         public async Task<IActionResult> AddReview(AddReviewDto model)
@@ -64,6 +68,7 @@ namespace Web.MVC.Controllers
         }
 
         [Authorize]
+        [AccountTypeAuthorizationFilter(AccountTypeEnum.Employee)]
         [HttpPost]
         [Route("reviews/{reviewId}/remove")]
         public async Task<IActionResult> DeleteReview(Guid reviewId, string returnUrl)

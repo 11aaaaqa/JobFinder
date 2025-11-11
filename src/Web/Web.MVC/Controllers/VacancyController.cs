@@ -2,10 +2,12 @@
 using System.Text;
 using System.Text.Json;
 using System.Web;
+using GeneralLibrary.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web.MVC.Constants.Permissions_constants;
 using Web.MVC.DTOs.Vacancy;
+using Web.MVC.Filters.Authorization_filters.Account_type_filters;
 using Web.MVC.Filters.Authorization_filters.Company_filters;
 using Web.MVC.Models.ApiResponses;
 using Web.MVC.Models.ApiResponses.Company;
@@ -102,6 +104,7 @@ namespace Web.MVC.Controllers
         }
 
         [Authorize]
+        [AccountTypeAuthorizationFilter(AccountTypeEnum.Employer)]
         [CompanyPermissionChecker(VacancyPermissionsConstants.AddVacancyPermission)]
         [HttpGet]
         [Route("vacancy/add")]
@@ -127,6 +130,7 @@ namespace Web.MVC.Controllers
         }
 
         [Authorize]
+        [AccountTypeAuthorizationFilter(AccountTypeEnum.Employer)]
         [CompanyPermissionChecker(VacancyPermissionsConstants.AddVacancyPermission)]
         [HttpPost]
         [Route("vacancy/add")]
@@ -264,6 +268,7 @@ namespace Web.MVC.Controllers
         }
 
         [Authorize]
+        [AccountTypeAuthorizationFilter(AccountTypeEnum.Employee)]
         [HttpPost]
         [Route("vacancy/favorite/add")]
         public async Task<IActionResult> AddVacancyToFavorites(Guid vacancyId, string returnUrl)
@@ -293,6 +298,7 @@ namespace Web.MVC.Controllers
         }
 
         [Authorize]
+        [AccountTypeAuthorizationFilter(AccountTypeEnum.Employee)]
         [HttpPost]
         [Route("vacancy/favorite/remove")]
         public async Task<IActionResult> RemoveVacancyFromFavorites(Guid vacancyId, string returnUrl)
@@ -311,6 +317,7 @@ namespace Web.MVC.Controllers
         }
 
         [Authorize]
+        [AccountTypeAuthorizationFilter(AccountTypeEnum.Employee)]
         [HttpGet]
         [Route("vacancy/{vacancyId}/respond")]
         public async Task<IActionResult> RespondToVacancy(Guid vacancyId, Guid resumeId)
@@ -355,6 +362,7 @@ namespace Web.MVC.Controllers
         }
 
         [Authorize]
+        [AccountTypeAuthorizationFilter(AccountTypeEnum.Employee)]
         [HttpGet]
         [Route("vacancy/{vacancyId}/respond/choose-resume")]
         public async Task<IActionResult> ChooseResumeToRespondToVacancy(Guid vacancyId)
@@ -387,6 +395,7 @@ namespace Web.MVC.Controllers
         }
 
         [Authorize]
+        [AccountTypeAuthorizationFilter(AccountTypeEnum.Employee)]
         [HttpPost]
         [Route("vacancy/{vacancyId}/respond/choose-resume")]
         public IActionResult ChooseResumeToRespondToVacancy(Guid vacancyId, Guid resumeId)
