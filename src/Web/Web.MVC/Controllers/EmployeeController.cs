@@ -5,6 +5,7 @@ using GeneralLibrary.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web.MVC.DTOs.Employee;
+using Web.MVC.Filters.Authorization_filters.Account_type_filters;
 using Web.MVC.Models.ApiResponses;
 using Web.MVC.Models.ApiResponses.Bookmark;
 using Web.MVC.Models.ApiResponses.Response;
@@ -13,6 +14,7 @@ using Web.MVC.Models.View_models;
 
 namespace Web.MVC.Controllers
 {
+    [AccountTypeAuthorizationFilter(AccountTypeEnum.Employee)]
     public class EmployeeController : Controller
     {
         private readonly IHttpClientFactory httpClientFactory;
