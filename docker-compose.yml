@@ -225,7 +225,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: JobFinderReviewMicroservice
     volumes: 
-      - postgres-review-data:/var/lib/postgresql/data
+      - postgres-review-data:/var/lib/postgresql
 
   postgres-notification:
     container_name: postgres-notification
@@ -237,7 +237,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: JobFinderNotificationMicroservice
     volumes: 
-      - postgres-notification-data:/var/lib/postgresql/data
+      - postgres-notification-data:/var/lib/postgresql
 
   postgres-chat:
     container_name: postgres-chat
@@ -249,7 +249,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: JobFinderChatMicroservice
     volumes: 
-      - postgres-chat-data:/var/lib/postgresql/data
+      - postgres-chat-data:/var/lib/postgresql
 
   postgres-response:
     container_name: postgres-response
@@ -261,7 +261,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: JobFinderResponseMicroservice
     volumes: 
-      - postgres-response-data:/var/lib/postgresql/data
+      - postgres-response-data:/var/lib/postgresql
 
   postgres-bookmark:
     container_name: postgres-bookmark
@@ -273,7 +273,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: JobFinderBookmarkMicroservice
     volumes: 
-      - postgres-bookmark-data:/var/lib/postgresql/data
+      - postgres-bookmark-data:/var/lib/postgresql
 
   postgres-resume:
     container_name: postgres-resume
@@ -285,7 +285,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: JobFinderResumeMicroservice
     volumes: 
-      - postgres-resume-data:/var/lib/postgresql/data
+      - postgres-resume-data:/var/lib/postgresql
 
   postgres-vacancy:
     container_name: postgres-vacancy
@@ -297,7 +297,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: JobFinderVacancyMicroservice
     volumes: 
-      - postgres-vacancy-data:/var/lib/postgresql/data
+      - postgres-vacancy-data:/var/lib/postgresql
 
   postgres-company:
     container_name: postgres-company
@@ -309,7 +309,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: JobFinderCompanyMicroservice
     volumes: 
-      - postgres-company-data:/var/lib/postgresql/data
+      - postgres-company-data:/var/lib/postgresql
 
   postgres-employer:
     container_name: postgres-employer
@@ -321,7 +321,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: JobFinderEmployerMicroservice
     volumes: 
-      - postgres-employer-data:/var/lib/postgresql/data
+      - postgres-employer-data:/var/lib/postgresql
 
   postgres-account:
     container_name: postgres-account
@@ -333,7 +333,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: JobFinderAccountMicroservice
     volumes: 
-      - postgres-account-data:/var/lib/postgresql/data
+      - postgres-account-data:/var/lib/postgresql
 
   postgres-employee:
     container_name: postgres-employee
@@ -345,7 +345,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: JobFinderEmployeeMicroservice
     volumes: 
-      - postgres-employee-data:/var/lib/postgresql/data
+      - postgres-employee-data:/var/lib/postgresql
 
   postgres-hangfire:
     container_name: postgres-hangfire
@@ -357,7 +357,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: JobFinderHangfire
     volumes: 
-      - postgres-hangfire-data:/var/lib/postgresql/data
+      - postgres-hangfire-data:/var/lib/postgresql
 
   kafka:
     image: apache/kafka:latest
