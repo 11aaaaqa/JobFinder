@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.0.11205.157 d18.0
+VisualStudioVersion = 18.0.11205.157
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{DF613AE9-E619-4420-B1BB-B7235149916E}"
 EndProject
@@ -100,6 +100,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{7A6C307F-28BF-45AE-BDDE-4D4CF8144141}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReviewMicroservice.UnitTests", "src\Microservices\Review\tests\ReviewMicroservice.UnitTests\ReviewMicroservice.UnitTests.csproj", "{9516E04C-98E6-4DF3-8D0E-C36E8535BC4F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{DB6BE5E8-5B04-48B5-9E81-2DC2E8976DC6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationMicroservice.UnitTests", "src\Microservices\Notification\tests\NotificationMicroservice.UnitTests\NotificationMicroservice.UnitTests.csproj", "{C8445610-E470-46DB-980E-76189BF8FC06}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -203,6 +207,10 @@ Global
 		{9516E04C-98E6-4DF3-8D0E-C36E8535BC4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9516E04C-98E6-4DF3-8D0E-C36E8535BC4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9516E04C-98E6-4DF3-8D0E-C36E8535BC4F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8445610-E470-46DB-980E-76189BF8FC06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8445610-E470-46DB-980E-76189BF8FC06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8445610-E470-46DB-980E-76189BF8FC06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8445610-E470-46DB-980E-76189BF8FC06}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -255,6 +263,8 @@ Global
 		{2E80E5E1-8AA0-41B9-A930-A06F73273FFD} = {6C8CDB64-E1CC-44E7-9F73-CEC1BDC639AF}
 		{7A6C307F-28BF-45AE-BDDE-4D4CF8144141} = {6C8CDB64-E1CC-44E7-9F73-CEC1BDC639AF}
 		{9516E04C-98E6-4DF3-8D0E-C36E8535BC4F} = {7A6C307F-28BF-45AE-BDDE-4D4CF8144141}
+		{DB6BE5E8-5B04-48B5-9E81-2DC2E8976DC6} = {871696E1-3A80-4508-B12C-B613BA101471}
+		{C8445610-E470-46DB-980E-76189BF8FC06} = {DB6BE5E8-5B04-48B5-9E81-2DC2E8976DC6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {64660282-E84C-4E51-B603-DAFFE1C041AA}
